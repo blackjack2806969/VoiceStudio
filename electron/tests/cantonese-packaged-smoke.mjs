@@ -36,6 +36,11 @@ try {
     const status = await page.evaluate(() => window.voicestudio.backend.getStatus());
     if (status.stage === 'ready') {
       assert.equal(status.managed, true);
+      const ready = await app.evaluate(async ({ net }, port) => {
+        const response = await net.fetch(`http://127.0.0.1:${port}/health`);
+        return response.ok;
+      }, status.port);
+      assert(ready, 'Chromium must reach the managed loopback backend');
       break;
     }
     assert(!['failed', 'crashed', 'setup_required', 'port_in_use'].includes(status.stage), JSON.stringify(status));

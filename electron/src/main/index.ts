@@ -84,7 +84,10 @@ const OVERLAY = { color: '#00000000', symbolColor: '#737373', height: 52 };
 logStartup('main module loaded');
 installAppIdentity(app);
 app.commandLine.appendSwitch('no-proxy-server');
-app.commandLine.appendSwitch('host-resolver-rules', 'MAP * ~NOTFOUND, EXCLUDE localhost');
+app.commandLine.appendSwitch(
+  'host-resolver-rules',
+  'MAP * ~NOTFOUND, EXCLUDE localhost, EXCLUDE 127.0.0.1, EXCLUDE [::1]',
+);
 app.commandLine.appendSwitch('force-webrtc-ip-handling-policy', 'disable_non_proxied_udp');
 app.setPath('userData', join(app.getPath('appData'), 'Cantonese Voice Studio'));
 registerAppScheme();
