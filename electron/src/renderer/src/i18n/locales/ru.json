@@ -4509,5 +4509,24 @@
     "stop_dictation": "Остановить диктовку",
     "settings": "Настройки",
     "quit": "Выйти"
+  },
+  "tone": {
+    "title": "Cantonese lexical tones",
+    "help": "Import a take from Clone or a recording (WAV, MP3, M4A; up to 120 seconds / 25 MB). Drag to select a syllable; zoom to refine it. Tone presets use the speaker’s relative pitch range. Add three points and drag vertically, or enter Hz. Praat PSOLA preserves the speech envelope; unvoiced regions stay unchanged. No musical-note quantization. Originals and edit recipes stay on this computer.",
+    "restore": "Reopen last edit",
+    "zoom": "Zoom",
+    "graph": "Speech waveform and F0 in Hz. Select a region by dragging, or enter start and end below.",
+    "start": "Start (seconds)",
+    "end": "End (seconds)",
+    "shift": "Shift (semitones)",
+    "presets": "Cantonese relative tone presets",
+    "points": "Add pitch points",
+    "point": "Pitch point",
+    "apply": "Apply pitch edit",
+    "undo": "Undo",
+    "before": "Before (original)",
+    "after": "After (edited)",
+    "export": "Export WAV",
+    "import": "Import recording"
   }
 }

@@ -1,3 +1,4 @@
+import { LexicalPitch } from './lexical-pitch';
 import { AudioLinesIcon, AudioWaveformIcon, GitCompareArrowsIcon, WrenchIcon } from 'lucide-react';
 import { SecondarySidebar } from '@/components/workspace-sidebar';
 import { ConvertVoice } from './convert-voice';
@@ -42,6 +43,7 @@ const tools = [
 type Tool = (typeof tools)[number];
 export function ToolsPage() {
   const { t } = useTranslation();
+  const [toneEditing, setToneEditing] = useState(true);
   const [comparing, setComparing] = useState(false);
   const [converting, setConverting] = useState(false);
   const [effects, setEffects] = useState(false);
@@ -58,13 +60,15 @@ export function ToolsPage() {
           variant="navigation"
           className="space-y-1"
         >
+          <Button className="w-full justify-start" variant={toneEditing ? 'secondary' : 'ghost'} aria-pressed={toneEditing} onClick={() => setToneEditing(true)}>{t('tone.title')}</Button>
           {tools.map((tool) => (
             <Button
               key={tool.id}
               className="h-9 w-full justify-start gap-2.5 rounded-lg px-2.5 font-normal [&_svg]:text-muted-foreground"
-              variant={!effects && !converting && !comparing && selected.id === tool.id ? 'secondary' : 'ghost'}
-              aria-pressed={!effects && !converting && !comparing && selected.id === tool.id}
+              variant={!toneEditing && !effects && !converting && !comparing && selected.id === tool.id ? 'secondary' : 'ghost'}
+              aria-pressed={!toneEditing && !effects && !converting && !comparing && selected.id === tool.id}
               onClick={() => {
+                setToneEditing(false);
                 setEffects(false);
                 setConverting(false);
                 setComparing(false);
@@ -77,9 +81,10 @@ export function ToolsPage() {
           ))}
           <Button
             className="h-9 w-full justify-start gap-2.5 rounded-lg px-2.5 font-normal [&_svg]:text-muted-foreground"
-            variant={!effects && !converting && comparing ? 'secondary' : 'ghost'}
-            aria-pressed={!effects && !converting && comparing}
+            variant={!toneEditing && !effects && !converting && comparing ? 'secondary' : 'ghost'}
+            aria-pressed={!toneEditing && !effects && !converting && comparing}
             onClick={() => {
+                setToneEditing(false);
               setEffects(false);
               setConverting(false);
               setComparing(true);
@@ -90,9 +95,10 @@ export function ToolsPage() {
           </Button>
           <Button
             className="h-9 w-full justify-start gap-2.5 rounded-lg px-2.5 font-normal [&_svg]:text-muted-foreground"
-            variant={!effects && converting ? 'secondary' : 'ghost'}
-            aria-pressed={!effects && converting}
+            variant={!toneEditing && !effects && converting ? 'secondary' : 'ghost'}
+            aria-pressed={!toneEditing && !effects && converting}
             onClick={() => {
+                setToneEditing(false);
               setEffects(false);
               setConverting(true);
             }}
@@ -102,16 +108,18 @@ export function ToolsPage() {
           </Button>
           <Button
             className="h-9 w-full justify-start gap-2.5 rounded-lg px-2.5 font-normal [&_svg]:text-muted-foreground"
-            variant={effects ? 'secondary' : 'ghost'}
-            aria-pressed={effects}
-            onClick={() => setEffects(true)}
+            variant={!toneEditing && effects ? 'secondary' : 'ghost'}
+            aria-pressed={!toneEditing && effects}
+            onClick={() => { setToneEditing(false); setEffects(true); }}
           >
             <AudioLinesIcon />
             {t('sfx.title')}
           </Button>
         </SecondarySidebar>
         <section className="min-w-0 flex-1 overflow-y-auto px-6 py-8">
-          {effects ? (
+          {toneEditing ? (
+            <LexicalPitch />
+          ) : effects ? (
             <SoundEffects />
           ) : converting ? (
             <ConvertVoice />

@@ -52,6 +52,7 @@ dependencies = [
     "tensorboardX",
     "numpy",
     "soundfile",
+    "praat-parselmouth==0.4.6",
     # whisperx / faster-whisper import `pkg_resources` at runtime. setuptools
     # 80+ DROPPED the bundled pkg_resources, so an unpinned ">=75" now resolves
     # to a version WITHOUT it → "No module named 'pkg_resources'", which both

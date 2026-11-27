@@ -1,0 +1,31 @@
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { afterEach, expect, it, vi } from 'vitest';
+const mock = vi.hoisted(() => ({ json: vi.fn(), fetch: vi.fn() }));
+vi.mock('@/lib/api/client', () => ({ apiJson: mock.json, apiFetch: mock.fetch, describeError: String }));
+vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
+import { LexicalPitch } from './lexical-pitch';
+const data = { id: 'test', take: 'source', duration: 1, times: [.1, .2], f0: [150, 150], waveform: [[-.2, .2]], range_hz: [100, 220], audio_url: '/source' };
+afterEach(() => { cleanup(); vi.clearAllMocks(); localStorage.clear(); });
+it('imports, edits a tone, exports, and undoes from the immutable original', async () => {
+  mock.json.mockResolvedValue(data);
+  mock.fetch.mockImplementation(async () => new Response(new Blob(['audio'])));
+  URL.createObjectURL = vi.fn(() => 'blob:audio'); URL.revokeObjectURL = vi.fn();
+  const view = render(<LexicalPitch />);
+  fireEvent.change(view.container.querySelector('input[type=file]')!, { target: { files: [new File(['wave'], 'ref.wav')] } });
+  await screen.findByText('55');
+  await waitFor(() => expect(screen.getByText('55')).not.toBeDisabled());
+  fireEvent.click(screen.getByText('25'));
+  await waitFor(() => expect(mock.json).toHaveBeenCalledWith('/tools/lexical-pitch/test/render', expect.objectContaining({ body: expect.stringContaining('"tone":"25"') })));
+  await waitFor(() => expect(screen.getByText('tone.undo')).not.toBeDisabled());
+  fireEvent.click(screen.getByText('tone.undo'));
+  await waitFor(() => expect(mock.json).toHaveBeenLastCalledWith('/tools/lexical-pitch/test/render', expect.objectContaining({ body: '{"edits":[]}' })));
+  await screen.findByText('tone.export');
+  expect(JSON.parse(localStorage.getItem('cantonese-tone-project')!)).toEqual({ id: 'test', edits: [] });
+});
+it('shows failed import without replacing the project', async () => {
+  mock.json.mockRejectedValue(new Error('invalid recording'));
+  const view = render(<LexicalPitch />);
+  fireEvent.change(view.container.querySelector('input[type=file]')!, { target: { files: [new File(['bad'], 'bad.wav')] } });
+  expect(await screen.findByRole('alert')).toHaveTextContent('invalid recording');
+  expect(localStorage.getItem('cantonese-tone-project')).toBeNull();
+});

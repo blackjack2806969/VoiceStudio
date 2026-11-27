@@ -37,6 +37,10 @@ from core.path_security import UnsafePath, resolve_within
 logger = logging.getLogger("omnivoice.tools")
 router = APIRouter()
 
+# Speech-tone editing reuses the Tools API and native-access policy.
+from api.routers.lexical_pitch import router as lexical_pitch_router
+router.include_router(lexical_pitch_router)
+
 
 # ── Probe (ffprobe wrapper) ────────────────────────────────────────────────
 

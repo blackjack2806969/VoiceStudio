@@ -203,3 +203,5 @@ backend/assets/samples/demo/dubbing/*.src.wav
 
 # Per-user Visual Studio Code workspace settings.
 /.vscode/settings.json
+
+/.venv-tone/
