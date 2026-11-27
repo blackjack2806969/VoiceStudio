@@ -4,6 +4,22 @@ import subprocess
 import sys
 
 
+def test_packaged_backend_resolves_the_downloaders_data_directory(tmp_path):
+    private = tmp_path / 'private'
+    private.mkdir()
+    alias = tmp_path / 'alias'
+    alias.symlink_to(private, target_is_directory=True)
+    env = {
+        **os.environ,
+        'VOICESTUDIO_CANTONESE_BUNDLED': '1',
+        'OMNIVOICE_DATA_DIR': str(alias),
+        'PYTHONPATH': str(Path(__file__).resolve().parents[1] / 'backend'),
+    }
+    result = subprocess.check_output([sys.executable, '-c', 'from core.config import DATA_DIR; print(DATA_DIR)'],
+                                     env=env, text=True, timeout=10)
+    assert result.strip() == str(private.resolve())
+
+
 def test_real_socket_boundary_in_child():
     code = '''
 import os, socket

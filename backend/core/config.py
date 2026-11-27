@@ -5,6 +5,10 @@ import sys
 def get_app_data_dir():
     custom_dir = os.environ.get("OMNIVOICE_DATA_DIR")
     if custom_dir:
+        if os.environ.get("VOICESTUDIO_CANTONESE_BUNDLED") == "1":
+            # The standalone provisioner persists canonical paths. macOS can
+            # refer to the same location as /var/... and /private/var/....
+            return os.path.realpath(os.path.expanduser(custom_dir))
         return custom_dir
         
     if sys.platform == "darwin":
