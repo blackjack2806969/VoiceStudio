@@ -34,9 +34,11 @@ def main():
         if status != previous:
             print(json.dumps(status), flush=True)
             previous = status
-        if status['installed']:
-            return
         job = status.get('job') or {}
+        # The weight marker is written before the installer persists the engine
+        # path. A restart must see both the files and the committed selection.
+        if status['installed'] and job.get('state') in {None, 'succeeded'}:
+            return
         if job.get('state') in {'failed', 'succeeded', 'cancelled'}:
             raise SystemExit('CosyVoice provisioning failed; see the install log above.')
         time.sleep(2)
