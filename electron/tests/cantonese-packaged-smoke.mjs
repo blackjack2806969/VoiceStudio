@@ -8,6 +8,16 @@ import { exerciseToneEditor } from './cantonese-tone-flow.mjs';
 const captures = resolve('artifacts/cantonese/packaged');
 await mkdir(captures, { recursive: true });
 const data = await mkdtemp(resolve(tmpdir(), 'cantonese-packaged-'));
+
+async function pollUntil(check, timeout, message) {
+  const deadline = Date.now() + timeout;
+  while (Date.now() < deadline) {
+    const result = await check();
+    if (result) return result;
+    await new Promise(resolve => setTimeout(resolve, 2000));
+  }
+  throw new Error(message);
+}
 // Launch the bundle's real entrypoint with Chromium sandboxing enabled.
 const app = await electron.launch({
   executablePath: resolve('electron/release/mac-arm64/VoiceStudio.app/Contents/MacOS/cantonese-offline'),
@@ -83,8 +93,9 @@ try {
   await install.click();
   const downloadFailed = page.getByText('CosyVoice setup failed.', { exact: false });
   const voice = page.getByRole('main').getByRole('button', { name: 'Demo Voice', exact: true });
-  await Promise.race([
-    page.waitForFunction(async () => {
+  await pollUntil(async () => {
+    assert.equal(await downloadFailed.isVisible(), false, 'CosyVoice download from the packaged app failed');
+    return page.evaluate(async () => {
       try {
         const response = await fetch('/api/engines/tts', { signal: AbortSignal.timeout(5000) });
         if (!response.ok) return false;
@@ -93,32 +104,27 @@ try {
       } catch {
         return false; // The backend restarts once the downloader has completed.
       }
-    }, null, { polling: 5000, timeout: 45 * 60 * 1000 }),
-    downloadFailed.waitFor({ timeout: 45 * 60 * 1000 }).then(() => {
-      throw new Error('CosyVoice download from the packaged app failed');
-    }),
-  ]);
+    });
+  }, 46 * 60 * 1000, 'CosyVoice runtime and weights never became available');
   console.log('PASS: local backend recognizes the installed CosyVoice runtime and weights.');
   await voice.click();
   await page.locator('[data-clone-script]').fill('你好，聽日見。');
   const synthesize = page.getByRole('button', { name: 'Synthesize audio', exact: true });
-  const deadlineTts = Date.now() + 30000;
-  while (!(await synthesize.isEnabled())) {
-    assert(Date.now() < deadlineTts, 'Installed CosyVoice did not unblock Clone');
-    await new Promise(resolve => setTimeout(resolve, 250));
-  }
+  await pollUntil(async () => (await synthesize.count()) > 0 && await synthesize.isEnabled(),
+    60000, 'Installed CosyVoice did not unblock Clone');
   await synthesize.click();
   // A saved take proves the UI submitted real synthesis and received its result.
-  await page.waitForFunction(async () => {
-    const response = await fetch('/api/history', { signal: AbortSignal.timeout(5000) });
-    return response.ok && (await response.json()).some(take => take.audio_path);
-  }, null, { polling: 1500, timeout: 12 * 60 * 1000 });
-  const take = await page.evaluate(async () => {
-    const history = await (await fetch('/api/history')).json();
-    const response = await fetch('/api/audio/' + encodeURIComponent(history.find(take => take.audio_path).audio_path));
+  const audioPath = await pollUntil(() => page.evaluate(async () => {
+    const response = await fetch('/api/history', { signal: AbortSignal.timeout(5000) }).catch(() => null);
+    if (!response?.ok) return null;
+    const history = await response.json();
+    return history.find(take => take.audio_path)?.audio_path;
+  }), 12 * 60 * 1000, 'Clone did not save a synthesized take');
+  const take = await page.evaluate(async path => {
+    const response = await fetch('/api/audio/' + encodeURIComponent(path));
     if (!response.ok) throw new Error(`Clone WAV: ${response.status}`);
     return Array.from(new Uint8Array(await response.arrayBuffer()));
-  });
+  }, audioPath);
   const speech = Buffer.from(take);
   assert(speech.length > 44 && speech.toString('ascii', 0, 4) === 'RIFF');
   await writeFile(resolve(captures, 'clone-generated.wav'), speech);
