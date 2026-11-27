@@ -22,7 +22,7 @@ export function CloneReadinessNotice({
   demo: boolean;
 }) {
   const { t } = useTranslation();
-  const { activeTts } = useEngines();
+  const { activeTts } = useEngines('tts');
   const designInstead = activeTts?.supports_voice_design !== false;
   return (
     <div

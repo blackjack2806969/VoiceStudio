@@ -566,6 +566,23 @@ def list_models():
     Uses a 10 s response cache to avoid repeated ``scan_cache_dir()`` disk
     walks when the frontend polls.
     """
+    if os.environ.get("VOICESTUDIO_CANTONESE_BUNDLED") == "1":
+        from services.sidecar_install import SPECS, get_status
+
+        repo = SPECS["cosyvoice"].weights_repo_id
+        model = next(item for item in KNOWN_MODELS if item["repo_id"] == repo)
+        return {
+            "target": "local",
+            "models": [{
+                **model,
+                "installed": get_status("cosyvoice")["installed"],
+                "supported": True,
+                "curated": True,
+                "sidecar_managed": True,
+                "license_info": _model_license_info(repo),
+                "license_acceptance": _model_licence_acceptance(repo),
+            }],
+        }
     platform_tags = _current_platform_tags()
     cache_key = "models:local:" + ",".join(sorted(platform_tags))
     cached_response = _cached(cache_key)

@@ -41,7 +41,7 @@ export type QualityOfferView =
 
 /** What, if anything, to say about speed beside the Generate button. Never changes settings. */
 export function useQualityOfferView(text: string, isGenerating: boolean): QualityOfferView | null {
-  const { activeTts } = useEngines();
+  const { activeTts } = useEngines('tts');
   const offer = useQualityOffer();
   const steps = useCloneSetting('steps');
   const engineId = activeTts?.id ?? null;

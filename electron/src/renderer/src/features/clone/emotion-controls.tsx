@@ -49,7 +49,7 @@ function resetEmotion() {
  */
 export function EmotionControls({ disabled = false }: { disabled?: boolean }) {
   const { t } = useTranslation();
-  const { activeTts } = useEngines();
+  const { activeTts } = useEngines('tts');
   const settings = useCloneSettings();
   const [open, setOpen] = useState(false);
   const id = useId();

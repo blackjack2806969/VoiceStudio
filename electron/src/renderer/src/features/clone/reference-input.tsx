@@ -71,7 +71,7 @@ function useIngest(onAccept?: AcceptReference, sharedPick?: PickToken): IngestFn
 /** How much of a clip longer than the 5–15 s recommendation the active engine uses. */
 export function ReferenceUsageNote({ durationSeconds }: { durationSeconds: number | null }) {
   const { t } = useTranslation();
-  const { activeTts } = useEngines();
+  const { activeTts } = useEngines('tts');
   const note = referenceUsageNote(activeTts, durationSeconds);
   if (!note) return null;
   return (

@@ -15,7 +15,7 @@ export function useTtsReadiness(
 export function useTtsReadiness(operation: string): TtsReadinessBlocker;
 export function useTtsReadiness(operation = 'tts'): TtsReadinessBlocker {
   const backend = useBackendStatus();
-  const engines = useEngines();
+  const engines = useEngines('tts');
   const tts = engineFamilyState(engines.data, 'tts');
   const activeEngine = tts?.active ?? undefined;
   const activeModelId = tts?.active_model;

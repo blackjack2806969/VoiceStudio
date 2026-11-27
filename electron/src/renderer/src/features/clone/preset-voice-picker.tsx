@@ -7,7 +7,7 @@ import SearchableSelect from '@shared/components/SearchableSelect';
 /** Built-in voices of engines that ship presets instead of cloning (e.g. Supertonic-3, #2938). */
 export function PresetVoicePicker({ disabled = false }: { disabled?: boolean }) {
   const { t } = useTranslation();
-  const { activeTts } = useEngines();
+  const { activeTts } = useEngines('tts');
   const settings = useCloneSettings();
   const voices = activeTts?.preset_voices ?? [];
   if (!voices.length) return null;

@@ -57,15 +57,18 @@ try {
   const install = page.getByRole('button', { name: 'Download CosyVoice 3', exact: true });
   await install.waitFor();
   const empty = await page.evaluate(async () => {
-    const [engines, catalogue] = await Promise.all(['/api/engines', '/api/models'].map(async path => {
-      const response = await fetch(path, { signal: AbortSignal.timeout(15_000) });
+    const [tts, catalogue] = await Promise.all(['/api/engines/tts', '/api/models'].map(async path => {
+      const response = await fetch(path, { signal: AbortSignal.timeout(15_000) }).catch(error => {
+        throw new Error(`${path}: ${error.message}`);
+      });
       if (!response.ok) throw new Error(`${path}: ${response.status}`);
       return response.json();
     }));
-    return { engine: engines.tts.active, ready: engines.tts.backends[0].available, models: catalogue.models.length };
+    return { engine: tts.active, ready: tts.backends[0].available, model: catalogue.models[0] };
   });
   assert.deepEqual([empty.engine, empty.ready], ['cosyvoice', false]);
-  assert(empty.models > 0);
+  assert.equal(empty.model.repo_id, 'FunAudioLLM/Fun-CosyVoice3-0.5B-2512');
+  assert.equal(empty.model.installed, false);
   await page.screenshot({ path: resolve(captures, 'clone-no-model.png') });
   console.log('PASS: packaged Clone opens without weights and shows the download action.');
 

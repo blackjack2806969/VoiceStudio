@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import {
   CheckIcon,
@@ -85,6 +86,11 @@ export function ModelActions({
   showSize?: boolean;
 }) {
   const { t } = useTranslation();
+  if (model.sidecar_managed) {
+    return model.installed
+      ? <span className="text-sm text-muted-foreground">{t('modelMaintenance.installed')}</span>
+      : <Link to="/clone">{t('engines.cosyvoice_install')}</Link>;
+  }
   const resident = maintenance ? ops.residentFor(model) : undefined;
   const busy = Boolean(ops.pending);
   return (

@@ -12,7 +12,7 @@ export function useCloneInputsReadiness() {
   const reference = useReference();
   const profiles = useProfiles();
   const recording = useStore(recordingBusyStore);
-  const { activeTts } = useEngines();
+  const { activeTts } = useEngines('tts');
   if (demo) return 'engine' as const;
   return cloneBlocker({
     text: settings.text,

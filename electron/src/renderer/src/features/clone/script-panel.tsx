@@ -28,7 +28,7 @@ export function ScriptPanel({
 }: { voiceName?: string; coachmark?: string; onUserEdit?: () => void } = {}) {
   const { t } = useTranslation();
   const text = useCloneSetting('text');
-  const { activeTts } = useEngines();
+  const { activeTts } = useEngines('tts');
   // Offer the engine's own reaction tags; any other engine would speak them as words.
   const engineTags = expressionCaps(activeTts).tags;
   const unsupportedTags = KNOWN_TAGS.filter((tag) => !engineTags.includes(tag));

@@ -293,7 +293,7 @@ function useGenerateController(): UseGenerateClone {
   const ttsBlocker = useTtsReadiness();
   const cloneEngineBlocker = useTtsReadiness('clone');
   const blocker = cloneEngineBlocker ?? inputBlocker;
-  const activeTts = useEngines().activeTts;
+  const activeTts = useEngines('tts').activeTts;
   const instructVocabulary = activeTts?.instruct_vocabulary ?? 'tags';
   const sendsDirection = expressionCaps(activeTts).emotion === 'direction';
   // An engine that declares it can't design would only fail inside the

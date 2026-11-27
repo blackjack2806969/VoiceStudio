@@ -13,6 +13,7 @@ export interface CatalogueModel {
   engines?: string[];
   size_gb: number;
   installed: boolean;
+  sidecar_managed?: boolean;
   supported: boolean;
   dictation_id?: string;
   required?: boolean;

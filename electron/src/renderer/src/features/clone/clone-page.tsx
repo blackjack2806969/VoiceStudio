@@ -54,7 +54,7 @@ export function ClonePage() {
   const selectedId = useCloneSetting('selectedProfileId');
   const text = useCloneSetting('text');
   const reference = useReference();
-  const { activeTts } = useEngines();
+  const { activeTts } = useEngines('tts');
   const transcription = useReferenceTranscript(selectedId ? null : reference.file, {
     skip: engineTrimsReference(activeTts, reference.durationSeconds),
   });

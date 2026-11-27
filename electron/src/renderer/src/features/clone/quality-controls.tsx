@@ -29,7 +29,7 @@ export function QualityControls({
 }) {
   const { t } = useTranslation();
   const settings = useCloneSettings();
-  const { activeTts } = useEngines();
+  const { activeTts } = useEngines('tts');
   const id = useId();
   const presetRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const bits = settings.wavBits;
