@@ -24,14 +24,27 @@ export async function exerciseToneEditor(page, baseUrl, captures) {
   await page.getByRole('button', { name: 'Apply pitch edit', exact: true }).click();
   assert.equal((await renderResponse).status(), 200);
   await page.getByRole('button', { name: 'Undo', exact: true }).waitFor({ state: 'visible' });
-  await page.waitForFunction(() => {
-    const players = [...document.querySelectorAll('audio')];
-    return players.length === 2 && players.every(p => p.readyState >= 2 && p.duration > 0);
-  });
-  for (const player of await page.locator('audio').all()) {
-    await player.evaluate(p => p.play());
-    await page.waitForFunction(() => [...document.querySelectorAll('audio')].some(p => !p.paused && p.currentTime > 0.05));
-    await player.evaluate(p => p.pause());
+  for (const name of ['Before (original)', 'After (edited)']) {
+    await page.getByLabel(name, { exact: true }).evaluate(async player => {
+      // A CI window may not receive animation frames while audio is playing.
+      await new Promise((resolve, reject) => {
+        const timer = setTimeout(() => {
+          finish(new Error(`${player.ariaLabel}: playback stalled at ${player.currentTime}s (readyState ${player.readyState})`));
+        }, 10000);
+        function finish(error) {
+          clearTimeout(timer);
+          player.removeEventListener('timeupdate', onTimeUpdate);
+          player.pause();
+          if (error) reject(error);
+          else resolve();
+        }
+        function onTimeUpdate() {
+          if (!player.paused && player.currentTime > 0.05) finish();
+        }
+        player.addEventListener('timeupdate', onTimeUpdate);
+        player.play().catch(finish);
+      });
+    });
   }
   await page.screenshot({ path: resolve(captures, 'editor-en.png'), fullPage: true });
   const download = page.waitForEvent('download');

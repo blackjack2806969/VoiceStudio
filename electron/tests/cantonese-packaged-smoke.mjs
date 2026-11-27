@@ -21,7 +21,10 @@ try {
   await page.waitForURL('app://voicestudio/**');
   assert.equal(await app.evaluate(({ app }) => app.commandLine.hasSwitch('no-sandbox')), false);
   const window = await app.browserWindow(page);
-  assert.equal(await window.evaluate(win => win.webContents.getLastWebPreferences().sandbox), true);
+  assert.equal(await window.evaluate(win => {
+    win.webContents.setBackgroundThrottling(false);
+    return win.webContents.getLastWebPreferences().sandbox;
+  }), true);
   assert.equal(await page.evaluate(() => typeof window.require), 'undefined');
   assert.equal(await app.evaluate(async ({ net }) => {
     try {
