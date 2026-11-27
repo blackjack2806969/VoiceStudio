@@ -13,7 +13,8 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     os.environ['OMNIVOICE_DATA_DIR'] = str(args.data_dir.expanduser().resolve())
-    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'backend'))
+    root = Path(__file__).resolve().parents[1]
+    sys.path[:0] = [str(root / 'backend'), str(root)]
     from core.offline import install
     install()
     from core import prefs

@@ -55,6 +55,15 @@ beforeEach(() => {
 const openPanel = (key: 'setup.options' | 'setup.more_fixes' | 'backend.details') =>
   fireEvent.click(screen.getByRole('button', { name: i18n.t(key) }));
 
+it('opens the offline workspace on first launch without requiring model downloads', () => {
+  localStorage.clear();
+  backendStatus.stage = 'ready';
+  const client = new QueryClient();
+  render(<QueryClientProvider client={client}><BackendGate><div>Offline editor</div></BackendGate></QueryClientProvider>);
+  expect(screen.getByText('Offline editor')).toBeVisible();
+  expect(localStorage.getItem('voicestudio.setup.complete.v1')).toBeNull();
+});
+
 it('presents an interrupted runtime as a resumable install', () => {
   render(
     <BackendGate>

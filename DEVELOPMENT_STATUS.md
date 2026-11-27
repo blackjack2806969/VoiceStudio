@@ -95,3 +95,11 @@ Implement bounded, non-destructive Praat lexical-tone editing integrated into El
 - Added a separate real-model ARM64 smoke workflow using the existing installer
   and public upstream reference, with synthesis under the offline OS sandbox.
   It checks voiced audio and the duration change at 1.25×; result pending.
+- Real-model run 45945374738 installed CosyVoice and public weights on ARM64.
+  Its smoke script then failed on the app's language-map import, before inference;
+  corrected the script's source root path. This is not a model synthesis pass.
+- Removed first-run online model setup gating and renderer analytics/cloud-sync
+  hooks. Pitch editing can open with no TTS weights installed. Added a packaged
+  launcher test that reuses the verified real browser audio-edit flow.
+- Follow-up checks: 58 Python tests, 77 backend-gate frontend tests, typecheck and
+  real Chromium/Praat edit/export/undo/Traditional Chinese flow passed on Linux.

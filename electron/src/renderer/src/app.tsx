@@ -10,10 +10,7 @@ import { queryClient } from '@/lib/query';
 import { router } from './router';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { UpdateRestartConfirm } from '@/components/update-restart-confirm';
-import { AnalyticsConsentBanner, AnalyticsRuntime } from '@/components/analytics-consent';
-import { DiagnosticRuntime } from '@/components/diagnostic-consent';
 import { GpuOfferBanner } from '@/components/gpu-offer';
-import { CloudSyncRuntime } from '@/features/account/cloud-sync-runtime';
 import { getBridge } from '@/components/bridge';
 import { FirstSoundHandoff } from '@/components/first-sound-handoff';
 import { stepAppearanceScale } from '@/hooks/use-appearance';
@@ -95,10 +92,6 @@ export function App() {
           <ModelInstallSync />
           <RealtimeEventSync />
           <GenerateBudgetSync />
-          <AnalyticsRuntime />
-          <DiagnosticRuntime />
-          <CloudSyncRuntime />
-          <AnalyticsConsentBanner />
           <GpuOfferBanner />
           <GenerationProvider>
             <FirstSoundHandoff />

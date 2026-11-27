@@ -1,5 +1,4 @@
 import { useVisibleInterval } from '@/lib/visible-interval';
-import { SetupGate } from './setup-gate';
 import { SetupProgressCard } from './setup-progress-card';
 import { ReportBug } from './report-bug';
 import { SetupAnalyticsConsent } from './analytics-consent';
@@ -180,7 +179,7 @@ export function BackendGate({ children, repairDock }: BackendGateProps) {
   if (status.stage === 'ready' || busy)
     return (
       <div className="contents">
-        <SetupGate>{children}</SetupGate>
+        {children}
         {busy ? <BackendOfflineBar seconds={busySeconds} /> : null}
       </div>
     );
@@ -704,7 +703,7 @@ export function BackendGate({ children, repairDock }: BackendGateProps) {
   if (recovering)
     return (
       <div className="contents">
-        <SetupGate>{children}</SetupGate>
+        {children}
         {gate}
       </div>
     );

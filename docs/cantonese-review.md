@@ -15,6 +15,12 @@ The speed regression failed before the change and passes afterward.
 Verdict: Ship this validation milestone. Real-model and installer CI must pass
 before calling either verified. Not checked: physical M1 Ultra or accent quality.
 
+First-launch review found the existing mandatory model-download wizard blocked
+the model-free editor. Removed its two wrappers from the backend gate and the
+unused analytics, diagnostics and cloud-sync mounts from the app. A fresh-profile
+regression and the real browser flow pass. The packaged test reuses that flow
+and launches the sandbox wrapper, rather than bypassing it with the inner binary.
+
 What this change does: Adds a speech-tone editor to the existing Electron Tools
 page and FastAPI service. It reuses existing access control, audio write helper,
 UI controls, locale catalogs and the existing cloning workflow. Assumed load is

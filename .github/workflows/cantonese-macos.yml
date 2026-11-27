@@ -73,6 +73,15 @@ jobs:
           bun run build
           bun run build:web
           bun x electron-builder --config electron-builder.config.mjs --mac --arm64 --publish never
+      - name: Launch the sandboxed app and edit real speech
+        run: node electron/tests/cantonese-packaged-smoke.mjs
+      - name: Retain packaged test evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: Cantonese-packaged-test-evidence
+          path: artifacts/cantonese/packaged
+          if-no-files-found: warn
       - name: Retain downloadable DMG and app ZIP
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
