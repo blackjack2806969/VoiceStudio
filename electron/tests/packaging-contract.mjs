@@ -385,7 +385,7 @@ if (artifactRequested) {
 
 const hostIsNode = /^node(?:\.exe)?$/i.test(basename(process.execPath));
 const syntaxRuntime = hostIsNode ? process.execPath : require('electron');
-for (const entry of ['out/main/index.js', 'out/preload/index.mjs']) {
+for (const entry of ['out/main/index.js', 'out/preload/index.cjs']) {
   const check = spawnSync(syntaxRuntime, ['--check', resolve(root, entry)], {
     encoding: 'utf8',
     env: hostIsNode ? process.env : { ...process.env, ELECTRON_RUN_AS_NODE: '1' },

@@ -89,3 +89,15 @@ AudioSeal loader ignored HF offline mode and tried its own URL loader; network
 policy blocked it. Reused the existing cache probe to skip absent optional weights
 before loading. Regression asserts that the loader is never called in that case.
 No pronunciation, speaker similarity or physical M1 Ultra result is inferred.
+
+### Packaged sandbox change
+
+What this change does: Moves the existing network-only Seatbelt profile to native
+worker launch, leaving Chromium free to initialize its own sandbox. The preload
+build switches to CommonJS so both windows can run sandboxed.
+
+The GPU and network child error was reproduced in ARM64 packaging logs. Reviewed
+backend restarts, native output and watch-folder callers, renderer request and
+external launch paths, and preload consumers. The worker spawn has no bare
+fallback. Existing package acceptance now also checks renderer isolation,
+Chromium egress and the downloaded WAV bytes.

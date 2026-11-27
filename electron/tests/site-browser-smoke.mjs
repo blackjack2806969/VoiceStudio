@@ -22,7 +22,7 @@ try {
   const origin = `http://127.0.0.1:${server.address().port}`;
   mkdirSync(join(scratch, 'main'));
   mkdirSync(join(scratch, 'preload'));
-  copyFileSync(resolve('out/preload/index.mjs'), join(scratch, 'preload/index.mjs'));
+  copyFileSync(resolve('out/preload/index.cjs'), join(scratch, 'preload/index.cjs'));
   await build({
     configFile: false,
     build: {
@@ -51,7 +51,7 @@ try {
       const path = new URL(request.url).pathname;
       return net.fetch(pathToFileURL(join(${JSON.stringify(resolve('out/renderer'))}, path)).href);
     });
-    const parent = new BrowserWindow({ show:false, webPreferences:{ preload:${JSON.stringify(join(scratch, 'preload/index.mjs'))}, sandbox:false, contextIsolation:true, nodeIntegration:false } });
+    const parent = new BrowserWindow({ show:false, webPreferences:{ preload:${JSON.stringify(join(scratch, 'preload/index.cjs'))}, sandbox:false, contextIsolation:true, nodeIntegration:false } });
     registerSiteBrowser(() => parent);
     await parent.loadURL('app://voicestudio/index.html');
     });

@@ -35,7 +35,7 @@ Implement bounded, non-destructive Praat lexical-tone editing integrated into El
 ## Implemented — offline/deployment milestone (Mac validation pending)
 - Python loopback-only audit policy; forced HF offline; telemetry disabled.
 - Electron external renderer request blocking; no cloud account startup or updates.
-- macOS sandbox launcher for the app and source builds, inherited by native child processes.
+- macOS network sandbox for backend and native audio workers, inherited by their children.
 - Manual ARM64 GitHub Actions workflow bundles existing Python/ffmpeg and uploads DMG/ZIP.
 - Separate model-provisioning command reuses the existing CosyVoice installer.
 - Installation/limitations documented in docs/cantonese-offline.md.
@@ -126,3 +126,13 @@ Implement bounded, non-destructive Praat lexical-tone editing integrated into El
   no longer trigger that attempt. Watermark/offline checks: 24 passed, 2 optional skips.
 - Installer verification still pending; run 45946571487 includes the signing fix
   and actual packaged edit/playback/export acceptance test.
+
+
+## Packaged Electron sandbox fix
+- Run 45946571487 reached packaged startup. Chromium GPU and network processes
+  failed to initialize their Seatbelt profiles after inheriting the launcher profile.
+- Moved the OS network profile to native worker launches and enabled Chromium's
+  renderer sandbox using the same preload bridge built as CommonJS. Main-process
+  online browser, repair, update-list and setup paths are blocked in offline mode.
+- The package smoke test checks Chromium sandbox preferences, external IP request
+  rejection, actual audio edit and playback, and the exported WAV header.

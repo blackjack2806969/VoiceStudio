@@ -136,7 +136,7 @@ export function installNativeCapture(
       webPreferences: {
         preload,
         contextIsolation: true,
-        sandbox: false,
+        sandbox: true,
         nodeIntegration: false,
         backgroundThrottling: false,
       },

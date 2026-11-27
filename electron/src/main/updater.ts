@@ -1094,6 +1094,7 @@ export function registerUpdateIpc(
   });
   ipcMain.handle(UPDATE_CHANNELS.listReleases, (event) => {
     trusted(event);
+    if (process.env.VOICESTUDIO_CANTONESE_OFFLINE === '1') return [];
     return listDesktopReleases();
   });
   const unsubscribe = updater.subscribe((state) => {

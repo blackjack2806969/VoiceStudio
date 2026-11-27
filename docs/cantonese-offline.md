@@ -128,20 +128,18 @@ locally until you delete their project directory with the app closed.
 
 ## Offline enforcement
 
-The macOS app entrypoint runs Electron and its children under `sandbox-exec`,
-allowing only loopback TCP and local Unix sockets. This is the boundary covering
-native TTS libraries, ffmpeg and engine subprocesses. If the OS refuses the
-profile, launch fails; there is no unsandboxed fallback. `sandbox-exec` is a
-legacy macOS interface, so the ARM64 CI smoke test and physical-Mac test remain
-required before calling the release fully verified.
+Electron uses Chromium's sandbox for its windows and utility processes.
+The desktop supervisor starts the Python backend and native audio helpers under
+macOS `sandbox-exec`. The profile permits only loopback IP and local Unix sockets
+and is inherited by ffmpeg, inference libraries and model subprocesses. A profile
+failure stops the affected worker.
 
-The Python backend additionally blocks non-loopback sockets/DNS through an audit
-hook and forces Hugging Face offline mode. Electron blocks external renderer
-requests, disables analytics/diagnostics and updates, and does not start the cloud
-account service. The original upstream online panels are not supported by this
-fork. Do not launch the internal Electron executable directly: only the `.app`
-entrypoint or provided source launcher applies the OS boundary. Linux development
-checks verify Python policy, not native macOS containment.
+The Python backend also blocks non-loopback sockets and DNS through an audit hook
+and forces Hugging Face offline mode. Electron filters external Chromium requests
+and disables proxy discovery, remote hostname resolution, external browser launch,
+analytics, updates and cloud account startup. Internet-dependent setup is a
+separate provisioning step. Use the normal app entrypoint or the source launcher
+to select the right worker profile.
 
 ## Build and downloadable artifact
 

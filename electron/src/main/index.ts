@@ -74,7 +74,7 @@ process.stdout?.on('error', () => {});
 process.stderr?.on('error', () => {});
 
 const here = dirname(fileURLToPath(import.meta.url));
-const PRELOAD_PATH = join(here, '../preload/index.mjs');
+const PRELOAD_PATH = join(here, '../preload/index.cjs');
 const RENDERER_DIR = join(here, '../renderer');
 
 // Neutral startup surface; transparent caption controls follow the CSS title bar.
@@ -83,6 +83,9 @@ const OVERLAY = { color: '#00000000', symbolColor: '#737373', height: 52 };
 
 logStartup('main module loaded');
 installAppIdentity(app);
+app.commandLine.appendSwitch('no-proxy-server');
+app.commandLine.appendSwitch('host-resolver-rules', 'MAP * ~NOTFOUND, EXCLUDE localhost');
+app.commandLine.appendSwitch('force-webrtc-ip-handling-policy', 'disable_non_proxied_udp');
 app.setPath('userData', join(app.getPath('appData'), 'Cantonese Voice Studio'));
 registerAppScheme();
 
@@ -324,8 +327,7 @@ function createWindow(): BrowserWindow {
     webPreferences: {
       preload: PRELOAD_PATH,
       contextIsolation: true,
-      // ESM preload scripts (electron-vite emits .mjs) require an unsandboxed renderer.
-      sandbox: false,
+      sandbox: true,
       nodeIntegration: false,
     },
   });
@@ -478,6 +480,7 @@ function isOwnUrl(url: string): boolean {
 }
 
 async function openOutside(url: string): Promise<void> {
+  if (process.env.VOICESTUDIO_CANTONESE_OFFLINE === '1') return;
   try {
     const parsed = new URL(url);
     if (
@@ -631,12 +634,12 @@ if (singleInstance && !app.requestSingleInstanceLock()) {
         );
         closeDevProxy = proxy.close;
       }
-      const repairAgentsReady = registerRepairAgents(
+      const repairAgentsReady = (process.env.VOICESTUDIO_CANTONESE_OFFLINE === '1' ? Promise.resolve(() => {}) : registerRepairAgents(
         backend,
         backendRoot(),
         () => mainWindow,
         () => mainErrors.recent(),
-      ).then((close) => {
+      )).then((close) => {
         if (quitting || quitPreparation) close();
         else closeRepairAgents = close;
       });

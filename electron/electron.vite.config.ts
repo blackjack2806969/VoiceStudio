@@ -52,7 +52,10 @@ export default defineConfig({
     define,
     build: {
       minify: true,
-      rollupOptions: { input: resolve(__dirname, 'src/preload/index.ts') },
+      rollupOptions: {
+        input: resolve(__dirname, 'src/preload/index.ts'),
+        output: { format: 'cjs', entryFileNames: '[name].cjs' },
+      },
     },
   },
   renderer: {

@@ -10,4 +10,4 @@ export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 DO_NOT
 export OMNIVOICE_ANALYTICS_DISABLED=1 OMNIVOICE_DIAGNOSTICS_DISABLED=1 VOICESTUDIO_DISABLE_UPDATER=1
 export OMNIVOICE_TTS_BACKEND=cosyvoice OMNIVOICE_LLM_BACKEND=off
 cd "$repo_dir"
-exec /usr/bin/sandbox-exec -f packaging/cantonese/offline.sb bun run start
+exec bun run start

@@ -1132,7 +1132,7 @@
             resources=${app}/libexec/electron/resources
             for path in \
               app/out/main/index.js \
-              app/out/preload/index.mjs \
+              app/out/preload/index.cjs \
               app/out/renderer/index.html \
               app/out/renderer/early-error-capture.js \
               backend/main.py \
@@ -1287,7 +1287,7 @@
               const files = [
                 "app/out/main/index.js",
                 "app/out/main/repair-mcp-server.js",
-                "app/out/preload/index.mjs",
+                "app/out/preload/index.cjs",
               ];
               // The .docx worker resolves this by name instead of importing it.
               const specifiers = new Set(["word-extractor"]);

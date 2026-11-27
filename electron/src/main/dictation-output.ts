@@ -1,4 +1,5 @@
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
+import { offlineWorkerCommand } from './cantonese-sandbox';
 
 export interface ShortcutEvent {
   pressed: boolean;
@@ -83,7 +84,8 @@ export class DictationOutputClient {
   }
 
   private start(): void {
-    this.child = spawn(this.executable, [String(this.ownerPid)], {
+    const worker = offlineWorkerCommand(this.executable, [String(this.ownerPid)]);
+    this.child = spawn(worker.command, worker.args, {
       env: { ...process.env, VOICESTUDIO_DESKTOP_EXE: process.execPath },
       stdio: ['pipe', 'pipe', 'pipe'],
       windowsHide: true,

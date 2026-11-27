@@ -1,3 +1,4 @@
+import { offlineWorkerCommand } from './cantonese-sandbox';
 import { localDataIdentity } from './local-data-identity';
 import { decideMissingRuntime, runtimeWasInstalled } from './runtime-repair';
 import { windowsRocmInstalled, windowsRocmRequested } from './runtime-windows-rocm';
@@ -1386,6 +1387,8 @@ export class BackendSupervisor extends EventEmitter<{
 
   /** No URL argument: the sample is chosen from this app's pinned package artifacts. */
   checkSetupConnection(): Promise<SetupConnectionCheck> {
+    if (process.env.VOICESTUDIO_CANTONESE_OFFLINE === '1')
+      return Promise.resolve({ status: 'unavailable', checkedAt: Date.now() });
     if (this.setupCheck) return this.setupCheck;
     this.setupCheck = (async (): Promise<SetupConnectionCheck> => {
       if (!['installing', 'setup_required'].includes(this.stage) || this.remoteUrl)
@@ -2684,7 +2687,8 @@ export class BackendSupervisor extends EventEmitter<{
     };
     void this.prepareDataIdentity(launch, gen);
     try {
-      child = spawn(command, args, {
+      const worker = offlineWorkerCommand(command, args);
+      child = spawn(worker.command, worker.args, {
         cwd: plan.cwd,
         env: processOptions.env,
         // stdin is the liveness contract: it stays open, unwritten, until quit.

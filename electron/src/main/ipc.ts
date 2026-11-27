@@ -377,7 +377,7 @@ export function registerIpc(
 ): void {
   const handle: typeof ipcMain.handle = (channel, listener) =>
     ipcMain.handle(channel, (event, ...args) => runOperation(() => listener(event, ...args)));
-  registerSiteBrowser(getMainWindow);
+  if (process.env.VOICESTUDIO_CANTONESE_OFFLINE !== '1') registerSiteBrowser(getMainWindow);
   let maintenanceBusy = false;
   let relocationSelection: {
     authorization: string;
@@ -487,6 +487,7 @@ export function registerIpc(
   handle(CHANNELS.backendInstallPythonRepair, async (event, raw: unknown) => {
     const owner = getMainWindow();
     assertTrustedMainFrame(event, owner);
+    if (process.env.VOICESTUDIO_CANTONESE_OFFLINE === '1') throw new Error('Offline mode disallows dependency installation');
     if (!raw || typeof raw !== 'object') throw new Error('Invalid Python repair confirmation');
     const input = raw as { token?: unknown; pythonPath?: unknown; packages?: unknown };
     if (typeof input.token !== 'string' || typeof input.pythonPath !== 'string' || !Array.isArray(input.packages) || input.packages.some((p) => typeof p !== 'string'))
@@ -868,6 +869,7 @@ export function registerIpc(
   handle(CHANNELS.filesOpenExternal, async (event, raw: unknown) => {
     const owner = getMainWindow();
     assertTrustedMainFrame(event, owner);
+    if (process.env.VOICESTUDIO_CANTONESE_OFFLINE === '1') return;
     const target = assertString(raw, 'url');
     // Web and mail only. A local path is not a URL at all (`new URL` refuses a
     // POSIX path) and `file:` is in no allowlist here: both would launch a local
