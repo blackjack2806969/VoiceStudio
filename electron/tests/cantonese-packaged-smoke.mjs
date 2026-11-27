@@ -79,13 +79,23 @@ try {
   });
   await install.click();
   const downloadFailed = page.getByText('CosyVoice setup failed.', { exact: false });
-  const voice = page.getByRole('button', { name: 'Demo Voice', exact: true });
+  const voice = page.getByRole('main').getByRole('button', { name: 'Demo Voice', exact: true });
   await Promise.race([
-    install.waitFor({ state: 'hidden', timeout: 45 * 60 * 1000 }),
+    page.waitForFunction(async () => {
+      try {
+        const response = await fetch('/api/engines/tts', { signal: AbortSignal.timeout(5000) });
+        if (!response.ok) return false;
+        const tts = await response.json();
+        return tts.active === 'cosyvoice' && tts.backends.some(engine => engine.id === tts.active && engine.available);
+      } catch {
+        return false; // The backend restarts once the downloader has completed.
+      }
+    }, null, { polling: 5000, timeout: 45 * 60 * 1000 }),
     downloadFailed.waitFor({ timeout: 45 * 60 * 1000 }).then(() => {
       throw new Error('CosyVoice download from the packaged app failed');
     }),
   ]);
+  console.log('PASS: local backend recognizes the installed CosyVoice runtime and weights.');
   await voice.click();
   await page.locator('[data-clone-script]').fill('你好，聽日見。');
   const synthesize = page.getByRole('button', { name: 'Synthesize audio', exact: true });
