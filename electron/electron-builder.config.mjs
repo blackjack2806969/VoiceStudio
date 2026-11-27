@@ -261,7 +261,7 @@ export default {
     ...(adhocSignMac ? { identity: '-' } : {}),
     // Signs the bundled GGUF runtime and refreshes its checksum manifest
     // before the bundle seal (electron/omnivoice-tts-bundle.mjs).
-    ...(isMacAppStore ? { sign: signMasRuntime } : { sign: signMac }),
+    ...(bundlesMasRuntime ? { sign: signMasRuntime } : { sign: signMac }),
     notarize: notarizeMac,
     extendInfo: {
       NSMicrophoneUsageDescription: readFileSync(resolve(here, 'build/Info.plist'), 'utf8')

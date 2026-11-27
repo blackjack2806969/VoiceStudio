@@ -67,6 +67,7 @@ jobs:
       - name: Build and test the existing Electron UI
         run: |
           bun install --frozen-lockfile
+          (ulimit -n 128; node electron/tests/cantonese-sign-walk.test.mjs)
           bun run --cwd electron typecheck
           cd electron
           bun x vitest run src/renderer/src/features/tools/lexical-pitch.test.tsx src/main/cantonese-offline.test.ts

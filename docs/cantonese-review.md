@@ -21,6 +21,13 @@ unused analytics, diagnostics and cloud-sync mounts from the app. A fresh-profil
 regression and the real browser flow pass. The packaged test reuses that flow
 and launches the sandbox wrapper, rather than bypassing it with the inner binary.
 
+Packaging review: osx-sign opens every bundled runtime file concurrently before
+applying ignore rules. This exhausted macOS file descriptors. A pinned patch
+only serializes that existing walk (both module formats); the low-limit test
+retains nested binary/framework targets. Reused signMasRuntime for this bundled
+distribution so Python/media signatures and manifest hashes stay consistent.
+No new signing library or runtime dependency. macOS build verification pending.
+
 What this change does: Adds a speech-tone editor to the existing Electron Tools
 page and FastAPI service. It reuses existing access control, audio write helper,
 UI controls, locale catalogs and the existing cloning workflow. Assumed load is

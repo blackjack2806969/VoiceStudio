@@ -24,6 +24,15 @@ export async function exerciseToneEditor(page, baseUrl, captures) {
   await page.getByRole('button', { name: 'Apply pitch edit', exact: true }).click();
   assert.equal((await renderResponse).status(), 200);
   await page.getByRole('button', { name: 'Undo', exact: true }).waitFor({ state: 'visible' });
+  await page.waitForFunction(() => {
+    const players = [...document.querySelectorAll('audio')];
+    return players.length === 2 && players.every(p => p.readyState >= 2 && p.duration > 0);
+  });
+  for (const player of await page.locator('audio').all()) {
+    await player.evaluate(p => p.play());
+    await page.waitForFunction(() => [...document.querySelectorAll('audio')].some(p => !p.paused && p.currentTime > 0.05));
+    await player.evaluate(p => p.pause());
+  }
   await page.screenshot({ path: resolve(captures, 'editor-en.png'), fullPage: true });
   const download = page.waitForEvent('download');
   await page.getByRole('link', { name: 'Export WAV', exact: true }).click();
@@ -36,5 +45,5 @@ export async function exerciseToneEditor(page, baseUrl, captures) {
   await page.getByRole('button', { name: '重開上次編輯', exact: true }).click();
   await page.getByRole('button', { name: '加入音高控制點', exact: true }).waitFor();
   await page.screenshot({ path: resolve(captures, 'editor-zh-TW.png'), fullPage: true });
-  console.log('PASS: real speech upload, pointer region, draggable F0 point, Praat render, WAV download, exact undo and Traditional Chinese restore.');
+  console.log('PASS: real speech upload, pointer region, draggable F0 point, Praat render, before/after playback, WAV download, exact undo and Traditional Chinese restore.');
 }

@@ -103,3 +103,10 @@ Implement bounded, non-destructive Praat lexical-tone editing integrated into El
   launcher test that reuses the verified real browser audio-edit flow.
 - Follow-up checks: 58 Python tests, 77 backend-gate frontend tests, typecheck and
   real Chromium/Praat edit/export/undo/Traditional Chinese flow passed on Linux.
+- Third packaging run (45945374495) compiled both UIs and native helpers, then
+  failed signing the bundled Python tree with EMFILE. Pinned a minimal Bun patch
+  to make the existing osx-sign walker sequential and reused the existing bundled
+  runtime signer to refresh signed-file manifests. A 128-open-file-limit regression
+  reproduces the original failure and passes with the patch.
+- Browser smoke now decodes and plays both before/after audio and verifies that
+  playback time advances; passed on Linux Chromium against the real local API.

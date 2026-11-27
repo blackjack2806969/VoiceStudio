@@ -1,0 +1,52 @@
+diff --git a/dist/cjs/util.js b/dist/cjs/util.js
+index 77e64b56872bc65bcb0f60ecfbec84eb3da02c6f..1b2b965107b98f67a8461aa84477661362fb8c0e 100644
+--- a/dist/cjs/util.js
++++ b/dist/cjs/util.js
+@@ -151,7 +151,9 @@ async function walkAsync(dirPath) {
+     (0, exports.debugLog)('Walking... ' + dirPath);
+     async function _walkAsync(dirPath) {
+         const children = await fs.readdir(dirPath);
+-        return await Promise.all(children.map(async (child) => {
++        const results = [];
++        for (const child of children) {
++            results.push(await (async () => {
+             const filePath = path.resolve(dirPath, child);
+             const stat = await fs.stat(filePath);
+             if (stat.isFile()) {
+@@ -174,7 +176,9 @@ async function walkAsync(dirPath) {
+                 return walkResult;
+             }
+             return null;
+-        }));
++            })());
++        }
++        return results;
+     }
+     const allPaths = await _walkAsync(dirPath);
+     return compactFlattenedList(allPaths);
+diff --git a/dist/esm/util.js b/dist/esm/util.js
+index d3f66d54b1a88e7410d78affe17de87302db02a3..b8dac1e62a1f475e4162ff6a635255b1b27e31f5 100644
+--- a/dist/esm/util.js
++++ b/dist/esm/util.js
+@@ -115,7 +115,9 @@ export async function walkAsync(dirPath) {
+     debugLog('Walking... ' + dirPath);
+     async function _walkAsync(dirPath) {
+         const children = await fs.readdir(dirPath);
+-        return await Promise.all(children.map(async (child) => {
++        const results = [];
++        for (const child of children) {
++            results.push(await (async () => {
+             const filePath = path.resolve(dirPath, child);
+             const stat = await fs.stat(filePath);
+             if (stat.isFile()) {
+@@ -138,7 +140,9 @@ export async function walkAsync(dirPath) {
+                 return walkResult;
+             }
+             return null;
+-        }));
++            })());
++        }
++        return results;
+     }
+     const allPaths = await _walkAsync(dirPath);
+     return compactFlattenedList(allPaths);
