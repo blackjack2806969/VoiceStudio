@@ -1,6 +1,6 @@
 (version 1)
 (allow default)
 (deny network*)
-(allow network-inbound (local ip "127.0.0.1:*") (local ip "[::1]:*"))
-(allow network-outbound (remote ip "127.0.0.1:*") (remote ip "[::1]:*"))
+(allow network-inbound (local ip "localhost:*"))
+(allow network-outbound (remote ip "localhost:*"))
 (allow network* (local unix-socket) (remote unix-socket))

@@ -8,7 +8,7 @@ currently fall back to English.
 
 ## What is tested
 
-The Linux development checks process real WAV/MP3/M4A audio, measure pitch
+The Linux development and macOS ARM64 CI checks process real WAV/MP3/M4A audio, measure pitch
 changes, preserve source samples, exercise undo and check the existing CosyVoice
 adapter contract. They do not establish M1 Ultra performance, Cantonese accent
 quality, or macOS installer correctness. See `DEVELOPMENT_STATUS.md` for the

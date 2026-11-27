@@ -69,3 +69,17 @@ Implement bounded, non-destructive Praat lexical-tone editing integrated into El
 - Existing bundled-runtime staging unconditionally activated the App Store
   code policy in sitecustomize. Added a build-time Cantonese variant that activates
   the offline network policy instead, allowing the prepared CosyVoice sidecar.
+
+## ARM64 CI and browser evidence
+- Fork push succeeded after the connector installation was granted repository access.
+- First ARM64 run: https://github.com/blackjack2806969/VoiceStudio/actions/runs/45942272650
+- Python/runtime/media staging succeeded and all 52 focused Python tests passed
+  on GitHub's macos-15 ARM64 runner. This is CI evidence, not physical M1 Ultra testing.
+- OS sandbox parsing rejected literal loopback IP patterns; corrected to macOS's
+  supported `localhost:*` pattern and queued a new build.
+- Linux Chromium against the actual Praat API passed real speech upload, pointer
+  selection, pitch-point drag, render/export, exact undo and Traditional Chinese restore.
+  Screenshots and an edited WAV are under artifacts/cantonese (untracked test artifacts).
+- Real-speech +2-semitone edit: median per-frame formant change F1 4.32%, F2 1.73%,
+  F3 1.11% for the test selection. This supports envelope preservation for this
+  fixture only; it is not an accent or perceptual-quality guarantee.
