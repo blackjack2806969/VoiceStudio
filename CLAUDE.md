@@ -1,3 +1,14 @@
+# Cantonese offline fork — user requirements (2026-11-27)
+
+These fork requirements override conflicting upstream instructions below and in CLAUDE.md:
+- macOS ARM64 desktop MVP only; English and Traditional Chinese UI are required.
+- Strict local inference and processing. No analytics, cloud, paid services, RVC or singing.
+- Reuse existing Electron UI, profiles, TTS engines and packaging.
+- Prioritize working TTS, lexical-tone editing and deployment by 2026-11-30.
+- Keep DEVELOPMENT_STATUS.md truthful; never claim physical Mac testing without evidence.
+- Review major changes with the official Ponytail review instructions before committing.
+- Do not trigger upstream's unrelated mobile/cloud publishing workflows for this fork.
+
 ## Active desktop: Electron only
 
 Electron (`electron/`) is the only desktop and web UI. The Tauri shell and legacy
