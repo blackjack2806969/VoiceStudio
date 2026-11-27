@@ -20,10 +20,16 @@ export async function exerciseToneEditor(page, baseUrl, captures) {
   await page.mouse.move(pointBox.x + pointBox.width / 2, pointBox.y + pointBox.height / 2);
   await page.mouse.down(); await page.mouse.move(pointBox.x + pointBox.width / 2, pointBox.y - 15, { steps: 5 }); await page.mouse.up();
   assert(Number(await page.getByRole('spinbutton', { name: 'Pitch point 2 Hz' }).inputValue()) > originalHz);
+  const exportLink = page.getByRole('link', { name: 'Export WAV', exact: true });
+  const originalUrl = await exportLink.getAttribute('href');
   const renderResponse = page.waitForResponse(r => r.url().endsWith('/render') && r.request().method() === 'POST');
   await page.getByRole('button', { name: 'Apply pitch edit', exact: true }).click();
   assert.equal((await renderResponse).status(), 200);
   await page.getByRole('button', { name: 'Undo', exact: true }).waitFor({ state: 'visible' });
+  await page.waitForFunction(oldUrl => {
+    const edited = document.querySelector('audio[aria-label="After (edited)"]');
+    return edited?.src.startsWith('blob:') && edited.src !== oldUrl;
+  }, originalUrl, { polling: 100 });
   for (const name of ['Before (original)', 'After (edited)']) {
     await page.getByLabel(name, { exact: true }).evaluate(async player => {
       // A CI window may not receive animation frames while audio is playing.
@@ -48,7 +54,7 @@ export async function exerciseToneEditor(page, baseUrl, captures) {
   }
   await page.screenshot({ path: resolve(captures, 'editor-en.png'), fullPage: true });
   const download = page.waitForEvent('download');
-  await page.getByRole('link', { name: 'Export WAV', exact: true }).click();
+  await exportLink.click();
   await (await download).saveAs(resolve(captures, 'edited-speech.wav'));
   const undoResponse = page.waitForResponse(r => r.url().endsWith('/render') && r.request().method() === 'POST');
   await page.getByRole('button', { name: 'Undo', exact: true }).click();

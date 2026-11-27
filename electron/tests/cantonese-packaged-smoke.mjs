@@ -10,6 +10,7 @@ await mkdir(captures, { recursive: true });
 const app = await electron.launch({
   executablePath: resolve('electron/release/mac-arm64/VoiceStudio.app/Contents/MacOS/cantonese-offline'),
   chromiumSandbox: true,
+  acceptDownloads: true,
   env: { ...process.env, OMNIVOICE_PORT: '3920', OMNIVOICE_PRELOAD_TTS_ASR: '0',
     OMNIVOICE_PRELOAD_CAPTURE_ASR: '0', OMNIVOICE_PRELOAD_WATERMARK: '0' },
   timeout: 60000,
