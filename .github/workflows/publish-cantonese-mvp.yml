@@ -1,0 +1,63 @@
+name: Publish Cantonese MVP installer
+
+on:
+  push:
+    branches: [cantonese-offline]
+    paths: ['.github/workflows/publish-cantonese-mvp.yml']
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: publish-cantonese-mvp-v0.1.0
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      BUILD_RUN: '45952519707'
+      BUILD_SHA: '85823f70f0903c4bf81b4e2dbc65f7ab1e66887d'
+      RELEASE_TAG: v0.1.0-cantonese-mvp
+    steps:
+      - name: Verify and publish the previously tested ARM64 DMG
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(gh run view "$BUILD_RUN" --json headSha --jq .headSha)" = "$BUILD_SHA"
+          test "$(gh run view "$BUILD_RUN" --json conclusion --jq .conclusion)" = success
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "Release already exists; refusing to overwrite."
+            exit 0
+          fi
+          gh run download "$BUILD_RUN" --name Cantonese-Voice-Studio-macOS-arm64 --dir installer
+          mapfile -d '' -t dmgs < <(find installer -type f -name '*.dmg' -print0)
+          test "${#dmgs[@]}" -eq 1
+          test -s "${dmgs[0]}"
+          cat > release-notes.md <<'NOTES'
+          ## Cantonese Voice Studio — first MVP
+          
+          Apple Silicon macOS desktop app with local voice-cloning TTS (CosyVoice 3), Cantonese lexical-tone presets, manual pitch contour editing, before/after playback, undo and WAV export.
+          
+          This DMG is reused from the successful macOS ARM64 CI run [45952519707](https://github.com/blackjack2806969/VoiceStudio/actions/runs/45952519707). No rebuild was performed.
+          
+          ### Installation
+          Download the DMG, open it and install the app in Applications. This build is ad-hoc signed, not Developer ID notarized. Follow your organization's IT policy for installation.
+          
+          CosyVoice model weights (approximately 5.4 GB) are not included. Prepare the model separately on an internet-connected ARM64 Mac using the [installation and model setup guide](https://github.com/blackjack2806969/VoiceStudio/blob/cantonese-offline/docs/cantonese-offline.md). After provisioning, synthesis and editing run locally.
+          
+          ### Known limitations
+          - Physical M1 Ultra testing, Cantonese listening quality and voice similarity are not yet validated.
+          - CosyVoice currently uses CPU on Mac; MLX/MPS acceleration is unverified.
+          - Model setup currently requires the documented development tools.
+          - The app is AGPL-3.0; component-level commercial licensing review remains incomplete. Use only authorized reference recordings.
+          
+          [Development status](https://github.com/blackjack2806969/VoiceStudio/blob/cantonese-offline/DEVELOPMENT_STATUS.md)
+          NOTES
+          gh release create "$RELEASE_TAG" "${dmgs[0]}" --target "$BUILD_SHA" --prerelease --title "Cantonese Voice Studio v0.1.0 MVP (macOS ARM64)" --notes-file release-notes.md
+          gh release view "$RELEASE_TAG" --json url,assets,isPrerelease
