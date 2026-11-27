@@ -164,5 +164,13 @@ The Mac test data folder could be addressed through both `/var` and `/private/va
 The installer saved the canonical path but the backend compared it to an alias
 and treated its managed checkout as external. The packaged backend now
 canonicalizes that same data path before restoring preferences. A local symlink
-regression passed. Run 45969948061 is verifying this fix through synthesis,
-pitch editing and the gated GitHub prerelease.
+regression passed. [Run 45969948061](https://github.com/blackjack2806969/VoiceStudio/actions/runs/45969948061)
+passed at `ef1628e3d` and published the ARM64 DMG and app ZIP.
+[Download the Clone fix](https://github.com/blackjack2806969/VoiceStudio/releases/tag/cantonese-macos-0.5.9-beta.9-tts.6).
+The packaged tests covered a fresh data directory, the download action, real
+CosyVoice installation, backend restart on port 3920, local Cantonese synthesis,
+Praat editing, both playbacks, WAV export, undo and Traditional Chinese reopen.
+The installer took about 3m45s and the first synthesis and save took about 5m34s
+on the hosted ARM64 runner. [WAV and screenshot evidence](https://github.com/blackjack2806969/VoiceStudio/actions/runs/45969948061/artifacts/15185952535).
+This follow-up has been tested on hosted macOS ARM64. Retesting on the user's
+physical Mac remains open.

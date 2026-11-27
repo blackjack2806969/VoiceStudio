@@ -45,6 +45,9 @@ model, then generates mixed Cantonese/English speech under the OS network sandbo
 It retains WAV files and duration/F0 metrics for listening and compares 1×/1.25×
 speed. This is a synthesis smoke check, not an automatic pronunciation assessment.
 
+Download the verified Apple Silicon DMG or app ZIP from the
+[Clone fix release](https://github.com/blackjack2806969/VoiceStudio/releases/tag/cantonese-macos-0.5.9-beta.9-tts.6).
+
 ## CosyVoice setup in the app
 
 Open **Clone** and click **Download CosyVoice 3**. Confirm **Download** in the
