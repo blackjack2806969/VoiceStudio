@@ -566,16 +566,16 @@ def list_models():
     Uses a 10 s response cache to avoid repeated ``scan_cache_dir()`` disk
     walks when the frontend polls.
     """
-    if os.environ.get("VOICESTUDIO_CANTONESE_BUNDLED") == "1":
-        from services.sidecar_install import SPECS, get_status
+    if os.environ.get("VOICESTUDIO_CANTONESE_OFFLINE") == "1":
+        from services.omnivoice_checkpoint import installed_omnivoice_checkpoint
 
-        repo = SPECS["cosyvoice"].weights_repo_id
+        repo = "k2-fsa/OmniVoice"
         model = next(item for item in KNOWN_MODELS if item["repo_id"] == repo)
         return {
             "target": "local",
             "models": [{
                 **model,
-                "installed": get_status("cosyvoice")["installed"],
+                "installed": installed_omnivoice_checkpoint() is not None,
                 "supported": True,
                 "curated": True,
                 "sidecar_managed": True,

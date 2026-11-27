@@ -46,7 +46,7 @@ export function useEngines(): UseEnginesResult;
 export function useEngines(family: 'tts'): TtsEnginesResult;
 export function useEngines(family?: 'tts'): TtsEnginesResult {
   const status = useBackendStatus();
-  const packagedTts = family === 'tts' && Boolean(window.voicestudio?.backend?.installCosyVoice);
+  const packagedTts = family === 'tts' && Boolean(window.voicestudio?.backend?.installOmniVoice);
   const query = useQuery({
     queryKey: packagedTts ? [...queryKeys.engines, 'tts'] : queryKeys.engines,
     queryFn: async ({ signal }) => packagedTts

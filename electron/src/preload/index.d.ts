@@ -519,7 +519,8 @@ export interface VoiceStudioBridge {
     onPersistenceFlush(callback: () => void | Promise<void>): () => void;
   };
   backend: {
-    installCosyVoice?(locale: string): Promise<void>;
+    installOmniVoice?(locale: string): Promise<void>;
+    onOmniVoiceDownloadProgress?(cb: (percent: number) => void): () => void;
     getStatus(): Promise<BackendStatus>;
     acknowledgeCrash(): Promise<NativeCrashRecord | undefined>;
     /** Subscribe to status changes. Returns an unsubscribe function. */

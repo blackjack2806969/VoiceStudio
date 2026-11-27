@@ -174,3 +174,18 @@ The installer took about 3m45s and the first synthesis and save took about 5m34s
 on the hosted ARM64 runner. [WAV and screenshot evidence](https://github.com/blackjack2806969/VoiceStudio/actions/runs/45969948061/artifacts/15185952535).
 This follow-up has been tested on hosted macOS ARM64. Retesting on the user's
 physical Mac remains open.
+
+## OmniVoice-only installer
+
+- The Cantonese distribution pins the bundled upstream `k2-fsa/OmniVoice`
+  engine, keeps its Apple Silicon MPS route and reuses complete HF snapshots,
+  including the original app's cache. Existing recordings and edit projects
+  keep their data paths.
+- Clone offers the upstream model downloader through the confirmed,
+  download-only Electron worker and shows progress and retry guidance.
+  Inference, recording and pitch editing keep the existing loopback-only
+  macOS worker profile. Clone discloses the non-commercial weights and
+  separate audio-tokenizer terms and uses upstream licence acknowledgement.
+- The release workflow runs the fresh install, restart with a reused upstream
+  cache, offline mixed-language clone and pitch editing in packaged Electron.
+  Physical M1 Ultra verification remains pending.

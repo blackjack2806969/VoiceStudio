@@ -633,6 +633,12 @@ def _is_finished_repair(plan, repo_dir: str, revision: str) -> bool:
 async def install_model(req: InstallModelRequest):
     """Download one HF repo snapshot; progress goes through the shared
     ``/setup/download-stream`` SSE feed."""
+    if os.environ.get("VOICESTUDIO_CANTONESE_BUNDLED") == "1":
+        raise HTTPException(status_code=409, detail="Download OmniVoice in Clone.")
+    return await start_model_install(req)
+
+
+async def start_model_install(req: InstallModelRequest, *, anonymous: bool = False):
     # ``req.repo_id`` is the catalogue identity; Hub calls use ``hub_repo``.
     model_spec = next(
         (model for model in KNOWN_MODELS if model_key(model) == req.repo_id),
@@ -736,7 +742,7 @@ async def install_model(req: InstallModelRequest):
                 "max_workers": _download_max_workers(),
             }
             from services.token_resolver import resolve as resolve_token
-            resolved_token = resolve_token()
+            resolved_token = None if anonymous else resolve_token()
             _bearer = resolved_token.token if resolved_token else None
             if allow_patterns:
                 dl_kwargs["allow_patterns"] = allow_patterns
@@ -1052,17 +1058,16 @@ async def install_model(req: InstallModelRequest):
             # A saved performance pack owns the desired engine/model policy.
             # Reconcile after every successful local install so the new model
             # becomes usable without a restart or a second manual selection.
-            try:
-                from services.performance_profiles import reconcile_active_profile
+            if not anonymous:
+                try:
+                    from services.performance_profiles import reconcile_active_profile
 
-                activated = reconcile_active_profile()
-                if activated:
-                    logger.info("model install activated performance profile: %s", activated)
-            except Exception:
-                # The model is fully installed even if optional preference
-                # reconciliation fails; readiness refresh and manual selection
-                # remain available instead of misreporting the download.
-                logger.exception("performance profile reconciliation failed after model install")
+                    activated = reconcile_active_profile()
+                    if activated:
+                        logger.info("model install activated performance profile: %s", activated)
+                except Exception:
+                    # The model is fully installed even if optional preference reconciliation fails.
+                    logger.exception("performance profile reconciliation failed after model install")
         except _InstallCancelled:
             _resolving.set()
             logger.info("model install cancelled: %s", req.repo_id)

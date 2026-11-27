@@ -37,8 +37,9 @@ export function useEngineSetup(operation = 'tts') {
   const { t } = useTranslation();
   const client = useQueryClient();
   const [fixing, setFixing] = useState(false);
+  const [downloadPercent, setDownloadPercent] = useState<number | null>(null);
   const blocker = useTtsReadiness(operation);
-  const installCosyVoice = window.voicestudio?.backend?.installCosyVoice;
+  const installOmniVoice = window.voicestudio?.backend?.installOmniVoice;
 
   const refreshReadiness = useCallback(
     () =>
@@ -108,9 +109,11 @@ export function useEngineSetup(operation = 'tts') {
   };
   const fix = async () => {
     setFixing(true);
+    let unsubscribe: (() => void) | undefined;
     try {
-      if (installCosyVoice) {
-        await installCosyVoice(document.documentElement.lang);
+      if (installOmniVoice) {
+        unsubscribe = window.voicestudio?.backend?.onOmniVoiceDownloadProgress?.(setDownloadPercent);
+        await installOmniVoice(document.documentElement.lang);
         void refreshReadiness();
         return;
       }
@@ -143,16 +146,19 @@ export function useEngineSetup(operation = 'tts') {
         );
       }
     } catch (error) {
-      if (installCosyVoice) toast.error(t('engines.cosyvoice_setup_failed'));
+      if (installOmniVoice) toast.error(t('engines.omnivoice_setup_failed'));
       else repair(`Automatic model setup failed: ${describeError(error)}`);
     } finally {
+      unsubscribe?.();
+      setDownloadPercent(null);
       setFixing(false);
     }
   };
   const view = install.view;
   return {
     blocked: blocker === 'engine',
-    cosyVoice: Boolean(installCosyVoice),
+    omnivoice: Boolean(installOmniVoice),
+    downloadPercent,
     busy: fixing || install.busy,
     /** A download this setup started or joined, until it ends or is dismissed. */
     install: view && view.stage !== 'ready' && view.stage !== 'cancelled' ? install : null,
@@ -168,6 +174,16 @@ export function EngineSetupProgress({
   setup: EngineSetup;
   className?: string;
 }) {
+  const { t } = useTranslation();
+  if (setup.downloadPercent != null) {
+    return (
+      <p role="status" className={cn('text-sm text-muted-foreground', className)}>
+        {setup.downloadPercent === 0
+          ? t('engines.omnivoice_preparing')
+          : t('engines.omnivoice_downloading', { percent: setup.downloadPercent })}
+      </p>
+    );
+  }
   const install = setup.install;
   if (!install?.view) return null;
   return (
@@ -208,7 +224,7 @@ export function EngineSetupButton({
       ) : (
         <WrenchIcon />
       )}
-      <span className="truncate">{t(setup.cosyVoice ? 'engines.cosyvoice_install' : 'engines.set_up')}</span>
+      <span className="truncate">{t(setup.omnivoice ? 'engines.omnivoice_install' : 'engines.set_up')}</span>
     </Button>
   );
 }
@@ -220,7 +236,7 @@ export function EngineSetupStatus({ setup, id }: { setup: EngineSetup; id?: stri
     <div id={id} className="mb-2.5 space-y-2 px-1">
       <p role="status" className="flex min-w-0 items-center gap-2 text-sm text-muted-foreground">
         <TriangleAlertIcon aria-hidden="true" className="size-3.5 shrink-0 text-warning" />
-        <span className="min-w-0 truncate">{t(setup.cosyVoice ? 'engines.cosyvoice_required' : 'engines.none_ready_title')}</span>
+        <span className="min-w-0 truncate">{t(setup.omnivoice ? 'engines.omnivoice_required' : 'engines.none_ready_title')}</span>
       </p>
       <EngineSetupProgress setup={setup} />
     </div>
@@ -342,7 +358,7 @@ export function EngineSetupNotice({
 }) {
   const { t } = useTranslation();
   if (!setup.blocked) return null;
-  const action = setup.install ? (
+  const action = setup.install || setup.downloadPercent != null ? (
     <EngineSetupProgress
       setup={setup}
       className={compact ? 'min-w-48 flex-1 basis-full' : undefined}
@@ -354,8 +370,8 @@ export function EngineSetupNotice({
     <NotReadyNotice
       compact={compact}
       className={className}
-      title={t(setup.cosyVoice ? 'engines.cosyvoice_required' : 'engines.none_ready_title')}
-      body={t(setup.cosyVoice ? 'engines.cosyvoice_setup_body' : 'engines.none_ready_body')}
+      title={t(setup.omnivoice ? 'engines.omnivoice_required' : 'engines.none_ready_title')}
+      body={t(setup.omnivoice ? 'engines.omnivoice_setup_body' : 'engines.none_ready_body')}
       action={action}
     />
   );

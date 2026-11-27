@@ -6,109 +6,49 @@ Cantonese lexical tones**. Set **Settings → Language → 繁體中文** for Tr
 Chinese; English is also supported. New editor strings in other UI languages
 currently fall back to English.
 
-## What is tested
+## Install and set up OmniVoice
 
-The Linux development and macOS ARM64 CI checks process real WAV/MP3/M4A audio, measure pitch
-changes, preserve source samples, exercise undo and check the existing CosyVoice
-adapter contract. Real offline CosyVoice synthesis also passed on GitHub ARM64:
-4.84 seconds at 1× and 3.86 seconds at 1.25× for the mixed-language fixture.
-They do not establish M1 Ultra performance, Cantonese accent
-quality, or macOS installer correctness. See `DEVELOPMENT_STATUS.md` for the
-current acceptance gates. There is no completed DMG until the ARM64 workflow
-has run successfully; a workflow file is not a tested installer.
+Install the Apple Silicon app from [GitHub Releases](https://github.com/blackjack2806969/VoiceStudio/releases).
+The DMG includes Python, the upstream OmniVoice engine and local ffmpeg. The
+pitch editor works before model setup.
 
-## TTS choice and licences
+1. Open **Clone**. The app reuses a complete `k2-fsa/OmniVoice` snapshot in the
+   original VoiceStudio/Hugging Face cache. This includes the default
+   `~/.cache/huggingface/hub` or a configured HF cache.
+2. If weights are missing, choose **Download OmniVoice** and confirm the macOS
+   prompt. The app uses the upstream pinned downloader and shows progress.
+   Allow about 2.4 GB for weights plus download working space. A failed download
+   can be retried after checking disk space and access to Hugging Face.
+3. Read and acknowledge the model licence in **Clone** before synthesizing.
+   OmniVoice weights are under CC-BY-NC. The bundled audio tokenizer is subject
+   to separate Higgs Audio 2 and Meta Llama 3 terms. See the
+   [pinned model card](https://huggingface.co/k2-fsa/OmniVoice/blob/c5fdb5ccb189668d56333f77ba2629f4cd7535f4/README.md)
+   and
+   [tokenizer licence](https://huggingface.co/k2-fsa/OmniVoice/blob/c5fdb5ccb189668d56333f77ba2629f4cd7535f4/audio_tokenizer/LICENSE).
+4. Disconnect after the download finishes. The app uses MPS on supported Apple
+   Silicon hosts and CPU when the system reports MPS unavailable.
 
-The initial Cantonese engine is the **existing CosyVoice 3** adapter, using
-`FunAudioLLM/Fun-CosyVoice3-0.5B-2512` and the repository's reviewed runtime/model
-pins. Its upstream model card labels the weights Apache-2.0. This is the preferred
-commercial-use candidate, but VoiceStudio's component-level commercial licence
-review is still incomplete; this fork does not turn that into a legal clearance.
-The app remains AGPL-3.0-only and Praat-Parselmouth is GPL-3.0-or-later. Neither
-requires a paid dependency; preserve notices and source obligations when sharing.
+For an offline Mac, copy the intact Hugging Face `models--k2-fsa--OmniVoice`
+directory from a prepared machine into `~/.cache/huggingface/hub`. Keep its
+`snapshots`, `blobs`, Git revision markers and relative symlinks together.
+The app's own downloads are under `~/Library/Application Support/Cantonese Voice
+Studio/models`. The app stores profiles and takes in its separate `data`
+directory.
 
-CosyVoice supports Cantonese (`yue`) and zero-shot references. On the M1 Ultra
-its current VoiceStudio adapter uses **CPU**, not a verified MPS implementation.
-The existing MLX adapter remains available, but its curated Qwen3 Base language
-list does not include Cantonese. Do not silently route `yue` to Mandarin or claim
-MLX Cantonese support. Upstream OmniVoice weights are currently recorded as
-non-commercial and are not the fork's default. Models are not embedded in the DMG.
-
-The v3 adapter now carries a Hong Kong Cantonese instruction, retaining English
-words and any user delivery instruction. It preserves the input text, including
-colloquial Traditional Chinese. This is model conditioning, not a guarantee of
-correct pronunciation; listen to your own references and output.
-The existing speech-speed control now reaches CosyVoice inference (0.5–2.0×).
-
-The separate **Cantonese real offline TTS** Actions workflow provisions the pinned
-model, then generates mixed Cantonese/English speech under the OS network sandbox.
-It retains WAV files and duration/F0 metrics for listening and compares 1×/1.25×
-speed. This is a synthesis smoke check, not an automatic pronunciation assessment.
-
-Download the verified Apple Silicon DMG or app ZIP from the
-[Clone fix release](https://github.com/blackjack2806969/VoiceStudio/releases/tag/cantonese-macos-0.5.9-beta.9-tts.6).
-
-## CosyVoice setup in the app
-
-Open **Clone** and click **Download CosyVoice 3**. Confirm **Download** in the
-Mac dialog to permit the separate installer to access the internet. It installs
-the engine, its dependencies and about 5.4 GB of weights. If setup fails, check
-internet access, free space and Xcode Command Line Tools (`xcode-select --install`),
-then retry. The package reuses completed downloads where possible. Keep the app
-open until setup finishes and its local backend restarts. You can disconnect
-before importing a recording or synthesizing speech.
-
-## One-time preparation on a connected ARM64 Mac
-
-Downloads happen in this separate preparation step. The studio itself stays
-offline. Do not send recordings, reference transcripts or synthesis text to any
-preparation command. A model-free pitch editor needs only the app runtime and
-local ffmpeg. TTS additionally needs the CosyVoice environment and weights.
-
-Install Xcode Command Line Tools, Git, Node 22, Bun 1.4.2 and uv 0.12.13. Then,
-from this fork's checkout:
-
-```sh
-bun install --frozen-lockfile
-uv sync --frozen --no-dev --no-editable --python 3.11
-.venv/bin/python scripts/prepare_cantonese_models.py --download \
-  --data-dir "$HOME/Library/Application Support/Cantonese Voice Studio/data"
-bun run build
-```
-
-The model preparation command calls VoiceStudio's existing pinned CosyVoice
-installer; it does not implement a second installer or download during inference.
-It reports success only when the existing runtime/weight probe passes. About
-5.4 GB of weights plus Python packages and source are required. Leave plenty of
-free disk space (30 GB is a reasonable starting budget for build and caches).
-
-The default packaged app data location is `~/Library/Application
-Support/Cantonese Voice Studio/data`. If your Electron application name differs, use its
-actual user-data location or set `OMNIVOICE_DATA_DIR` consistently for provisioning
-and launch. The engine's `.venv` and persisted paths must remain valid. Copying a
-Linux environment or moving an ARM64 venv to a new absolute path is not supported.
-For an air-gapped target, prepare on that Mac before disconnecting, or restore an
-ARM64 environment at the same absolute paths and verify it before use. A generic
-relocatable offline model installer has not yet been validated.
-
-For source operation, use the same data directory explicitly:
-
-```sh
-export OMNIVOICE_DATA_DIR="$HOME/Library/Application Support/Cantonese Voice Studio/data"
-bash scripts/run-cantonese-offline.sh
-```
-
-For a packaged build, install the app from the workflow's DMG/ZIP, retain the
-prepared data directory, disconnect networking, and launch the `.app` normally.
-The app bundles Python and ffmpeg. No model or runtime download is attempted as
-a fallback: missing local assets must be prepared before offline use.
+For source development on ARM64, install Git, Node 22, Bun 1.4.2 and uv 0.12.13.
+Use `bun install --frozen-lockfile` and
+`uv sync --frozen --no-dev --no-editable --python 3.11`. Run
+`.venv/bin/python scripts/prepare_cantonese_models.py` for the explicit connected
+setup, then `bash scripts/run-cantonese-offline.sh` with the same Hugging Face
+cache. See [development status](../DEVELOPMENT_STATUS.md) for validation and
+hardware coverage.
 
 ## Generate, edit and export
 
 1. In **Clone**, import a clean WAV, MP3 or M4A recording of the speaker. Use a
    short Cantonese reference (roughly 5–15 seconds, one speaker, no music) and
    enter its accurate transcript. Save a named local voice profile.
-2. Choose **CosyVoice 3** and **Cantonese**. Enter colloquial Traditional Chinese,
+2. Choose **Cantonese**. Enter colloquial Traditional Chinese,
    for example `聽日開 meeting，記得帶 laptop。`. Adjust speed and generate. If
    offline transcription has no installed model, enter the transcript manually.
 3. Preview and export the take using the existing Clone controls. Import that
@@ -155,20 +95,10 @@ to select the right worker profile.
 
 ## Build and downloadable artifact
 
-After the fork is writable, open **Actions → Cantonese offline macOS ARM64 → Run
-workflow** on `cantonese-offline`. It uses the standard `macos-15` ARM64 runner,
-existing runtime staging, existing native helper build and Electron packaging.
-The job tests audio processing and the OS sandbox before uploading DMG and app ZIP
-under **Cantonese-Voice-Studio-macOS-arm64** (14-day retention). It does not create
-a release or use signing/notarization secrets. Artifacts use ad-hoc signing, without Developer ID notarization; no Apple
-Developer subscription is required to build them. Follow macOS's explicit
-Open/Privacy & Security approval for a locally trusted unsigned build.
-
-Before the 30 November deadline, run the artifact on the actual M1 Ultra with
-network disconnected, import each supported format, create/reopen a profile,
-generate Cantonese and mixed-English examples, compare pitch edits by ear and
-measure F0 again. Record runner logs and physical-Mac results separately.
-
-Optional AudioSeal watermark weights must also be prepared locally to embed an
-invisible watermark. Missing weights are skipped offline; no watermark is claimed
-for the smoke-test WAVs.
+The **Cantonese offline macOS ARM64** workflow builds the app on the
+`macos-15` ARM64 runner. It opens the packaged Electron app with an empty
+cache, downloads and reuses the real model, runs a cloned mixed-language
+synthesis offline, and tests pitch editing, playback and WAV export. A
+`cantonese-macos-*` tag publishes the DMG and app ZIP only after those checks
+pass. The packages use ad-hoc signing. Developer ID notarization is unavailable
+for these builds.

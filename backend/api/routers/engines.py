@@ -82,17 +82,9 @@ def _family_payload(family: str, module):
             instance = getattr(tts_backend, "_active_instance", None)
             if instance is not None and getattr(tts_backend, "_active_instance_id", None) == active:
                 model = instance.model_identity()
-    if family == "tts" and active == "cosyvoice" and os.environ.get("VOICESTUDIO_CANTONESE_BUNDLED") == "1":
-        # The packaged fork pins this engine. Unrelated native probes must not
-        # decide when Clone opens, and the sidecar installer owns its weights.
-        from services.sidecar_install import get_status
-
-        backends = public_backends(module.list_backends(only=active))
-        if backends and backends[0]["available"] and not get_status(active)["installed"]:
-            backends[0].update(available=False, reason="CosyVoice weights are missing. Download CosyVoice 3 in Clone.")
-        model = None
-    else:
-        backends = public_backends(module.list_backends())
+    if family == "tts" and os.environ.get("VOICESTUDIO_CANTONESE_OFFLINE") == "1":
+        model = "k2-fsa/OmniVoice"
+    backends = public_backends(module.list_backends())
     if family == "tts":
         from services import settings_store
 
@@ -600,7 +592,7 @@ def install_sidecar_engine(engine_id: str):
     translation-engine route so a mis-aimed client can self-correct.
     """
     if os.environ.get("VOICESTUDIO_CANTONESE_BUNDLED") == "1":
-        raise HTTPException(status_code=409, detail="Use the CosyVoice installer in Clone.")
+        raise HTTPException(status_code=409, detail="Download OmniVoice in Clone.")
     from services import sidecar_install
     try:
         return sidecar_install.start_install(engine_id)

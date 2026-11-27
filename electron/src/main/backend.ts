@@ -729,9 +729,12 @@ function childEnv(
   env.PYTHONUTF8 = '1';
   if (app.isPackaged && !runtimeSetupSupported()) {
     const selectedData = env.OMNIVOICE_DATA_DIR;
+    const legacyCache = env.OMNIVOICE_CACHE_DIR || env.HF_HUB_CACHE || env.HUGGINGFACE_HUB_CACHE || env.HF_HOME;
     Object.assign(env, bundledRuntimeEnv(backendRoot(), app.getPath('userData')));
-    // This direct-download fork permits preinstalled local engine sidecars; the OS blocks networking.
-    if (process.env.VOICESTUDIO_CANTONESE_BUNDLED === '1') delete env.VOICESTUDIO_BUNDLED_CODE_ONLY;
+    if (process.env.VOICESTUDIO_CANTONESE_BUNDLED === '1') {
+      env.VOICESTUDIO_OMNIVOICE_BUNDLED_CACHE = env.HF_HUB_CACHE;
+      if (legacyCache) env.VOICESTUDIO_OMNIVOICE_LEGACY_CACHE = legacyCache;
+    }
     // Keep an explicit data pointer even when its bookmark is stale/malformed.
     // Access must fail visibly; never redirect existing data to an empty default.
     if (selectedData) env.OMNIVOICE_DATA_DIR = selectedData;

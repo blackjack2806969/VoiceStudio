@@ -1,8 +1,8 @@
 import { _electron as electron } from 'playwright';
 import assert from 'node:assert/strict';
-import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rename, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { tmpdir } from 'node:os';
+import { homedir, tmpdir } from 'node:os';
 import { exerciseToneEditor } from './cantonese-tone-flow.mjs';
 
 const captures = resolve('artifacts/cantonese/packaged');
@@ -19,7 +19,7 @@ async function pollUntil(check, timeout, message) {
   throw new Error(message);
 }
 // Launch the bundle's real entrypoint with Chromium sandboxing enabled.
-const app = await electron.launch({
+const launch = () => electron.launch({
   executablePath: resolve('electron/release/mac-arm64/VoiceStudio.app/Contents/MacOS/cantonese-offline'),
   chromiumSandbox: true,
   acceptDownloads: true,
@@ -27,6 +27,7 @@ const app = await electron.launch({
     OMNIVOICE_PRELOAD_CAPTURE_ASR: '0', OMNIVOICE_PRELOAD_WATERMARK: '0' },
   timeout: 60000,
 });
+let app = await launch();
 app.process().stderr?.on('data', chunk => process.stderr.write(chunk));
 let page;
 try {
@@ -64,7 +65,7 @@ try {
     await new Promise(resolve => setTimeout(resolve, 500));
   }
   await page.goto('app://voicestudio/#/clone');
-  const install = page.getByRole('button', { name: 'Download CosyVoice 3', exact: true });
+  const install = page.getByRole('button', { name: 'Download OmniVoice', exact: true });
   await install.waitFor();
   const empty = await page.evaluate(async () => {
     const [tts, catalogue] = await Promise.all(['/api/engines/tts', '/api/models'].map(async path => {
@@ -74,44 +75,70 @@ try {
       if (!response.ok) throw new Error(`${path}: ${response.status}`);
       return response.json();
     }));
-    return { engine: tts.active, ready: tts.backends[0].available, model: catalogue.models[0] };
+    return { engine: tts.active, ready: tts.backends[0].available, engines: tts.backends.map(item => item.id), models: catalogue.models };
   });
-  assert.deepEqual([empty.engine, empty.ready], ['cosyvoice', false]);
-  assert.equal(empty.model.repo_id, 'FunAudioLLM/Fun-CosyVoice3-0.5B-2512');
-  assert.equal(empty.model.installed, false);
+  assert.deepEqual([empty.engine, empty.ready], ['omnivoice', true]);
+  assert.deepEqual(empty.engines, ['omnivoice']);
+  assert.deepEqual(empty.models.map(item => item.repo_id), ['k2-fsa/OmniVoice']);
+  assert.equal(empty.models[0].installed, false);
+  assert.equal(empty.models[0].license_info.license_category, 'noncommercial');
   await page.screenshot({ path: resolve(captures, 'clone-no-model.png') });
   console.log('PASS: packaged Clone opens without weights and shows the download action.');
 
   // Accept only the real installer confirmation. The signed app still launches
-  // its actual download worker and restarts the offline backend.
+  // its actual download worker while inference stays offline.
   await app.evaluate(({ dialog }) => {
     const show = dialog.showMessageBox.bind(dialog);
-    dialog.showMessageBox = (owner, options) => options.message === 'Go online to install CosyVoice 3?'
+    dialog.showMessageBox = (owner, options) => options.message === 'Go online to download OmniVoice?'
       ? Promise.resolve({ response: 0, checkboxChecked: false })
       : show(owner, options);
   });
   await install.click();
-  const downloadFailed = page.getByText('CosyVoice setup failed.', { exact: false });
-  const voice = page.getByRole('main').getByRole('button', { name: 'Demo Voice', exact: true });
+  const downloadFailed = page.getByText('OmniVoice download failed.', { exact: false });
+  await page.getByText(/Preparing OmniVoice download|Downloading OmniVoice/).first().waitFor();
   await pollUntil(async () => {
-    assert.equal(await downloadFailed.isVisible(), false, 'CosyVoice download from the packaged app failed');
+    assert.equal(await downloadFailed.isVisible(), false, 'OmniVoice download from the packaged app failed');
     return page.evaluate(async () => {
       try {
-        const response = await fetch('/api/engines/tts', { signal: AbortSignal.timeout(5000) });
+        const response = await fetch('/api/models', { signal: AbortSignal.timeout(5000) });
         if (!response.ok) return false;
-        const tts = await response.json();
-        return tts.active === 'cosyvoice' && tts.backends.some(engine => engine.id === tts.active && engine.available);
+        const catalogue = await response.json();
+        return catalogue.models[0]?.installed;
       } catch {
-        return false; // The backend restarts once the downloader has completed.
+        return false;
       }
     });
-  }, 46 * 60 * 1000, 'CosyVoice runtime and weights never became available');
-  console.log('PASS: local backend recognizes the installed CosyVoice runtime and weights.');
-  await voice.click();
-  await page.locator('[data-clone-script]').fill('你好，聽日見。');
+  }, 46 * 60 * 1000, 'OmniVoice weights never became available');
+  console.log('PASS: local backend recognizes the installed OmniVoice weights.');
+  await page.screenshot({ path: resolve(captures, 'clone-installed.png') });
+  const cache = await app.evaluate(({ app }) => app.getPath('userData'));
+  await app.close();
+  const legacyHub = resolve(homedir(), '.cache/huggingface/hub');
+  await mkdir(legacyHub, { recursive: true });
+  const repoCache = 'models--k2-fsa--OmniVoice';
+  await rename(resolve(cache, 'models', repoCache), resolve(legacyHub, repoCache));
+
+  // A new launch must use the original app's Hugging Face cache without a download.
+  app = await launch();
+  app.process().stderr?.on('data', chunk => process.stderr.write(chunk));
+  page = await app.firstWindow();
+  await page.waitForURL('app://voicestudio/**');
+  await pollUntil(async () => (await page.evaluate(() => window.voicestudio.backend.getStatus())).stage === 'ready',
+    180000, 'The offline app did not restart with the upstream cache');
+  await page.goto('app://voicestudio/#/clone');
+  await page.getByText('OmniVoice weights are for non-commercial use.', { exact: false }).waitFor();
+  await page.getByRole('button', { name: /^Licence:.*OmniVoice/i }).click();
+  const licence = page.getByRole('dialog');
+  await licence.getByRole('checkbox', { name: /I have read the OmniVoice licence/ }).check();
+  await licence.getByRole('button', { name: 'Accept licence', exact: true }).click();
+  await licence.getByRole('button', { name: 'Withdraw acceptance' }).waitFor();
+  await licence.getByRole('button', { name: 'Close', exact: true }).click();
+  await licence.waitFor({ state: 'hidden' });
+  await page.getByRole('main').getByRole('button', { name: 'Demo Voice', exact: true }).click();
+  await page.locator('[data-clone-script]').fill('你好，聽日見。See you tomorrow.');
   const synthesize = page.getByRole('button', { name: 'Synthesize audio', exact: true });
   await pollUntil(async () => (await synthesize.count()) > 0 && await synthesize.isEnabled(),
-    60000, 'Installed CosyVoice did not unblock Clone');
+    60000, 'Installed OmniVoice did not unblock Clone');
   await synthesize.click();
   // A saved take proves the UI submitted real synthesis and received its result.
   const audioPath = await pollUntil(() => page.evaluate(async () => {
@@ -128,8 +155,8 @@ try {
   const speech = Buffer.from(take);
   assert(speech.length > 44 && speech.toString('ascii', 0, 4) === 'RIFF');
   await writeFile(resolve(captures, 'clone-generated.wav'), speech);
-  await page.screenshot({ path: resolve(captures, 'clone-installed.png') });
-  console.log('PASS: packaged installer downloaded CosyVoice and Clone synthesized a local WAV.');
+  await page.screenshot({ path: resolve(captures, 'clone-reused.png') });
+  console.log('PASS: Clone generated and exported a mixed Cantonese–English WAV from the reused OmniVoice weights.');
 
   await exerciseToneEditor(page, 'app://voicestudio', captures);
   const exported = await readFile(resolve(captures, 'edited-speech.wav'));

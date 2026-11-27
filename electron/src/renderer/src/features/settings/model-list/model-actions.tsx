@@ -89,7 +89,7 @@ export function ModelActions({
   if (model.sidecar_managed) {
     return model.installed
       ? <span className="text-sm text-muted-foreground">{t('modelMaintenance.installed')}</span>
-      : <Link to="/clone">{t('engines.cosyvoice_install')}</Link>;
+      : <Link to="/clone">{t('engines.omnivoice_install')}</Link>;
   }
   const resident = maintenance ? ops.residentFor(model) : undefined;
   const busy = Boolean(ops.pending);

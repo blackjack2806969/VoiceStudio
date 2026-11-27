@@ -20,7 +20,7 @@ def install():
     os.environ.update(HF_HUB_OFFLINE='1', TRANSFORMERS_OFFLINE='1',
                       HF_HUB_DISABLE_TELEMETRY='1', DO_NOT_TRACK='1',
                       OMNIVOICE_ANALYTICS_DISABLED='1', OMNIVOICE_DIAGNOSTICS_DISABLED='1')
-    os.environ.setdefault('OMNIVOICE_TTS_BACKEND', 'cosyvoice')
+    os.environ.setdefault('OMNIVOICE_TTS_BACKEND', 'omnivoice')
     os.environ.setdefault('OMNIVOICE_LLM_BACKEND', 'off')
 
     def audit(event, args):

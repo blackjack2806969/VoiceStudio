@@ -12,6 +12,32 @@ logger = logging.getLogger(__name__)
 _DEFAULT_OMNIVOICE_CHECKPOINT = "k2-fsa/OmniVoice"
 
 
+def installed_omnivoice_checkpoint() -> str | None:
+    """Find the complete upstream checkpoint without moving or modifying it."""
+    from pathlib import Path
+    from services.hf_revisions import installed_revision, revision_for
+    from services.model_catalogue import (
+        _hub_cache_roots, _repo_dir_name, catalogue_entry, snapshot_is_complete,
+    )
+
+    repo = _DEFAULT_OMNIVOICE_CHECKPOINT
+    model = catalogue_entry(repo)
+    roots = [Path(path) for path in _hub_cache_roots()]
+    for key in ("VOICESTUDIO_OMNIVOICE_BUNDLED_CACHE", "VOICESTUDIO_OMNIVOICE_LEGACY_CACHE"):
+        if extra_cache := os.environ.get(key):
+            extra = Path(extra_cache).expanduser()
+            roots.extend([extra, extra / "hub"])
+    legacy = Path.home() / ".cache" / "huggingface"
+    roots.extend([legacy / "hub", legacy])
+    for root in dict.fromkeys(roots):
+        snapshots = root / _repo_dir_name(repo) / "snapshots"
+        for revision in dict.fromkeys((installed_revision(repo, str(root)), revision_for(repo))):
+            path = snapshots / revision
+            if path.is_dir() and snapshot_is_complete(model, str(path)):
+                return str(path)
+    return None
+
+
 def resolve_omnivoice_checkpoint() -> str:
     """Resolve the VoiceStudio TTS checkpoint from ``OMNIVOICE_MODEL``, self-healing
     a misconfigured value.
@@ -23,6 +49,8 @@ def resolve_omnivoice_checkpoint() -> str:
     and is not a valid model identifier listed on huggingface.co/models"* (#693).
     Fall back to the default rather than 500 on every launch.
     """
+    if os.environ.get("VOICESTUDIO_CANTONESE_OFFLINE") == "1":
+        return installed_omnivoice_checkpoint() or _DEFAULT_OMNIVOICE_CHECKPOINT
     checkpoint = os.environ.get("OMNIVOICE_MODEL", "").strip()
     if not checkpoint:
         # Dynamic import: local_model_paths reaches back into model_manager.

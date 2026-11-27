@@ -116,7 +116,8 @@ const bridge: VoiceStudioBridge = {
   },
   backend: {
     ...(process.env.VOICESTUDIO_CANTONESE_BUNDLED === '1' ? {
-      installCosyVoice: (locale: string) => ipcRenderer.invoke('cosyvoice:install', locale) as Promise<void>,
+      installOmniVoice: (locale: string) => ipcRenderer.invoke('omnivoice:install', locale) as Promise<void>,
+      onOmniVoiceDownloadProgress: (cb: (percent: number) => void) => subscribe('omnivoice:download-progress', cb),
     } : {}),
     getStatus: () => ipcRenderer.invoke('backend:getStatus') as Promise<BackendStatus>,
     acknowledgeCrash: () => ipcRenderer.invoke('backend:acknowledgeCrash'),

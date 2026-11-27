@@ -134,7 +134,9 @@ const bundledUvResources =
     : [];
 // OmniVoice GGUF runtime, staged by the release workflows (#2780).
 const bundledOmnivoiceTtsResources =
-  isMacAppStore && !bundlesMasRuntime ? [] : omnivoiceTtsResources();
+  process.env.VOICESTUDIO_CANTONESE_BUILD === '1' || (isMacAppStore && !bundlesMasRuntime)
+    ? []
+    : omnivoiceTtsResources();
 const notarizeMac =
   !isMacAppStore &&
   Boolean(

@@ -2919,10 +2919,13 @@
     "pockettts_accepted_toast": "PocketTTS-Bedingungen akzeptiert."
   },
   "engines": {
-    "cosyvoice_install": "Download CosyVoice 3",
-    "cosyvoice_required": "CosyVoice 3 is required for local speech",
-    "cosyvoice_setup_body": "Connect to the internet to download the engine and about 5.4 GB of model weights. Speech and recordings stay on this Mac.",
-    "cosyvoice_setup_failed": "CosyVoice setup failed. Check the internet connection, free disk space and Xcode Command Line Tools, then try again.",
+    "omnivoice_install": "Download OmniVoice",
+    "omnivoice_required": "OmniVoice weights are required for local speech",
+    "omnivoice_setup_body": "Connect to download about 2.4 GB of OmniVoice weights. Text and recordings stay on this Mac.",
+    "omnivoice_setup_failed": "OmniVoice download failed. Check access to Hugging Face and free disk space, then retry Download OmniVoice.",
+    "omnivoice_preparing": "Preparing OmniVoice download…",
+    "omnivoice_downloading": "Downloading OmniVoice ({{percent}}%)",
+    "omnivoice_license": "OmniVoice weights are for non-commercial use. Its audio tokenizer has separate terms.",
     "selectCpuFallback": "{{engine}}: läuft auf der CPU — {{reason}}",
     "selectWithCaveat": "Zu {{engine}} gewechselt — {{reason}}",
     "acceptLicense": "Lizenz akzeptieren",

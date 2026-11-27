@@ -4285,6 +4285,8 @@ _REGISTRY: dict[str, type[TTSBackend]] = _LazyRegistry({
     "gpt-sovits":    GPTSoVITSBackend,
     "sherpa-onnx":   SherpaOnnxBackend,
 })
+if os.environ.get("VOICESTUDIO_CANTONESE_OFFLINE") == "1":
+    _REGISTRY = {"omnivoice": OmniVoiceBackend}
 
 
 # ── ENGINE-06 last-error cache ─────────────────────────────────────────────
@@ -4511,7 +4513,10 @@ def list_backends(*, include_hidden: bool = False, only: str | None = None) -> l
     from services.engine_disk_usage import disk_summary_for
     from services.engine_evidence import snapshot as execution_snapshot
     caps = detect_host_caps()
-    installable = _sidecar_installable_ids()
+    installable = (
+        frozenset() if os.environ.get("VOICESTUDIO_CANTONESE_OFFLINE") == "1"
+        else _sidecar_installable_ids()
+    )
 
     out: list[dict] = []
     for bid, cls in _REGISTRY.items():
@@ -4953,6 +4958,8 @@ def gpu_routing_verdict() -> dict:
 
 
 def active_backend_id() -> str:
+    if os.environ.get("VOICESTUDIO_CANTONESE_OFFLINE") == "1":
+        return "omnivoice"
     # Env var > persisted UI choice > default. Env wins so power-users can
     # pin a backend without the Settings picker silently undoing it.
     from core import prefs
@@ -5000,6 +5007,10 @@ def ensure_engine_licence(cls) -> None:
 
     engine_id = getattr(cls, "id", None)
     if not engine_id:
+        return
+    if os.environ.get("VOICESTUDIO_CANTONESE_OFFLINE") == "1":
+        # A reused cache snapshot is still the licensed OmniVoice repository.
+        ensure_engine_accepted(engine_id, "k2-fsa/OmniVoice")
         return
     try:
         identity = cls.configured_identity()

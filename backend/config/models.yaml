@@ -56,7 +56,7 @@ models:
     engines: [omnivoice, omnivoice-subprocess]
     size_gb: 2.4
     required: true
-    known_files:
+    required_files:
       - config.json
       - tokenizer.json
       - model.safetensors

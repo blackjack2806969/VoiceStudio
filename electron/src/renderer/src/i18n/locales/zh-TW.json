@@ -2919,10 +2919,13 @@
     "pockettts_accepted_toast": "已接受 PocketTTS 條件。"
   },
   "engines": {
-    "cosyvoice_install": "下載 CosyVoice 3",
-    "cosyvoice_required": "本機語音合成需要 CosyVoice 3",
-    "cosyvoice_setup_body": "請連線下載引擎及約 5.4 GB 的模型權重。語音和錄音會留在這部 Mac。",
-    "cosyvoice_setup_failed": "CosyVoice 設定失敗。請檢查網絡、剩餘磁碟空間及 Xcode 命令列工具，再試一次。",
+    "omnivoice_install": "下載 OmniVoice",
+    "omnivoice_required": "本機語音合成需要 OmniVoice 模型",
+    "omnivoice_setup_body": "連線下載約 2.4 GB 的 OmniVoice 模型權重。文字和錄音留在這部 Mac。",
+    "omnivoice_setup_failed": "OmniVoice 下載失敗。請確認可連線至 Hugging Face、硬碟空間充足，然後重試。",
+    "omnivoice_preparing": "正在準備下載 OmniVoice…",
+    "omnivoice_downloading": "正在下載 OmniVoice（{{percent}}%）",
+    "omnivoice_license": "OmniVoice 模型權重只限非商業用途。音訊 tokenizer 另有授權條款。",
     "selectCpuFallback": "{{engine}}：正在 CPU 上執行 — {{reason}}",
     "selectWithCaveat": "已切換至 {{engine}} — {{reason}}",
     "acceptLicense": "接受許可",

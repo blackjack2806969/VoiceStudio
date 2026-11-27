@@ -29,6 +29,8 @@ import { useCloneDemo } from '@/hooks/use-clone-demo';
 import { runRendererTask } from '@/lib/global-error-recovery';
 import { SynthesisDock } from '@/components/synthesis-dock';
 import { isSynthesizeShortcut } from './synthesize-shortcut';
+import { useModelCatalogue } from '@/features/settings/model-catalogue-query';
+import { ModelLicense } from '@/features/settings/model-license';
 
 const DEMO_PROFILE_ID = 'demo0001';
 const DEMO_PROMPTED_KEY = 'omnivoice.demoClonePrompted';
@@ -42,6 +44,8 @@ export function ClonePage() {
   // One setup for the notice and the composer: choosing a voice swaps one for
   // the other, and a download must keep its progress and Cancel across that.
   const setup = useEngineSetup('clone');
+  const catalogue = useModelCatalogue({ enabled: setup.omnivoice });
+  const omniVoice = catalogue.data?.models.find((model) => model.repo_id === 'k2-fsa/OmniVoice');
   const { panel, editingProfileId } = useWorkspace();
   const setPanel = (panel: 'voice' | null) => setWorkspace({ panel });
   const setLibraryTab = (libraryTab: 'voices' | 'takes') => setWorkspace({ libraryTab });
@@ -180,6 +184,19 @@ export function ClonePage() {
             </div>
           </header>
           <div className="mx-auto flex min-h-0 w-full max-w-4xl flex-1 flex-col gap-5 overflow-y-auto px-6 pt-6 pb-4">
+            {setup.omnivoice && (
+              <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+                <span>{t('engines.omnivoice_license')}</span>
+                {omniVoice && (
+                  <ModelLicense
+                    repoId={omniVoice.repo_id}
+                    label="OmniVoice"
+                    info={omniVoice.license_info}
+                    acceptance={omniVoice.license_acceptance}
+                  />
+                )}
+              </div>
+            )}
             {/* With the composer on screen, its primary action is the setup instead. */}
             {(choosingVoice || savingUpload || demo) && !isGenerating && (
               <EngineSetupNotice setup={setup} />

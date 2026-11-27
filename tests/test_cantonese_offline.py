@@ -68,3 +68,31 @@ def test_offline_synthesis_does_not_download_optional_watermark(monkeypatch):
     source = torch.zeros(1, 24000)
     assert watermark.mark_synthetic(source, 24000, context='test.offline') is source
     assert not loads
+
+
+def test_omnivoice_reuses_original_hub_snapshot_only_when_complete(monkeypatch, tmp_path):
+    repo = "k2-fsa/OmniVoice"
+    cache = tmp_path / ".cache" / "huggingface" / "hub" / "models--k2-fsa--OmniVoice"
+    rev = "b" * 40
+    (cache / "refs").mkdir(parents=True)
+    (cache / "refs" / "main").write_text(rev)
+    snapshot = cache / "snapshots" / rev
+    monkeypatch.setenv("HOME", str(tmp_path))
+    monkeypatch.setenv("HF_HUB_CACHE", str(tmp_path / "new-empty-cache"))
+    monkeypatch.setenv("VOICESTUDIO_CANTONESE_OFFLINE", "1")
+    monkeypatch.setenv("OMNIVOICE_MODEL", "someone/other-model")
+    from services.model_catalogue import catalogue_entry
+    from services.omnivoice_checkpoint import installed_omnivoice_checkpoint, resolve_omnivoice_checkpoint
+
+    for name in catalogue_entry(repo)["required_files"]:
+        if name == "audio_tokenizer/model.safetensors":
+            continue
+        path = snapshot / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("wb") as output:
+            output.truncate(5 * 1024 * 1024 if path.suffix == ".safetensors" else 1)
+    assert not installed_omnivoice_checkpoint()
+    assert resolve_omnivoice_checkpoint() == repo
+    with (snapshot / "audio_tokenizer/model.safetensors").open("wb") as output:
+        output.truncate(5 * 1024 * 1024)
+    assert resolve_omnivoice_checkpoint() == str(snapshot)
