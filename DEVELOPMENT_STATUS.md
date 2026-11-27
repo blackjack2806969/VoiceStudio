@@ -189,3 +189,18 @@ physical Mac remains open.
 - The release workflow runs the fresh install, restart with a reused upstream
   cache, offline mixed-language clone and pitch editing in packaged Electron.
   Physical M1 Ultra verification remains pending.
+- Ponytail review kept the upstream model loader, downloader and licence gate.
+  The only connected process handles the pinned public model download. The
+  fork's engine registry exposes OmniVoice only and performs no other TTS
+  availability checks.
+- [ARM64 run 45981656040](https://github.com/blackjack2806969/VoiceStudio/actions/runs/45981656040)
+  passed the packaged tests. Clone opened without weights, downloaded OmniVoice,
+  reopened using the original cache path and generated a mixed Cantonese–English
+  take with the local reference voice. The same packaged app passed speech
+  import, manual F0 editing, before/after playback, undo and WAV export.
+  [Screenshots and WAV files](https://github.com/blackjack2806969/VoiceStudio/actions/runs/45981656040/artifacts/15190228799)
+  are retained as CI evidence.
+- [Release cantonese-macos-0.2.0](https://github.com/blackjack2806969/VoiceStudio/releases/tag/cantonese-macos-0.2.0)
+  contains the ARM64 DMG and app ZIP from that run. Prior releases remain
+  available. Packages use ad-hoc signing. The CI run does not establish MPS
+  performance or pronunciation quality on a physical M1 Ultra.
