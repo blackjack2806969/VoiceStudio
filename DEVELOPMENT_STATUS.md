@@ -54,8 +54,7 @@ Implement bounded, non-destructive Praat lexical-tone editing integrated into El
 1. Complete the ARM64 packaging workflow; source milestones are pushed to cantonese-offline.
 2. Validate packaged startup and inherited OS network denial on macOS, fix any failures.
 3. Provision CosyVoice on M1 Ultra and test real cloning, Cantonese lexical tones,
-   mixed-English text, speed, profile persistence and offline restart. Current TTS
-   regression tests mock model inference; no real TTS output was generated here.
+   mixed-English text, speed, profile persistence and offline restart. Real offline CosyVoice synthesis passed on GitHub ARM64; M1 Ultra listening/performance remain untested.
 4. Measure latency/RAM and evaluate an existing MLX/Metal Cantonese-capable engine
    only if its support and licence can be substantiated. Do not promise acceleration.
 5. Review the upstream model-component licences before commercial redistribution.
@@ -110,3 +109,20 @@ Implement bounded, non-destructive Praat lexical-tone editing integrated into El
   reproduces the original failure and passes with the patch.
 - Browser smoke now decodes and plays both before/after audio and verifies that
   playback time advances; passed on Linux Chromium against the real local API.
+
+## Real offline Cantonese synthesis — passed
+- Run: https://github.com/blackjack2806969/VoiceStudio/actions/runs/45945764393
+- Existing CosyVoice installer provisioned pinned source and weights on macos-15 ARM64.
+  Synthesis then ran under the OS offline sandbox with a public upstream reference.
+- Mixed text: 聽日開 meeting，記得帶 laptop。我哋九點見。
+- 1×: 4.84 s, median F0 253.18 Hz; 1.25×: 3.86 s, median F0 250.31 Hz.
+  Cold run including loading took 247.6 s; second run 65.7 s on the CI runner.
+  These are not M1 Ultra timings or perceptual Cantonese/cloning-quality scores.
+- Downloaded WAVs and metrics: artifacts/cantonese/tts (ignored local evidence).
+- Applied the real pitch editor to the generated Cantonese: requested +2 semitones,
+  measured +2.026; samples outside the selected syllable remained exactly unchanged.
+- Optional AudioSeal attempted to fetch absent weights; the offline policy blocked
+  it and audio generation succeeded. Added a cache check so absent optional weights
+  no longer trigger that attempt. Watermark/offline checks: 24 passed, 2 optional skips.
+- Installer verification still pending; run 45946571487 includes the signing fix
+  and actual packaged edit/playback/export acceptance test.

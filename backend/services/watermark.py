@@ -584,6 +584,10 @@ def embed_watermark(
     if (not force and not is_enabled()) or not _check_available():
         return waveform
 
+    if os.environ.get('HF_HUB_OFFLINE') == '1' and _generator is None and not _generator_checkpoint_cached():
+        logger.info('Offline watermark skipped: no local AudioSeal checkpoint.')
+        return waveform
+
     try:
         generator = _get_generator()
         msg = torch.tensor(message or OMNI_MESSAGE, dtype=torch.int32).unsqueeze(0)

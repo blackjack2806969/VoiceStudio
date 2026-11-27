@@ -83,3 +83,9 @@ Further review fixes: blocked attachment to an existing unconfined backend and
 remote backend configuration, isolated Electron data and default port, and fixed
 the staged sitecustomize policy (deleting a parent environment flag alone was
 insufficient). Regression checks cover the attachment refusal and staging mode.
+
+Real-model review: ARM64 offline synthesis and speed checks passed. The optional
+AudioSeal loader ignored HF offline mode and tried its own URL loader; network
+policy blocked it. Reused the existing cache probe to skip absent optional weights
+before loading. Regression asserts that the loader is never called in that case.
+No pronunciation, speaker similarity or physical M1 Ultra result is inferred.

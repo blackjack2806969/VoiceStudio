@@ -34,3 +34,21 @@ def test_bundled_runtime_uses_offline_policy_without_store_sidecar_restriction()
     assert '_voicestudio_bundled_code' in module.runtime_customization()
     fork = module.runtime_customization(cantonese=True)
     assert fork == 'from _voicestudio_offline import install\ninstall()\n'
+
+
+def test_offline_synthesis_does_not_download_optional_watermark(monkeypatch):
+    import torch
+    from services import watermark
+    monkeypatch.setenv('HF_HUB_OFFLINE', '1')
+    monkeypatch.setattr(watermark, '_generator', None)
+    monkeypatch.setattr(watermark, 'is_enabled', lambda: True)
+    monkeypatch.setattr(watermark, '_check_available', lambda: True)
+    monkeypatch.setattr(watermark, '_generator_checkpoint_cached', lambda: False)
+    loads = []
+    def unexpected_load():
+        loads.append(True)
+        raise AssertionError('Missing optional weights must never trigger a download.')
+    monkeypatch.setattr(watermark, '_get_generator', unexpected_load)
+    source = torch.zeros(1, 24000)
+    assert watermark.mark_synthetic(source, 24000, context='test.offline') is source
+    assert not loads

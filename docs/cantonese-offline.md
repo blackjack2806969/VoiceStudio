@@ -10,7 +10,9 @@ currently fall back to English.
 
 The Linux development and macOS ARM64 CI checks process real WAV/MP3/M4A audio, measure pitch
 changes, preserve source samples, exercise undo and check the existing CosyVoice
-adapter contract. They do not establish M1 Ultra performance, Cantonese accent
+adapter contract. Real offline CosyVoice synthesis also passed on GitHub ARM64:
+4.84 seconds at 1× and 3.86 seconds at 1.25× for the mixed-language fixture.
+They do not establish M1 Ultra performance, Cantonese accent
 quality, or macOS installer correctness. See `DEVELOPMENT_STATUS.md` for the
 current acceptance gates. There is no completed DMG until the ARM64 workflow
 has run successfully; a workflow file is not a tested installer.
@@ -156,3 +158,7 @@ Before the 30 November deadline, run the artifact on the actual M1 Ultra with
 network disconnected, import each supported format, create/reopen a profile,
 generate Cantonese and mixed-English examples, compare pitch edits by ear and
 measure F0 again. Record runner logs and physical-Mac results separately.
+
+Optional AudioSeal watermark weights must also be prepared locally to embed an
+invisible watermark. Missing weights are skipped offline; no watermark is claimed
+for the smoke-test WAVs.
