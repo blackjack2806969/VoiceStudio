@@ -132,7 +132,8 @@ _ENGINE_ID_RE = re.compile(r"[a-z0-9][a-z0-9_.\-]{0,39}")
 
 
 def _kill_switched() -> bool:
-    return (os.environ.get(_KILL_SWITCH, "") or "").strip().lower() in _OFF_VALUES
+    # This offline fork never sends telemetry, including for previously opted-in profiles.
+    return True
 
 
 def user_opted_in() -> bool:

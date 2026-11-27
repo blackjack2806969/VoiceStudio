@@ -10,6 +10,9 @@ _backend_dir = os.path.dirname(os.path.abspath(__file__))
 if _backend_dir not in sys.path:
     sys.path.insert(0, _backend_dir)
 
+from core.offline import install as _install_offline
+_install_offline()
+
 from core.crash_diagnostics import enable_fault_handler, install_exit_forensics  # noqa: E402
 from core.app_config import PRODUCT_NAME  # noqa: E402
 # Arm native-crash tracebacks before model or GPU libraries can be imported.

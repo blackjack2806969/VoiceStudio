@@ -1,3 +1,4 @@
+import { localRuntimeUrl } from './cantonese-offline';
 import { logStartup } from './startup-log';
 import {
   decideTerminalStop,
@@ -82,6 +83,7 @@ const OVERLAY = { color: '#00000000', symbolColor: '#737373', height: 52 };
 
 logStartup('main module loaded');
 installAppIdentity(app);
+app.setPath('userData', join(app.getPath('appData'), 'Cantonese Voice Studio'));
 registerAppScheme();
 
 const mainErrors = new MainErrorJournal(
@@ -555,6 +557,9 @@ if (singleInstance && !app.requestSingleInstanceLock()) {
   initialized = app
     .whenReady()
     .then(async () => {
+      session.defaultSession.webRequest.onBeforeRequest((details, callback) => {
+        callback({ cancel: !localRuntimeUrl(details.url) });
+      });
       electronApp.setAppUserModelId(APP_ID);
       if (app.isPackaged) {
         try {
@@ -603,7 +608,7 @@ if (singleInstance && !app.requestSingleInstanceLock()) {
         (work) => runDiagnosticOperation(reports, work),
       );
       // Before backend.start(): the backend inherits the token-bridge env.
-      closeAccount = await startAccount({
+      closeAccount = process.env.VOICESTUDIO_CANTONESE_OFFLINE === '1' ? () => {} : await startAccount({
         getMainWindow: () => mainWindow,
         isRemoteBackend: () => backend.connection.remote,
         notifyBackend: async (path) => {

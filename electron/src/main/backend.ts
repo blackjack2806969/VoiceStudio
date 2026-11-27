@@ -729,6 +729,8 @@ function childEnv(
   if (app.isPackaged && !runtimeSetupSupported()) {
     const selectedData = env.OMNIVOICE_DATA_DIR;
     Object.assign(env, bundledRuntimeEnv(backendRoot(), app.getPath('userData')));
+    // This direct-download fork permits preinstalled local engine sidecars; the OS blocks networking.
+    if (process.env.VOICESTUDIO_CANTONESE_BUNDLED === '1') delete env.VOICESTUDIO_BUNDLED_CODE_ONLY;
     // Keep an explicit data pointer even when its bookmark is stale/malformed.
     // Access must fail visibly; never redirect existing data to an empty default.
     if (selectedData) env.OMNIVOICE_DATA_DIR = selectedData;
@@ -1271,7 +1273,7 @@ export class BackendSupervisor extends EventEmitter<{
   get port(): number {
     return this.localPort;
   }
-  private remoteUrl = loadRemoteBackend(this.remotePath);
+  private remoteUrl = process.env.VOICESTUDIO_CANTONESE_OFFLINE === '1' ? null : loadRemoteBackend(this.remotePath);
   private remoteSession: RemoteSession | null = null;
   private testedRemote: { url: string; session: RemoteSession | null } | null = null;
 
@@ -2206,6 +2208,9 @@ export class BackendSupervisor extends EventEmitter<{
   }
 
   async testRemote(url: string, apiKey: string): Promise<RemoteBackendProbe> {
+    if (process.env.VOICESTUDIO_CANTONESE_OFFLINE === '1') {
+      return { ok: false, kind: 'invalid', target: url };
+    }
     const result = await probeRemoteBackend(url, apiKey);
     if (result.ok) this.testedRemote = { url: result.target, session: result.session };
     else this.testedRemote = null;
@@ -2220,6 +2225,9 @@ export class BackendSupervisor extends EventEmitter<{
   }
 
   async useRemote(url: string, apiKey: string): Promise<RemoteBackendProbe> {
+    if (process.env.VOICESTUDIO_CANTONESE_OFFLINE === '1') {
+      return { ok: false, kind: 'invalid', target: url };
+    }
     const trimmed = url.trim().replace(/\/+$/, '');
     let result;
     if (!apiKey.trim() && this.testedRemote?.url === trimmed) {
@@ -2978,6 +2986,14 @@ export class BackendSupervisor extends EventEmitter<{
     patch: { managed?: boolean; message?: string | undefined },
     superviseAfter: boolean,
   ): Promise<boolean> {
+    if (process.env.VOICESTUDIO_CANTONESE_OFFLINE === '1' &&
+        (!this.child || this.remoteUrl || patch.managed === false)) {
+      this.setStage('failed', {
+        managed: false,
+        message: 'Offline mode requires its own local backend. Close the other VoiceStudio process and retry.',
+      });
+      return false;
+    }
     const credentials = await this.remoteCredentials();
     if (gen !== this.generation) return false;
     if (credentials === 'valid') {

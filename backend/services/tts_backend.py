@@ -3721,6 +3721,10 @@ class CosyVoiceBackend(TTSBackend):
         # CosyVoice 3 wants its system prompt ahead of every prompt, the
         # same construction as the sidecar (engines/cosyvoice_subprocess).
         v3 = type(self._model).__name__ == "CosyVoice3"
+        # Mirrored in the dependency-isolated CosyVoice sidecar.
+        dialect = str(language or "").lower().replace("_", "-").split("-")[0]
+        if v3 and dialect in {"yue", "cantonese"}:
+            instruct = f"Speak in Hong Kong Cantonese. Pronounce English words in English. {instruct or ''}".strip()
         pieces = []
         if instruct and ref_audio:
             # Instruct mode: "用四川话说<|endofprompt|>"

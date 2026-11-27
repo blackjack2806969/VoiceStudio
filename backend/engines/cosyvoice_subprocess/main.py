@@ -278,6 +278,10 @@ def _run_model(model, msg: dict):
     ref_text = msg.get("ref_text") or None
     instruct = msg.get("instruct") or None
     v3 = _is_v3(model)
+    # Keep this standalone sidecar free of app imports; mirrored by CosyVoiceBackend.
+    language = str(msg.get("language") or "").lower().replace("_", "-").split("-")[0]
+    if v3 and language in {"yue", "cantonese"}:
+        instruct = f"Speak in Hong Kong Cantonese. Pronounce English words in English. {instruct or ''}".strip()
     if not ref_audio and v3:
         ref_audio = os.path.join(_checkout(), *_DEFAULT_PROMPT_CLIP)
         ref_text = None  # the sample's transcript is not ours to supply

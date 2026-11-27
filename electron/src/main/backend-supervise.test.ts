@@ -617,3 +617,19 @@ it('asserts the desktop origin in main-owned backend headers', () => {
     'X-VoiceStudio-Desktop-Origin': 'app://voicestudio',
   });
 });
+
+it('offline mode refuses an already-running backend outside its process boundary', async () => {
+  vi.stubEnv('VOICESTUDIO_CANTONESE_OFFLINE', '1');
+  vi.stubEnv('OMNIVOICE_PORT', '');
+  stubHealth({ mode: 'up' });
+  const supervisor = new BackendSupervisor();
+  try {
+    await supervisor.start();
+    expect(supervisor.status.stage).toBe('failed');
+    expect(supervisor.status.message).toContain('own local backend');
+    expect(mocks.spawn).not.toHaveBeenCalled();
+    expect((await supervisor.testRemote('https://example.com', 'key')).ok).toBe(false);
+    expect((await supervisor.useRemote('http://127.0.0.1:3900', '')).ok).toBe(false);
+    expect(calls.some(url => url.includes('example.com'))).toBe(false);
+  } finally { await supervisor.shutdown(); }
+});

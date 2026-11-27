@@ -57,5 +57,5 @@ export function applicationUpdatesSupported(
 }
 
 export function runtimeSetupSupported(target: DistributionTarget = CURRENT_DISTRIBUTION): boolean {
-  return DISTRIBUTION_PROFILES[target].runtimeCode === 'user-initiated-download';
+  return process.env.VOICESTUDIO_CANTONESE_BUNDLED !== '1' && DISTRIBUTION_PROFILES[target].runtimeCode === 'user-initiated-download';
 }

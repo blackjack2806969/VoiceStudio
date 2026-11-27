@@ -1,3 +1,4 @@
+import { packageCantonese } from './cantonese-bundle.mjs';
 // electron-builder configuration.
 //
 // The installer version is NOT stored in electron/package.json (its version
@@ -32,7 +33,7 @@ const macRuntimeArch = process.env.VOICESTUDIO_RUST_TARGET?.startsWith('x86_64')
   : process.env.VOICESTUDIO_RUST_TARGET?.startsWith('aarch64')
     ? 'arm64'
     : process.arch;
-const bundlesMasRuntime = isMacAppStore && macRuntimeArch === 'arm64';
+const bundlesMasRuntime = (isMacAppStore || process.env.VOICESTUDIO_CANTONESE_BUILD === '1') && macRuntimeArch === 'arm64';
 // Direct downloads are `VoiceStudio-<version>-<os>-<arch>.<ext>`; store builds
 // keep a label so they never collide with them. Releases up to v0.5.7-beta.3
 // used `VoiceStudio-Electron-*`; the installers still resolve those names.
@@ -226,6 +227,7 @@ export default {
   ],
   asar: true,
   afterPack: async (context) => {
+    packageCantonese(context);
     await packageCli(context);
     await packageNativeHelper(context);
     finalizeOmnivoiceTts(context);

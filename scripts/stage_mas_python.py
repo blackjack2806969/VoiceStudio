@@ -10,6 +10,7 @@ import argparse
 import hashlib
 import importlib.metadata
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -91,7 +92,10 @@ def runtime_files(root: Path) -> dict:
     return result
 
 
-def runtime_customization() -> str:
+def runtime_customization(*, cantonese: bool = False) -> str:
+    if cantonese:
+        # Direct-download fork: local engine sidecars are allowed; networking is denied.
+        return "from _voicestudio_offline import install\ninstall()\n"
     # init([]) alone still reads knownfiles on the first call in 3.11.
     # OS MIME files may be visible to stat but denied to a sandbox read.
     return (
@@ -170,7 +174,9 @@ def stage_runtime(base: Path, packages: Path, output: Path, lock: Path, version:
         policy = Path(__file__).resolve().parents[1] / "backend/core/bundled_code.py"
         shutil.copy2(policy, destination_packages / "_voicestudio_bundled_code.py")
         shutil.copy2(policy.with_name("sandbox_bookmarks.py"), destination_packages / "_voicestudio_sandbox_bookmarks.py")
-        customization.write_text(runtime_customization(), encoding="utf-8")
+        shutil.copy2(policy.with_name("offline.py"), destination_packages / "_voicestudio_offline.py")
+        customization.write_text(runtime_customization(
+            cantonese=os.environ.get("VOICESTUDIO_CANTONESE_BUILD") == "1"), encoding="utf-8")
         patches = stage_phonemizer(scratch, destination_packages)
         check_tree(scratch)
         manifest = {

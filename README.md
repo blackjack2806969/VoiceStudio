@@ -1,3 +1,5 @@
+> **Cantonese offline fork:** [Installation, model setup and editing guide](docs/cantonese-offline.md) · [Development status](DEVELOPMENT_STATUS.md). This branch is an MVP under validation; upstream release links below do not contain these changes.
+
 <div align="center">
   <h1><sub><img src="docs/logo.png" alt="" width="36" height="36" /></sub> VoiceStudio</h1>
   <p>

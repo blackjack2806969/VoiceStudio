@@ -50,3 +50,8 @@ Verdict: Ship the source milestone for Mac validation, not as a verified release
 Not checked: macOS sandbox grammar/LaunchServices, actual bundled startup, model
 installation on ARM64, real TTS synthesis, and component licence clearance.
 No review result here claims these missing checks passed.
+
+Further review fixes: blocked attachment to an existing unconfined backend and
+remote backend configuration, isolated Electron data and default port, and fixed
+the staged sitecustomize policy (deleting a parent environment flag alone was
+insufficient). Regression checks cover the attachment refusal and staging mode.

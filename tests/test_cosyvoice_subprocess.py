@@ -474,3 +474,18 @@ def test_the_sidecar_class_sends_a_convert_op(monkeypatch):
     # The in-process scaffold and every other engine keep re-speaking.
     assert CosyVoiceBackend.supports_voice_conversion is False
     assert TTSBackend.supports_voice_conversion is False
+
+
+def test_v3_cantonese_clone_carries_dialect_without_rewriting_mixed_text(monkeypatch, tmp_path):
+    calls = []
+    sidecar, _ = _load_sidecar(monkeypatch, tmp_path, calls)
+    text = '聽日開 meeting，記得帶 laptop。'
+    sidecar._handle_synthesize({'text': text, 'ref_audio': '/r.wav', 'ref_text': 'reference',
+                               'language': 'yue-Hant-HK', 'instruct': 'Speak calmly.'}, io.BytesIO())
+    kind, args, _ = calls[-1]
+    assert kind == 'instruct2'
+    assert args[0] == text
+    assert 'Hong Kong Cantonese' in args[1]
+    assert 'English words in English' in args[1]
+    assert 'Speak calmly.' in args[1]
+    assert args[2] == '/r.wav'
