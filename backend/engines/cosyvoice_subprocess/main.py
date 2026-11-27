@@ -277,6 +277,9 @@ def _run_model(model, msg: dict):
     ref_audio = msg.get("ref_audio") or None
     ref_text = msg.get("ref_text") or None
     instruct = msg.get("instruct") or None
+    speed = float(msg.get("speed", 1.0))
+    if not 0.5 <= speed <= 2.0:
+        raise ValueError("Speech speed must be between 0.5 and 2.0.")
     v3 = _is_v3(model)
     # Keep this standalone sidecar free of app imports; mirrored by CosyVoiceBackend.
     language = str(msg.get("language") or "").lower().replace("_", "-").split("-")[0]
@@ -286,17 +289,17 @@ def _run_model(model, msg: dict):
         ref_audio = os.path.join(_checkout(), *_DEFAULT_PROMPT_CLIP)
         ref_text = None  # the sample's transcript is not ours to supply
     if instruct and ref_audio:
-        return model.inference_instruct2(text, _instruct(instruct, v3), ref_audio, stream=False)
+        return model.inference_instruct2(text, _instruct(instruct, v3), ref_audio, stream=False, speed=speed)
     if ref_audio and ref_text:
         prompt_text = _v3_prompt(ref_text) if v3 else ref_text
-        return model.inference_zero_shot(text, prompt_text, ref_audio, stream=False)
+        return model.inference_zero_shot(text, prompt_text, ref_audio, stream=False, speed=speed)
     if ref_audio:
         tts_text = _v3_prompt(text) if v3 else f"{_lang_tag(msg.get('language'))}{text}"
-        return model.inference_cross_lingual(tts_text, ref_audio, stream=False)
+        return model.inference_cross_lingual(tts_text, ref_audio, stream=False, speed=speed)
     speakers = model.list_available_spks()
     if not speakers:
         raise ValueError("This CosyVoice model has no built-in voices; pass a reference clip.")
-    return model.inference_sft(text, speakers[0], stream=False)
+    return model.inference_sft(text, speakers[0], stream=False, speed=speed)
 
 
 def _mono_pcm_b64(chunks, sample_rate: int) -> tuple[str, int]:

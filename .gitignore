@@ -205,3 +205,4 @@ backend/assets/samples/demo/dubbing/*.src.wav
 /.vscode/settings.json
 
 /.venv-tone/
+/artifacts/cantonese/

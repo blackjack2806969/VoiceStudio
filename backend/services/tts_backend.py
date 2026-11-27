@@ -3712,6 +3712,9 @@ class CosyVoiceBackend(TTSBackend):
         ref_audio = kw.get("ref_audio")
         ref_text = kw.get("ref_text")
         instruct = kw.get("instruct")
+        speed = float(kw.get("speed", 1.0))
+        if not 0.5 <= speed <= 2.0:
+            raise ValueError("Speech speed must be between 0.5 and 2.0.")
 
         # Pick the right inference method based on what the caller provides:
         # 1. instruct + ref_audio → inference_instruct2 (emotion/dialect/speed)
@@ -3733,16 +3736,16 @@ class CosyVoiceBackend(TTSBackend):
             if v3 and not instruct.startswith(self._SYSTEM_PROMPT):
                 instruct = f"{self._SYSTEM_PROMPT} {instruct}"
             results = self._model.inference_instruct2(
-                text, instruct, ref_audio, stream=False,
+                text, instruct, ref_audio, stream=False, speed=speed,
             )
         elif ref_audio and ref_text:
             prompt_text = self._v3_prompt(ref_text) if v3 else ref_text
             results = self._model.inference_zero_shot(
-                text, prompt_text, ref_audio, stream=False,
+                text, prompt_text, ref_audio, stream=False, speed=speed,
             )
         elif ref_audio and v3:
             results = self._model.inference_cross_lingual(
-                self._v3_prompt(text), ref_audio, stream=False,
+                self._v3_prompt(text), ref_audio, stream=False, speed=speed,
             )
         elif ref_audio:
             # Cross-lingual: prefix text with language tag if available.
@@ -3752,13 +3755,13 @@ class CosyVoiceBackend(TTSBackend):
                 lang_key = full_lang[:2] if len(full_lang) > 2 else full_lang
                 lang_tag = self.LANG_TAGS.get(full_lang) or self.LANG_TAGS.get(lang_key, "")
             results = self._model.inference_cross_lingual(
-                f"{lang_tag}{text}", ref_audio, stream=False,
+                f"{lang_tag}{text}", ref_audio, stream=False, speed=speed,
             )
         else:
             # No ref audio — try SFT with first available speaker.
             spks = self._model.list_available_spks()
             spk = spks[0] if spks else "中文女"
-            results = self._model.inference_sft(text, spk, stream=False)
+            results = self._model.inference_sft(text, spk, stream=False, speed=speed)
 
         for chunk in results:
             wav = chunk.get("tts_speech")

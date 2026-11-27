@@ -489,3 +489,28 @@ def test_v3_cantonese_clone_carries_dialect_without_rewriting_mixed_text(monkeyp
     assert 'English words in English' in args[1]
     assert 'Speak calmly.' in args[1]
     assert args[2] == '/r.wav'
+
+
+@pytest.mark.parametrize('inprocess', [False, True])
+def test_cantonese_speed_reaches_existing_engine(monkeypatch, tmp_path, inprocess):
+    calls = []
+    if inprocess:
+        from services.tts_backend import CosyVoiceBackend
+        backend = CosyVoiceBackend()
+        backend._model = _fake_model_class('CosyVoice3', calls)()
+        monkeypatch.setattr(backend, '_ensure_loaded', lambda: None)
+        backend.generate('聽日見。', language='yue', ref_audio='/r.wav', speed=1.25)
+    else:
+        sidecar, _ = _load_sidecar(monkeypatch, tmp_path, calls)
+        sidecar._handle_synthesize({'text': '聽日見。', 'language': 'yue',
+                                   'ref_audio': '/r.wav', 'speed': 1.25}, io.BytesIO())
+    assert _last_call(calls)[2]['speed'] == 1.25
+
+
+@pytest.mark.parametrize('speed', [0, float('nan'), float('inf'), 3])
+def test_invalid_cosyvoice_speed_never_reaches_model(monkeypatch, tmp_path, speed):
+    calls = []
+    sidecar, _ = _load_sidecar(monkeypatch, tmp_path, calls)
+    with pytest.raises(ValueError, match='Speech speed'):
+        sidecar._run_model(_fake_model_class('CosyVoice3', calls)(), {'speed': speed})
+    assert not calls

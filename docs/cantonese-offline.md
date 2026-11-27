@@ -36,6 +36,12 @@ The v3 adapter now carries a Hong Kong Cantonese instruction, retaining English
 words and any user delivery instruction. It preserves the input text, including
 colloquial Traditional Chinese. This is model conditioning, not a guarantee of
 correct pronunciation; listen to your own references and output.
+The existing speech-speed control now reaches CosyVoice inference (0.5–2.0×).
+
+The separate **Cantonese real offline TTS** Actions workflow provisions the pinned
+model, then generates mixed Cantonese/English speech under the OS network sandbox.
+It retains WAV files and duration/F0 metrics for listening and compares 1×/1.25×
+speed. This is a synthesis smoke check, not an automatic pronunciation assessment.
 
 ## One-time preparation on a connected ARM64 Mac
 

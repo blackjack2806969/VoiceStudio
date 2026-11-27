@@ -1,5 +1,20 @@
 # Ponytail review — first MVP
 
+## Speed and CI follow-up
+
+What this change does: Passes the existing speed control through both CosyVoice
+adapters and adds an actual model smoke check using the existing installer.
+The frontend unit test mocks the blob method directly; the real browser check
+still exercises binary WAV responses. Removed the cloud/paid support shortcut.
+
+Reviewed the callers, subprocess keyword forwarding and pinned upstream
+inference signatures. Voice conversion remains unchanged. Invalid speed is
+rejected before inference; no new runtime dependencies or installer were added.
+The speed regression failed before the change and passes afterward.
+
+Verdict: Ship this validation milestone. Real-model and installer CI must pass
+before calling either verified. Not checked: physical M1 Ultra or accent quality.
+
 What this change does: Adds a speech-tone editor to the existing Electron Tools
 page and FastAPI service. It reuses existing access control, audio write helper,
 UI controls, locale catalogs and the existing cloning workflow. Assumed load is

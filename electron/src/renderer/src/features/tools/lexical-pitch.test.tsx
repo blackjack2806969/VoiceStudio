@@ -8,7 +8,7 @@ const data = { id: 'test', take: 'source', duration: 1, times: [.1, .2], f0: [15
 afterEach(() => { cleanup(); vi.clearAllMocks(); localStorage.clear(); });
 it('imports, edits a tone, exports, and undoes from the immutable original', async () => {
   mock.json.mockResolvedValue(data);
-  mock.fetch.mockImplementation(async () => new Response(new Blob(['audio'])));
+  mock.fetch.mockImplementation(async () => ({ blob: async () => new Blob(['audio']) }));
   URL.createObjectURL = vi.fn(() => 'blob:audio'); URL.revokeObjectURL = vi.fn();
   const view = render(<LexicalPitch />);
   fireEvent.change(view.container.querySelector('input[type=file]')!, { target: { files: [new File(['wave'], 'ref.wav')] } });

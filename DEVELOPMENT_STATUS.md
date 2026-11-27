@@ -51,7 +51,7 @@ Implement bounded, non-destructive Praat lexical-tone editing integrated into El
 - Full-suite results, physical Mac tests and production Cantonese listening validation are not claimed.
 
 ## Acceptance work still required (priority order)
-1. Push the committed branch and run the ARM64 workflow; fork write access is now verified.
+1. Complete the ARM64 packaging workflow; source milestones are pushed to cantonese-offline.
 2. Validate packaged startup and inherited OS network denial on macOS, fix any failures.
 3. Provision CosyVoice on M1 Ultra and test real cloning, Cantonese lexical tones,
    mixed-English text, speed, profile persistence and offline restart. Current TTS
@@ -83,3 +83,15 @@ Implement bounded, non-destructive Praat lexical-tone editing integrated into El
 - Real-speech +2-semitone edit: median per-frame formant change F1 4.32%, F2 1.73%,
   F3 1.11% for the test selection. This supports envelope preservation for this
   fixture only; it is not an accent or perceptual-quality guarantee.
+
+## Follow-up validation
+- Second ARM64 run (45942624693) passed the 52 Python tests, actual OS sandbox
+  checks and native helper compilation. Frontend test failed waiting for a
+  mocked Response/Blob; its fetch mock now returns the expected async blob contract.
+  The separate real Chromium/API test exercises actual binary WAV transport.
+- CosyVoice previously discarded speed. Both existing adapters now pass validated
+  0.5–2.0 speed to upstream inference; regression failed before and passes after.
+- Removed the paid/cloud support shortcut from Clone and the workspace header.
+- Added a separate real-model ARM64 smoke workflow using the existing installer
+  and public upstream reference, with synthesis under the offline OS sandbox.
+  It checks voiced audio and the duration change at 1.25×; result pending.
