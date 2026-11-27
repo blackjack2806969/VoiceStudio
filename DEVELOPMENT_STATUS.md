@@ -7,7 +7,7 @@ Updated: 2026-11-27. Deadline: 2026-11-30.
 - Branch: cantonese-offline. Original history and AGPL-3.0 license retained.
 - Official Ponytail instructions persisted in AGENTS.md; official review skill installed locally.
 - Existing code includes voice import, local profiles, MLX TTS, speed, preview, exports and ARM64 packaging.
-- Development host: Linux x86_64. No physical Mac test or real TTS inference performed yet.
+- Development host: Linux x86_64. Real TTS and installer checks also ran on GitHub macOS ARM64. Physical Mac testing remains open.
 - Initial fork creation returned HTTP 403. On recheck, blackjack2806969/VoiceStudio exists as a fork and grants push permission; publishing is now proceeding.
 
 ## Current milestone
@@ -15,8 +15,7 @@ Implement bounded, non-destructive Praat lexical-tone editing integrated into El
 
 ## Remaining acceptance gates
 - Real Hong Kong Cantonese and mixed English listening evaluation on an M1 Ultra.
-- Strict offline application runtime and model provisioning validation.
-- ARM64 build, offline install, and downloaded artifact smoke test.
+- Install the downloaded ARM64 artifact on a physical Mac and exercise the offline workflow.
 - Optional duration editing, alignment and selected-segment regeneration are outside the first milestone.
 
 ## Implemented — editor milestone
@@ -32,7 +31,7 @@ Implement bounded, non-destructive Praat lexical-tone editing integrated into El
   MLX Cantonese inference is not verified; OmniVoice non-commercial weights are not the default.
 - Ponytail review recorded in docs/cantonese-review.md.
 
-## Implemented — offline/deployment milestone (Mac validation pending)
+## Implemented — offline/deployment milestone
 - Python loopback-only audit policy; forced HF offline; telemetry disabled.
 - Electron external renderer request blocking; no cloud account startup or updates.
 - macOS network sandbox for backend and native audio workers, inherited by their children.
@@ -51,14 +50,12 @@ Implement bounded, non-destructive Praat lexical-tone editing integrated into El
 - Full-suite results, physical Mac tests and production Cantonese listening validation are not claimed.
 
 ## Acceptance work still required (priority order)
-1. Complete the ARM64 packaging workflow; source milestones are pushed to cantonese-offline.
-2. Validate packaged startup and inherited OS network denial on macOS, fix any failures.
-3. Provision CosyVoice on M1 Ultra and test real cloning, Cantonese lexical tones,
+1. Provision CosyVoice on M1 Ultra and test real cloning, Cantonese lexical tones,
    mixed-English text, speed, profile persistence and offline restart. Real offline CosyVoice synthesis passed on GitHub ARM64; M1 Ultra listening/performance remain untested.
-4. Measure latency/RAM and evaluate an existing MLX/Metal Cantonese-capable engine
+2. Measure latency/RAM and evaluate an existing MLX/Metal Cantonese-capable engine
    only if its support and licence can be substantiated. Do not promise acceleration.
-5. Review the upstream model-component licences before commercial redistribution.
-6. Optional duration/segment regeneration, alignment and pronunciation detection
+3. Review the upstream model-component licences before commercial redistribution.
+4. Optional duration/segment regeneration, alignment and pronunciation detection
    stay outside the initial milestone. No RVC, singing or DAW work.
 
 ## Final review corrections
@@ -124,8 +121,7 @@ Implement bounded, non-destructive Praat lexical-tone editing integrated into El
 - Optional AudioSeal attempted to fetch absent weights; the offline policy blocked
   it and audio generation succeeded. Added a cache check so absent optional weights
   no longer trigger that attempt. Watermark/offline checks: 24 passed, 2 optional skips.
-- Installer verification still pending; run 45946571487 includes the signing fix
-  and actual packaged edit/playback/export acceptance test.
+- Run 45946571487 verified signing and exposed the packaged Chromium sandbox conflict.
 
 
 ## Packaged Electron sandbox fix
@@ -136,3 +132,12 @@ Implement bounded, non-destructive Praat lexical-tone editing integrated into El
   online browser, repair, update-list and setup paths are blocked in offline mode.
 - The package smoke test checks Chromium sandbox preferences, external IP request
   rejection, actual audio edit and playback, and the exported WAV header.
+
+
+## macOS ARM64 installer acceptance passed
+- GitHub Actions run [45952519707](https://github.com/blackjack2806969/VoiceStudio/actions/runs/45952519707) verified commit `85823f70f` on macos-15 ARM64.
+- 59 Python tests and 4 selected Electron tests passed. The OS profile allowed loopback and denied external TCP in the worker and an inherited native child.
+- The packaged app launched with Chromium renderer sandboxing enabled, rejected external Chromium requests, and reached the managed loopback backend. The app imported speech, edited a pitch point, rendered with Praat, advanced both playback clocks, exported a nonempty RIFF/WAVE file, undid the edit and reopened the project in Traditional Chinese.
+- The playback test now waits for the edited audio source to replace the original blob before measuring progress.
+- The [installer artifact](https://github.com/blackjack2806969/VoiceStudio/actions/runs/45952519707/artifacts/15177723043) contains the DMG and app ZIP with 14-day retention. [Test evidence](https://github.com/blackjack2806969/VoiceStudio/actions/runs/45952519707/artifacts/15178047423) contains the exported WAV and screenshots.
+- The CI smoke test launches the built app bundle. Physical M1 Ultra testing and installation from a downloaded or quarantined DMG remain open. The artifacts use ad-hoc signing.
