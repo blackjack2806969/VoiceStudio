@@ -157,3 +157,12 @@ cannot synthesize. Explicit confirmation starts a separate, fixed-purpose
 installer using the existing pinned provisioning recipe. The backend retains
 its offline profile and port 3920. The ARM64 workflow now tests the packaged
 Clone UI before and after provisioning, real TTS and the existing pitch workflow.
+
+The packaged run 45965307281 opened Clone with no weights, completed the online
+installer and restarted its backend, then failed to see the installed engine.
+The Mac test data folder could be addressed through both `/var` and `/private/var`.
+The installer saved the canonical path but the backend compared it to an alias
+and treated its managed checkout as external. The packaged backend now
+canonicalizes that same data path before restoring preferences. A local symlink
+regression passed. Run 45969948061 is verifying this fix through synthesis,
+pitch editing and the gated GitHub prerelease.
