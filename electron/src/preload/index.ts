@@ -115,6 +115,9 @@ const bridge: VoiceStudioBridge = {
     onState: (cb) => subscribe<AccountPublicState>('account:state', cb),
   },
   backend: {
+    ...(process.env.VOICESTUDIO_CANTONESE_BUNDLED === '1' ? {
+      installCosyVoice: (locale: string) => ipcRenderer.invoke('cosyvoice:install', locale) as Promise<void>,
+    } : {}),
     getStatus: () => ipcRenderer.invoke('backend:getStatus') as Promise<BackendStatus>,
     acknowledgeCrash: () => ipcRenderer.invoke('backend:acknowledgeCrash'),
     onStatus: (cb) => subscribe<BackendStatus>('backend:status', cb),

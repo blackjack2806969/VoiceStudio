@@ -6,6 +6,8 @@ const state = vi.hoisted(() => ({
   backendStage: 'ready',
   localReady: false,
   supportsCloning: true,
+  catalogueError: false,
+  activeModel: 'k2-fsa/OmniVoice' as string | null,
 }));
 
 vi.mock('./use-backend-status', async (importOriginal) => {
@@ -19,7 +21,7 @@ vi.mock('./use-engines', () => ({
     data: {
       tts: {
         active: 'omnivoice',
-        active_model: 'k2-fsa/OmniVoice',
+        active_model: state.activeModel,
         backends: [
           {
             id: 'omnivoice',
@@ -47,6 +49,7 @@ vi.mock('@/features/settings/model-catalogue-query', () => ({
       ],
     },
     isLoading: false,
+    isError: state.catalogueError,
   }),
 }));
 
@@ -56,6 +59,8 @@ describe('local TTS readiness', () => {
       backendStage: 'ready',
       localReady: false,
       supportsCloning: true,
+      catalogueError: false,
+      activeModel: 'k2-fsa/OmniVoice',
     });
   });
 
@@ -66,6 +71,16 @@ describe('local TTS readiness', () => {
   it('allows an installed local engine', () => {
     state.localReady = true;
     expect(renderHook(() => useTtsReadiness()).result.current).toBeNull();
+  });
+
+  it('uses the managed sidecar verdict without depending on the model catalogue', () => {
+    state.activeModel = null;
+    state.catalogueError = true;
+    const readiness = renderHook(() => useTtsReadiness('clone'));
+    expect(readiness.result.current).toBe('engine');
+    state.localReady = true;
+    readiness.rerender();
+    expect(readiness.result.current).toBeNull();
   });
 
   it('blocks cloning with a model that would ignore the reference', () => {

@@ -141,3 +141,19 @@ Implement bounded, non-destructive Praat lexical-tone editing integrated into El
 - The playback test now waits for the edited audio source to replace the original blob before measuring progress.
 - The [installer artifact](https://github.com/blackjack2806969/VoiceStudio/actions/runs/45952519707/artifacts/15177723043) contains the DMG and app ZIP with 14-day retention. [Test evidence](https://github.com/blackjack2806969/VoiceStudio/actions/runs/45952519707/artifacts/15178047423) contains the exported WAV and screenshots.
 - The CI smoke test launches the built app bundle. Physical M1 Ultra testing and installation from a downloaded or quarantined DMG remain open. The artifacts use ad-hoc signing.
+
+## Clone readiness and installer follow-up
+
+A physical Mac user reported an indefinitely loading Clone page. The old gate
+waited without a deadline for the full engine inventory and model catalogue.
+Its recovery tried to download within the backend network sandbox. A runtime
+marker alone could also mark a CosyVoice sidecar available before weights were
+complete.
+
+The packaged app checks the pinned CosyVoice runtime and complete local weights
+without probing unrelated TTS engines or waiting on the model catalogue. Engine
+and catalogue requests have deadlines. Clone shows a download action when it
+cannot synthesize. Explicit confirmation starts a separate, fixed-purpose
+installer using the existing pinned provisioning recipe. The backend retains
+its offline profile and port 3920. The ARM64 workflow now tests the packaged
+Clone UI before and after provisioning, real TTS and the existing pitch workflow.

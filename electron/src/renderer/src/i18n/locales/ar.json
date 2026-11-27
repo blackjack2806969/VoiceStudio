@@ -2975,6 +2975,10 @@
     "pockettts_accepted_toast": "تم قبول شروط PocketTTS."
   },
   "engines": {
+    "cosyvoice_install": "Download CosyVoice 3",
+    "cosyvoice_required": "CosyVoice 3 is required for local speech",
+    "cosyvoice_setup_body": "Connect to the internet to download the engine and about 5.4 GB of model weights. Speech and recordings stay on this Mac.",
+    "cosyvoice_setup_failed": "CosyVoice setup failed. Check the internet connection, free disk space and Xcode Command Line Tools, then try again.",
     "selectCpuFallback": "{{engine}}: يعمل على المعالج المركزي — {{reason}}",
     "selectWithCaveat": "تم التبديل إلى {{engine}} — {{reason}}",
     "acceptLicense": "قبول الترخيص",

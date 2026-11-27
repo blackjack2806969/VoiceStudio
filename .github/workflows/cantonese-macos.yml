@@ -3,6 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [cantonese-offline]
+    tags: ['cantonese-macos-*']
     paths:
       - 'backend/**'
       - 'electron/**'
@@ -70,11 +71,11 @@ jobs:
           (ulimit -n 128; node electron/tests/cantonese-sign-walk.test.mjs)
           bun run --cwd electron typecheck
           cd electron
-          bun x vitest run src/renderer/src/features/tools/lexical-pitch.test.tsx src/main/cantonese-offline.test.ts
+          bun x vitest run src/renderer/src/features/tools/lexical-pitch.test.tsx src/main/cantonese-offline.test.ts src/main/ipc-registry.test.ts src/renderer/src/hooks/use-tts-readiness.test.tsx
           bun run build
           bun run build:web
           bun x electron-builder --config electron-builder.config.mjs --mac --arm64 --publish never
-      - name: Launch the sandboxed app and edit real speech
+      - name: Verify packaged Clone with and without CosyVoice, then edit real speech
         run: node electron/tests/cantonese-packaged-smoke.mjs
       - name: Retain packaged test evidence
         if: always()
@@ -92,3 +93,25 @@ jobs:
           path: |
             electron/release/*.dmg
             electron/release/*arm64*.zip
+  publish:
+    if: github.repository == 'blackjack2806969/VoiceStudio' && startsWith(github.ref, 'refs/tags/cantonese-macos-')
+    needs: macos-arm64
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: Cantonese-Voice-Studio-macOS-arm64
+          path: installers
+      - name: Publish the verified macOS ARM64 prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --verify-tag --prerelease \
+            --title "Cantonese Voice Studio for macOS — Clone setup fix" \
+            --notes-file - installers/*.dmg installers/*arm64*.zip <<'NOTES'
+          Clone opens before CosyVoice is installed. Choose **Download CosyVoice 3** to connect for model setup. Downloads include the engine, its dependencies and about 5.4 GB of weights. Xcode Command Line Tools may be needed.
+
+          Recordings, voice cloning, synthesis and pitch editing remain local. The macOS ARM64 CI test opened Clone with no weights, used the packaged installer, synthesized a WAV in Clone and exercised pitch editing, playback and export. The app is ad-hoc signed and has no Developer ID notarization.
+          NOTES

@@ -38,6 +38,7 @@ export function useEngineSetup(operation = 'tts') {
   const client = useQueryClient();
   const [fixing, setFixing] = useState(false);
   const blocker = useTtsReadiness(operation);
+  const installCosyVoice = window.voicestudio?.backend?.installCosyVoice;
 
   const refreshReadiness = useCallback(
     () =>
@@ -108,6 +109,11 @@ export function useEngineSetup(operation = 'tts') {
   const fix = async () => {
     setFixing(true);
     try {
+      if (installCosyVoice) {
+        await installCosyVoice(document.documentElement.lang);
+        void refreshReadiness();
+        return;
+      }
       // Readiness also blocks when the selected engine is available but the
       // model chosen for it is not downloaded. Download that model first,
       // keeping the user's engine choice; a recommended model alone would not
@@ -137,7 +143,8 @@ export function useEngineSetup(operation = 'tts') {
         );
       }
     } catch (error) {
-      repair(`Automatic model setup failed: ${describeError(error)}`);
+      if (installCosyVoice) toast.error(t('engines.cosyvoice_setup_failed'));
+      else repair(`Automatic model setup failed: ${describeError(error)}`);
     } finally {
       setFixing(false);
     }
@@ -145,6 +152,7 @@ export function useEngineSetup(operation = 'tts') {
   const view = install.view;
   return {
     blocked: blocker === 'engine',
+    cosyVoice: Boolean(installCosyVoice),
     busy: fixing || install.busy,
     /** A download this setup started or joined, until it ends or is dismissed. */
     install: view && view.stage !== 'ready' && view.stage !== 'cancelled' ? install : null,
@@ -200,7 +208,7 @@ export function EngineSetupButton({
       ) : (
         <WrenchIcon />
       )}
-      <span className="truncate">{t('engines.set_up')}</span>
+      <span className="truncate">{t(setup.cosyVoice ? 'engines.cosyvoice_install' : 'engines.set_up')}</span>
     </Button>
   );
 }
@@ -212,7 +220,7 @@ export function EngineSetupStatus({ setup, id }: { setup: EngineSetup; id?: stri
     <div id={id} className="mb-2.5 space-y-2 px-1">
       <p role="status" className="flex min-w-0 items-center gap-2 text-sm text-muted-foreground">
         <TriangleAlertIcon aria-hidden="true" className="size-3.5 shrink-0 text-warning" />
-        <span className="min-w-0 truncate">{t('engines.none_ready_title')}</span>
+        <span className="min-w-0 truncate">{t(setup.cosyVoice ? 'engines.cosyvoice_required' : 'engines.none_ready_title')}</span>
       </p>
       <EngineSetupProgress setup={setup} />
     </div>
@@ -346,8 +354,8 @@ export function EngineSetupNotice({
     <NotReadyNotice
       compact={compact}
       className={className}
-      title={t('engines.none_ready_title')}
-      body={t('engines.none_ready_body')}
+      title={t(setup.cosyVoice ? 'engines.cosyvoice_required' : 'engines.none_ready_title')}
+      body={t(setup.cosyVoice ? 'engines.cosyvoice_setup_body' : 'engines.none_ready_body')}
       action={action}
     />
   );

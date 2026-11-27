@@ -2919,6 +2919,10 @@
     "pockettts_accepted_toast": "已接受 PocketTTS 條件。"
   },
   "engines": {
+    "cosyvoice_install": "下載 CosyVoice 3",
+    "cosyvoice_required": "本機語音合成需要 CosyVoice 3",
+    "cosyvoice_setup_body": "請連線下載引擎及約 5.4 GB 的模型權重。語音和錄音會留在這部 Mac。",
+    "cosyvoice_setup_failed": "CosyVoice 設定失敗。請檢查網絡、剩餘磁碟空間及 Xcode 命令列工具，再試一次。",
     "selectCpuFallback": "{{engine}}：正在 CPU 上執行 — {{reason}}",
     "selectWithCaveat": "已切換至 {{engine}} — {{reason}}",
     "acceptLicense": "接受許可",

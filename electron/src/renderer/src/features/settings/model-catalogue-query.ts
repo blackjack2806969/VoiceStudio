@@ -48,16 +48,20 @@ export const CATALOGUE_POLL_WHILE_WAITING_MS = 15_000;
 
 export function useModelCatalogue({
   pollWhile,
+  enabled = true,
 }: {
+  enabled?: boolean;
   /** Keep re-reading while this holds, e.g. while a gate waits on a download. */
   pollWhile?: (data: ModelCatalogueResponse | undefined) => boolean;
 } = {}) {
   const status = useBackendStatus();
   return useQuery({
     queryKey: ['model-catalogue'],
-    queryFn: () => apiJson<ModelCatalogueResponse>('/models'),
+    queryFn: ({ signal }) => apiJson<ModelCatalogueResponse>('/models', {
+      signal: AbortSignal.any([signal, AbortSignal.timeout(15_000)]),
+    }),
     staleTime: 30_000,
-    enabled: isBackendReachable(status.stage),
+    enabled: enabled && isBackendReachable(status.stage),
     refetchInterval: pollWhile
       ? (query) => (pollWhile(query.state.data) ? CATALOGUE_POLL_WHILE_WAITING_MS : false)
       : undefined,

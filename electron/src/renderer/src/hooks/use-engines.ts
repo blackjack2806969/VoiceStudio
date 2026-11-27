@@ -43,7 +43,8 @@ export function useEngines(): UseEnginesResult {
   const status = useBackendStatus();
   const query = useQuery({
     queryKey: queryKeys.engines,
-    queryFn: getEngines,
+    queryFn: ({ signal }) => getEngines(signal),
+    retry: false,
     staleTime: ENGINES_STALE_MS,
     enabled: isBackendReachable(status.stage),
     refetchInterval: (query) =>

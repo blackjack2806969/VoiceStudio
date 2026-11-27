@@ -23,6 +23,7 @@ export function useTtsReadiness(operation = 'tts'): TtsReadinessBlocker {
   // this gate must too, or a download finished elsewhere (Settings, another
   // window, the CLI) leaves the "not ready" notice up until a remount.
   const catalogue = useModelCatalogue({
+    enabled: Boolean(activeModelId) && engines.activeTtsReady,
     pollWhile: (data) => Boolean(activeModelId) && modelMissing(data, activeModelId),
   });
   // A live-but-busy backend (#2430) is not a loading state: it is mid-job, so
@@ -42,7 +43,7 @@ export function useTtsReadiness(operation = 'tts'): TtsReadinessBlocker {
   )
     return 'cloning';
   if (activeModelId && catalogue.isLoading) return 'loading';
-  return modelMissing(catalogue.data, activeModelId) ? 'engine' : null;
+  return activeModelId && (catalogue.isError || modelMissing(catalogue.data, activeModelId)) ? 'engine' : null;
 }
 
 /** The catalogue lists this model and it is not fully on disk. */

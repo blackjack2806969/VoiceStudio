@@ -82,7 +82,17 @@ def _family_payload(family: str, module):
             instance = getattr(tts_backend, "_active_instance", None)
             if instance is not None and getattr(tts_backend, "_active_instance_id", None) == active:
                 model = instance.model_identity()
-    backends = public_backends(module.list_backends())
+    if family == "tts" and active == "cosyvoice" and os.environ.get("VOICESTUDIO_CANTONESE_BUNDLED") == "1":
+        # The packaged fork pins this engine. Unrelated native probes must not
+        # decide when Clone opens, and the sidecar installer owns its weights.
+        from services.sidecar_install import get_status
+
+        backends = public_backends(module.list_backends(only=active))
+        if backends and backends[0]["available"] and not get_status(active)["installed"]:
+            backends[0].update(available=False, reason="CosyVoice weights are missing. Download CosyVoice 3 in Clone.")
+        model = None
+    else:
+        backends = public_backends(module.list_backends())
     if family == "tts":
         from services import settings_store
 
@@ -138,7 +148,7 @@ def _request_install_capability(payload, request):
     result = dict(payload)
     result["backends"] = [dict(entry) for entry in payload["backends"]]
     for entry in result["backends"]:
-        if entry.get("one_click_install") and not allowed:
+        if entry.get("one_click_install") and (not allowed or os.environ.get("VOICESTUDIO_CANTONESE_BUNDLED") == "1"):
             entry["one_click_install"] = False
             entry["local_install_required"] = True
     return result
@@ -589,6 +599,8 @@ def install_sidecar_engine(engine_id: str):
     404 for engines that have no sidecar installer — the response names the
     translation-engine route so a mis-aimed client can self-correct.
     """
+    if os.environ.get("VOICESTUDIO_CANTONESE_BUNDLED") == "1":
+        raise HTTPException(status_code=409, detail="Use the CosyVoice installer in Clone.")
     from services import sidecar_install
     try:
         return sidecar_install.start_install(engine_id)

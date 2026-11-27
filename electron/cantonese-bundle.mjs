@@ -1,4 +1,4 @@
-import { copyFileSync, chmodSync, readFileSync } from 'node:fs';
+import { copyFileSync, chmodSync, mkdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 
@@ -11,6 +11,9 @@ export function packageCantonese(context) {
   copyFileSync(new URL('launch-offline.sh', source), launcher);
   chmodSync(launcher, 0o755);
   copyFileSync(new URL('offline.sb', source), join(contents, 'Resources', 'cantonese-offline.sb'));
+  const scripts = join(contents, 'Resources', 'scripts');
+  mkdirSync(scripts, { recursive: true });
+  copyFileSync(new URL('../scripts/prepare_cantonese_models.py', import.meta.url), join(scripts, 'prepare_cantonese_models.py'));
   execFileSync('/usr/libexec/PlistBuddy', ['-c', 'Set :CFBundleExecutable cantonese-offline', join(contents, 'Info.plist')]);
   const manifest = JSON.parse(readFileSync(join(contents, 'Resources', 'python-runtime', 'manifest.json')));
   if (manifest.arch !== 'arm64') throw new Error('Cantonese runtime must be ARM64');

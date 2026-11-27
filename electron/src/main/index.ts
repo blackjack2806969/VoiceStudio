@@ -1,4 +1,5 @@
 import { localRuntimeUrl } from './cantonese-offline';
+import { registerCantoneseInstaller } from './cantonese-installer';
 import { logStartup } from './startup-log';
 import {
   decideTerminalStop,
@@ -589,6 +590,9 @@ if (singleInstance && !app.requestSingleInstanceLock()) {
 
       applySavedTorchVariant();
       const backend = new BackendSupervisor();
+      if (process.env.VOICESTUDIO_CANTONESE_BUNDLED === '1') {
+        registerCantoneseInstaller(backend, () => mainWindow);
+      }
       supervisor = backend;
       console.log(`[supervisor] backend root: ${backendRoot()} (packaged=${app.isPackaged})`);
       backend.subscribe((s) => {

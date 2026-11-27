@@ -45,6 +45,16 @@ model, then generates mixed Cantonese/English speech under the OS network sandbo
 It retains WAV files and duration/F0 metrics for listening and compares 1×/1.25×
 speed. This is a synthesis smoke check, not an automatic pronunciation assessment.
 
+## CosyVoice setup in the app
+
+Open **Clone** and click **Download CosyVoice 3**. Confirm **Download** in the
+Mac dialog to permit the separate installer to access the internet. It installs
+the engine, its dependencies and about 5.4 GB of weights. If setup fails, check
+internet access, free space and Xcode Command Line Tools (`xcode-select --install`),
+then retry. The package reuses completed downloads where possible. Keep the app
+open until setup finishes and its local backend restarts. You can disconnect
+before importing a recording or synthesizing speech.
+
 ## One-time preparation on a connected ARM64 Mac
 
 Downloads happen in this separate preparation step. The studio itself stays
@@ -137,8 +147,7 @@ failure stops the affected worker.
 The Python backend also blocks non-loopback sockets and DNS through an audit hook
 and forces Hugging Face offline mode. Electron filters external Chromium requests
 and disables proxy discovery, remote hostname resolution, external browser launch,
-analytics, updates and cloud account startup. Internet-dependent setup is a
-separate provisioning step. Use the normal app entrypoint or the source launcher
+analytics, updates and cloud account startup. Only an explicitly confirmed, separate model installer uses the internet. Use the normal app entrypoint or the source launcher
 to select the right worker profile.
 
 ## Build and downloadable artifact

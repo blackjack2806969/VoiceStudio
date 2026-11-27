@@ -33,6 +33,7 @@ const read = (file: string): string => readFileSync(file, 'utf8');
 /** Modules that register a channel with `ipcMain` directly or through the gate. */
 const REGISTERING_MODULES = new Set([
   'account/account-ipc.ts',
+  'cantonese-installer.ts',
   'index.ts',
   'ipc.ts',
   'native-capture.ts',

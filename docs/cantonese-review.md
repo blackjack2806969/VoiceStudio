@@ -101,3 +101,18 @@ backend restarts, native output and watch-folder callers, renderer request and
 external launch paths, and preload consumers. The worker spawn has no bare
 fallback. Existing package acceptance now also checks renderer isolation,
 Chromium egress and the downloaded WAV bytes.
+
+### Packaged Clone readiness and setup
+
+What this change does: Uses the existing CosyVoice inventory and installer,
+with bounded renderer metadata requests and a user-confirmed download outside
+the offline backend. A missing model leaves the Clone workspace accessible.
+
+Reviewed runtime and weights separately. A complete venv without weights cannot
+enable inference. IPC accepts the locale only and uses the trusted main frame,
+native confirmation, bundled executable, fixed script and app-owned data path.
+The downloader does not receive a recording, prompt or API token from the UI.
+Its separate launch skips the bundled Python startup hook. Backend and audio
+worker launches still use the existing OS profile and Python network policy.
+The packaged check starts with fresh app data, exercises the actual download
+button and verifies real speech generation and pitch editing.

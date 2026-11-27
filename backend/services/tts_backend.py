@@ -4447,7 +4447,7 @@ def preset_voices_of(cls) -> list[str]:
     return [v for v in voices if isinstance(v, str)]
 
 
-def list_backends(*, include_hidden: bool = False) -> list[dict]:
+def list_backends(*, include_hidden: bool = False, only: str | None = None) -> list[dict]:
     """Enumerate every registered backend with its availability state.
 
     On MPS, the explicit ``omnivoice-subprocess`` compatibility entry is
@@ -4515,6 +4515,8 @@ def list_backends(*, include_hidden: bool = False) -> list[dict]:
 
     out: list[dict] = []
     for bid, cls in _REGISTRY.items():
+        if only is not None and bid != only:
+            continue
         if not include_hidden and caps.family == "mps" and bid == "omnivoice-subprocess":
             continue
         cls = _effective_backend_class(bid, cls, caps.family)
