@@ -3,8 +3,12 @@ import { resolve } from 'node:path';
 
 export async function exerciseToneEditor(page, baseUrl, captures) {
   await page.goto(baseUrl + '/#/tools');
+  const imported = page.waitForResponse(response =>
+    response.request().method() === 'POST' && response.url().endsWith('/tools/lexical-pitch/import'));
   await page.getByLabel('Import recording', { exact: true }).setInputFiles(resolve(import.meta.dirname, '../../backend/assets/samples/dictation/en_conversational.wav'));
-  await page.getByRole('button', { name: 'Add pitch points', exact: true }).waitFor();
+  assert.equal((await imported).status(), 200);
+  await page.getByRole('button', { name: 'Add pitch points', exact: true })
+    .and(page.locator('button:enabled')).waitFor();
   const graph = page.getByRole('img', { name: /Speech waveform/ });
   await graph.scrollIntoViewIfNeeded();
   const rect = await graph.boundingBox();

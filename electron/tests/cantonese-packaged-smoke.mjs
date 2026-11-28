@@ -1,6 +1,6 @@
 import { _electron as electron } from 'playwright';
 import assert from 'node:assert/strict';
-import { mkdir, mkdtemp, readFile, rename, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, mkdtemp, readFile, rename, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { homedir, tmpdir } from 'node:os';
 import { exerciseToneEditor } from './cantonese-tone-flow.mjs';
@@ -80,12 +80,15 @@ try {
   await verifyNavigation(page, ['Clone', 'Cantonese Pitch Editor', 'Saved Voices', 'History', 'Settings']);
   await navigation(page).getByRole('link', { name: 'Saved Voices', exact: true }).click();
   await page.getByRole('heading', { name: 'Saved Voices', exact: true }).waitFor();
+  await page.getByRole('main').getByRole('button', { name: 'Demo Voice', exact: true }).waitFor();
+  await page.screenshot({ path: resolve(captures, 'ui-03-saved-voices.png') });
   await page.goto('app://voicestudio/#/settings/sharing');
   await page.waitForURL('**/#/settings/general');
   await page.getByRole('heading', { name: 'General', exact: true }).waitFor();
   await page.getByRole('link', { name: 'Models', exact: true }).click();
   await page.getByText('VoiceStudio (k2-fsa/OmniVoice, 600+ languages)', { exact: true }).first().waitFor();
   assert.equal(await page.getByRole('link', { name: /dictation|translation|credentials|network|account/i }).count(), 0);
+  await page.screenshot({ path: resolve(captures, 'ui-05-settings.png') });
   await page.goto('app://voicestudio/#/dub');
   await page.waitForURL('**/#/clone');
   const install = page.getByRole('button', { name: 'Download OmniVoice', exact: true });
@@ -186,12 +189,17 @@ try {
       await navigation(page).getByRole('link', { name: 'History', exact: true }).click();
       await page.getByRole('heading', { name: 'History', exact: true }).waitFor();
     }
+    const editPitch = page.getByRole('button', { name: 'Edit Pitch', exact: true });
+    await editPitch.waitFor();
+    await page.screenshot({
+      path: resolve(captures, origin === 'Clone' ? 'ui-01-clone.png' : 'ui-04-history.png'),
+    });
     const original = page.waitForResponse(response =>
       new URL(response.url()).pathname === '/api/audio/' + encodeURIComponent(audioPath) &&
       response.ok());
     const upload = page.waitForResponse(response =>
       response.request().method() === 'POST' && response.url().endsWith('/tools/lexical-pitch/import'));
-    await page.getByRole('button', { name: 'Edit Pitch', exact: true }).click();
+    await editPitch.click();
     const [wavResponse, importResponse] = await Promise.all([original, upload]);
     assert.deepEqual(await wavResponse.body(), speech, `${origin} selected a different WAV`);
     assert.equal(importResponse.status(), 200);
@@ -206,6 +214,7 @@ try {
   console.log('PASS: both Clone and History opened the selected WAV directly in the pitch editor.');
 
   await exerciseToneEditor(page, 'app://voicestudio', captures);
+  await copyFile(resolve(captures, 'editor-en.png'), resolve(captures, 'ui-02-cantonese-pitch-editor.png'));
   await verifyNavigation(page, ['複製', '廣東話音高編輯器', '已儲存聲音', '歷史記錄', '設定']);
   const exported = await readFile(resolve(captures, 'edited-speech.wav'));
   assert(exported.length > 44 && exported.toString('ascii', 0, 4) === 'RIFF' &&
