@@ -9,7 +9,7 @@ from test_docker_registry_owner import resolved_env
 
 yaml = pytest.importorskip("yaml")
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 WORKFLOW = os.path.join(ROOT, ".github", "workflows", "docker.yml")
 # CUDA amd64, ROCm amd64 and CUDA arm64 (#2831) image jobs.
 FLAVORS = 3
@@ -77,10 +77,10 @@ def test_docker_hub_keeps_its_existing_coordinate():
 def test_active_templates_use_the_canonical_public_path():
     canonical = "ghcr.io/debpalash/voicestudio"
     for rel in (
-        "deploy/docker-compose.yml",
+        "app/deploy/docker-compose.yml",
         "docs/integration-directory.md",
         "docs/install/linux.md",
-        "electron/src/renderer/src/features/integrations/setup-registry.ts",
+        "app/electron/src/renderer/src/features/integrations/setup-registry.ts",
     ):
         text = open(os.path.join(ROOT, rel), encoding="utf-8").read()
         assert canonical in text, f"{rel} does not use the canonical GHCR path"
@@ -91,7 +91,7 @@ def test_the_docs_name_the_path_that_is_actually_published(tmp_path):
     env = resolved_env(tmp_path, "debpalash")
     published = f"ghcr.io/{env['IMAGE_NAME']}"
     legacy = f"ghcr.io/{env['LEGACY_IMAGE_NAME']}"
-    for rel in ("docs/install/docker.md", "deploy/dockerhub-overview.md"):
+    for rel in ("docs/install/docker.md", "app/deploy/dockerhub-overview.md"):
         path = os.path.join(ROOT, rel)
         if not os.path.isfile(path):
             continue

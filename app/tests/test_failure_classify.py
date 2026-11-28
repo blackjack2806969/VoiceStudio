@@ -213,7 +213,7 @@ def test_transformers_import_hint_versions_match_the_constraint_file():
     surfaces = {
         "core/failure.py hint": failure._HINTS["TRANSFORMERS_IMPORT"],
     }
-    with open(os.path.join(root, "docs", "install", "troubleshooting.md")) as fh:
+    with open(os.path.join(root, "..", "docs", "install", "troubleshooting.md")) as fh:
         surfaces["troubleshooting.md"] = fh.read()
 
     # The COMMAND, not isolated substrings (CodeRabbit): a surface could carry

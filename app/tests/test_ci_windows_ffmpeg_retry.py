@@ -27,7 +27,7 @@ pytestmark = pytest.mark.skipif(
 
 _WORKFLOW = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    ".github", "workflows", "ci.yml",
+    "..", ".github", "workflows", "ci.yml",
 )
 _STEP = "System deps (Windows)"
 

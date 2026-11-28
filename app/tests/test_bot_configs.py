@@ -24,7 +24,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 CONFIGS = (".coderabbit.yaml", "greptile.json")
 _GLOB_CHARS = "*?{["
 _BANNED = ("src-tauri", "frontend/")
@@ -152,7 +152,7 @@ def test_extractor_flags_stale_paths():
     )
     assert tokens == ["frontend/src/i18n/locales/*.json", "backend/core/version.py", "NOPE.md"]
     assert not _prefix_exists("frontend/src-tauri/Cargo.toml")
-    assert _prefix_exists("electron/src/{shared,renderer}/**/*.tsx")
+    assert _prefix_exists("app/electron/src/{shared,renderer}/**/*.tsx")
     assert _glob_regex("electron/src/{shared,renderer}/**/*.{js,tsx}").match(
         "electron/src/shared/components/Foo.tsx"
     )

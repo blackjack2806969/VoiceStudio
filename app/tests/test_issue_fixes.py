@@ -30,16 +30,15 @@ OLD_DISCORD = "discord.gg/aRRdVj3de7"
 NEW_DISCORD = "discord.gg/bzQavDfVV9"
 
 _LINK_FILES = [
-    "README.md",
     ".github/CONTRIBUTING.md",
-    "electron/src/shared/utils/contactLinks.js",
+    "app/electron/src/shared/utils/contactLinks.js",
 ]
 
 
 @pytest.mark.parametrize("relpath", _LINK_FILES)
 def test_discord_link_updated(relpath):
     """Expired Discord invite must not appear anywhere we publish links."""
-    filepath = _REPO / relpath
+    filepath = _REPO.parent / relpath
     if not filepath.exists():
         pytest.skip(f"{relpath} not found")
     content = filepath.read_text(encoding="utf-8")
@@ -51,13 +50,13 @@ def test_no_old_discord_link_anywhere():
     """Repo-wide sweep: no markdown or JSX file should reference the old link."""
     hits = []
     for ext in ("*.md", "*.jsx", "*.tsx"):
-        for p in _REPO.rglob(ext):
+        for p in _REPO.parent.rglob(ext):
             # Skip node_modules, .git, research submodules
-            parts = p.relative_to(_REPO).parts
+            parts = p.relative_to(_REPO.parent).parts
             if any(skip in parts for skip in ("node_modules", ".git", "research", "dist", "target", "build")):
                 continue
             if OLD_DISCORD in p.read_text(encoding="utf-8", errors="ignore"):
-                hits.append(str(p.relative_to(_REPO)))
+                hits.append(str(p.relative_to(_REPO.parent)))
     assert hits == [], f"Old Discord link still in: {hits}"
 
 

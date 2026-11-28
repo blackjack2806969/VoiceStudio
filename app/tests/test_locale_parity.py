@@ -304,5 +304,5 @@ def test_the_contract_does_not_name_a_removed_catalog() -> None:
         "the legacy shared i18n catalog is back: document it again in CLAUDE.md and AGENTS.md"
     )
     for name in ("CLAUDE.md", "AGENTS.md"):
-        text = (root / name).read_text(encoding="utf-8")
+        text = (root.parent / name).read_text(encoding="utf-8")
         assert "shared/i18n" not in text, f"{name} still exempts the removed legacy i18n catalog"

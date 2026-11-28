@@ -106,6 +106,7 @@ esac
 printf 'git %s\\n' "$*" >> "$TEST_ROOT/commands"
 if [ "$1" = clone ]; then
  for arg in "$@"; do dest=$arg; done
+ ${options.nestedSource ? 'dest="$dest/app"' : ':'}
  mkdir -p "$dest/electron/release"
  mkdir -p "$dest/electron/tests" "$dest/electron/scripts"
  touch "$dest/electron/tests/packaging-contract.mjs" "$dest/electron/tests/update-package-contract.mjs" "$dest/electron/scripts/embed-appimage-update.mjs"
@@ -262,9 +263,9 @@ for (const options of [{ badChecksum: true }, { missing: true }]) {
     assert.equal(existsSync(join(f.home, '.local/bin/VoiceStudio')), false);
   });
 }
-for (const option of ['--main', '--source']) {
-  test(`${option} builds a fresh main checkout and installs`, (t) => {
-    const f = fixture(t);
+for (const [option, nestedSource] of [['--main', false], ['--source', false], ['--main', true]]) {
+  test(`${option} builds and installs from a ${nestedSource ? 'nested' : 'flat'} main checkout`, (t) => {
+    const f = fixture(t, { nestedSource });
     const r = f.run([option]);
     assert.equal(r.status, 0, r.stderr);
     assert.equal(readFileSync(join(f.home, '.local/bin/VoiceStudio'), 'utf8'), payload);
