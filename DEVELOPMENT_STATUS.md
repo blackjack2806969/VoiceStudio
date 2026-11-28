@@ -215,3 +215,8 @@ physical Mac remains open.
   projects outside the focused History view keep their files.
 - Packaged acceptance covers both handoffs, the exact navigation in English and
   Traditional Chinese, model setup and reuse, and the existing audio tests.
+- Local type checking, locale validation and 130 targeted Electron tests
+  passed. The candidate is tagged `cantonese-macos-0.3.0`.
+- GitHub rejected workflow dispatch with HTTP 422 because Actions is disabled
+  for the fork. The integration cannot read or change the Actions settings
+  (HTTP 403). Packaged ARM64 acceptance and release publication are pending.
