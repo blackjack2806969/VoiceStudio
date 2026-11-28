@@ -11,7 +11,7 @@ Updated: 2026-11-28. Deadline: 2026-11-30.
 - Initial fork creation returned HTTP 403. On recheck, blackjack2806969/VoiceStudio exists as a fork and grants push permission; publishing is now proceeding.
 
 ## Current milestone
-Validate the v0.4.0 Multiple Takes candidate.
+The v0.4.0 Multiple Takes candidate passed ARM64 CI and awaits physical acceptance.
 
 ## Remaining acceptance gates
 - Real Hong Kong Cantonese and mixed English listening evaluation on an M1 Ultra.
@@ -253,9 +253,16 @@ physical Mac remains open.
 - Each completed take supports playback, WAV export and Edit Pitch in Clone and
   is saved to History. Cancelling or failing a batch leaves its completed takes
   available. The app reuses the existing model and offline restrictions.
-- Focused Electron tests cover queue order, input reuse, seeds, cancellation,
-  partial failures and single-take generation. The ARM64 workflow includes
-  packaged checks for 1, 3 and 5 takes using the reused OmniVoice cache.
+- 99 focused Electron tests and 24 Python regressions passed. Cancellation and
+  partial failure were tested with controlled generation responses. Cancellation
+  drops waiting takes and aborts the renderer request. Inference already running
+  in the backend may take time to finish.
+- [ARM64 CI](https://github.com/blackjack2806969/Cantonese-Voice-Studio/actions/runs/46156322338)
+  installed from the DMG and generated 1, 3 and 5 takes offline using the reused
+  OmniVoice cache. The 3- and 5-take runs shared the warm model. CI verified unique
+  seeds, History entries, playback, WAV export and independent Edit Pitch handoffs.
+  The [CI artifact](https://github.com/blackjack2806969/Cantonese-Voice-Studio/actions/runs/46156322338/artifacts/15268750036)
+  contains the DMG and app ZIP.
 - Physical M1 Ultra acceptance still needs an offline install and restart with
   existing data, Cantonese and mixed-language listening checks, and a real save
   dialog. Release publication requires approval.
