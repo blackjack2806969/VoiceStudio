@@ -6,6 +6,7 @@
   <p><a href="README.md">English</a> · <strong>繁體中文（香港）</strong></p>
   <p>
     <a href="https://github.com/blackjack2806969/VoiceStudio/releases"><strong>下載 macOS 版本</strong></a> ·
+    <a href="#實際介面">實際介面</a> ·
     <a href="#快速上手">快速上手</a> ·
     <a href="https://github.com/blackjack2806969/VoiceStudio/blob/cantonese-offline/docs/cantonese-offline.md">技術文件（英文）</a>
   </p>
@@ -26,6 +27,37 @@
 > 完整語境有助 OmniVoice 生成更自然嘅廣東話發音、節奏同語調。例如唔好將「聽日」、「開會」分開生成，而係一次過輸入「聽日朝早九點要開會，記得準時返嚟。」
 >
 > 如果個別字讀錯聲調，先生成成句，再用 Pitch Editor 修正嗰個字；如果需要重新生成，亦建議 Render 成句，而唔係逐字剪接。
+
+## 實際介面
+
+以下係 v0.3.0 macOS ARM64 打包測試截圖，並非設計示意圖。
+
+### 語音複製（Clone）
+
+[![v0.3.0 語音複製介面](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-01-clone.png)](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-01-clone.png)
+
+### 廣東話修音（Cantonese Pitch Editor）
+
+[![v0.3.0 廣東話修音介面](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-02-cantonese-pitch-editor.png)](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-02-cantonese-pitch-editor.png)
+
+<details>
+<summary>查看更多介面截圖：已儲存聲線、歷史紀錄及設定</summary>
+
+### 已儲存聲線
+
+[![已儲存聲線](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-03-saved-voices.png)](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-03-saved-voices.png)
+
+### 歷史紀錄
+
+[![歷史紀錄](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-04-history.png)](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-04-history.png)
+
+### 設定
+
+[![設定](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-05-settings.png)](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-05-settings.png)
+
+</details>
+
+[查看完整 v0.3.0 發佈及截圖](https://github.com/blackjack2806969/VoiceStudio/releases/tag/cantonese-macos-0.3.0)
 
 ## 兩大核心功能
 
@@ -70,9 +102,9 @@
 3. 閱讀並確認模型授權條款。
 4. 匯入一段約 5–15 秒、清晰而且已獲講者授權嘅參考錄音，輸入準確逐字稿。
 5. 選擇 Cantonese，輸入完整句子，例如：`聽日開 meeting，記得帶 laptop。我哋九點見。`，再生成語音。
-6. 試聽後，將語音開啟到廣東話修音介面，選取音節、修正聲調並輸出 WAV。
+6. 試聽後，撳 **Edit Pitch** 直接開啟廣東話修音介面，選取音節、修正聲調並輸出 WAV。
 
-v0.2.0 需要先輸出生成語音，再經 **Tools → Cantonese lexical tones** 匯入修音。v0.3.0 候選版本加入直接由 Clone 同 History 開啟修音工具嘅 **Edit Pitch** 功能。
+v0.3.0 支援直接由 Clone 同 History 開啟修音工具。舊版 v0.2.0 則需要先輸出生成語音，再經 **Tools → Cantonese lexical tones** 匯入修音。
 
 如需繁體中文介面，可喺 Settings 嘅語言設定選擇繁體中文。未安裝語音辨識模型時，可以手動輸入參考錄音逐字稿。
 
@@ -87,7 +119,9 @@ App 可以重用完整嘅 `k2-fsa/OmniVoice` Hugging Face 模型快取。對於�
 | 版本 | 狀態 |
 | --- | --- |
 | [v0.2.0](https://github.com/blackjack2806969/VoiceStudio/releases/tag/cantonese-macos-0.2.0) | 已發佈 OmniVoice-only ARM64 安裝包，通過打包後 CI 測試 |
-| [v0.3.0](https://github.com/blackjack2806969/VoiceStudio/tree/cantonese-macos-0.3.0) | 精簡介面候選版本：語音複製、廣東話修音、已儲存聲線、歷史紀錄、設定；安裝包供應情況以 Releases 為準 |
+| [v0.3.0](https://github.com/blackjack2806969/VoiceStudio/releases/tag/cantonese-macos-0.3.0) | 已發佈 ARM64 安裝包；五個精簡工作區、直接 Edit Pitch、通過打包後 CI 測試 |
+
+v0.3.0 嘅發佈測試已驗證模型設定、離線語音複製、Clone 同 History 嘅 Edit Pitch、播放、復原及 WAV 輸出。
 
 v0.2.0 嘅 [macOS ARM64 CI 測試](https://github.com/blackjack2806969/VoiceStudio/actions/runs/45981656040) 已驗證模型下載、快取重用、本地中英夾雜語音複製、手動 F0 編輯、播放、復原及 WAV 輸出。
 
