@@ -223,12 +223,12 @@ def test_cla_held(pr, signed, held):
     assert scope.cla_held(pr, signed) is held
 
 
-def _scope_main(tmp_path, monkeypatch, event_name, event, api, argv=()):
+def _scope_main(tmp_path, monkeypatch, event_name, event, api, argv=(), repo="debpalash/VoiceStudio"):
     path = tmp_path / "event.json"
     path.write_text(json.dumps(event))
     output = tmp_path / "output"
     for key, value in {"GITHUB_EVENT_PATH": str(path), "GITHUB_EVENT_NAME": event_name,
-                       "GITHUB_REPOSITORY": "owner/repo", "GITHUB_OUTPUT": str(output)}.items():
+                       "GITHUB_REPOSITORY": repo, "GITHUB_OUTPUT": str(output)}.items():
         monkeypatch.setenv(key, value)
     calls = []
 
@@ -259,6 +259,19 @@ def test_unsigned_opener_skips_runtime_ci_explicitly(tmp_path, monkeypatch):
     event = {"number": 7, "pull_request": {"user": ALICE}}
     out, _ = _scope_main(tmp_path, monkeypatch, "pull_request", event, _api(set()))
     assert out == "runtime=false\ncla=held\n"
+
+
+def test_fork_runs_runtime_ci_without_reading_cla_signatures(tmp_path, monkeypatch):
+    def api(endpoint):
+        assert endpoint.endswith("/files")
+        return [[{"status": "modified", "filename": "backend/core/config.py"}]]
+
+    out, calls = _scope_main(
+        tmp_path, monkeypatch, "pull_request", {"number": 7, "pull_request": {"user": ALICE}},
+        api, repo="blackjack2806969/Cantonese-Voice-Studio",
+    )
+    assert out == "runtime=true\ncla=clear\n"
+    assert len(calls) == 1
 
 
 @pytest.mark.parametrize("signed,labels", [({1001}, ()), (set(), ("cla-override",))])

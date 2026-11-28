@@ -13,7 +13,7 @@ Thanks for your interest in improving VoiceStudio! This guide covers everything 
 
 ---
 
-> **Before your first pull request: sign the CLA first.** Unless exempt under the
+> **Before your first pull request to upstream VoiceStudio: sign the CLA first.** Unless exempt under the
 > [CLA checker’s policy](#contribution-licensing), sign the
 > [Contributor License Agreement](CLA-1.0.md) once. It takes a minute: post the
 > line in [Contribution licensing](#contribution-licensing) on the
@@ -785,6 +785,11 @@ test-only PR. Docker Hub overview edits still publish through the small
   `VOICESTUDIO_VERIFY_ACTION_PINS=1 uv run pytest tests/test_workflow_action_pins.py`.
 
 ## Contribution licensing
+
+The VoiceStudio CLA applies to pull requests submitted to
+[debpalash/VoiceStudio](https://github.com/debpalash/VoiceStudio). Pull requests
+within Cantonese Voice Studio are governed by the repository's
+[AGPL-3.0 licence](../LICENSE) and [licence notice](../LICENSE-NOTICE.md).
 
 VoiceStudio is **AGPL-3.0-only**, and the maintainer also offers a
 **commercial license** (see [LICENSE-NOTICE.md](../LICENSE-NOTICE.md)). Before
