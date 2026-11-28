@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { isMac } from '@/components/bridge';
+import { isCantoneseStudio } from '@/lib/cantonese-studio';
 
 /**
  * True when a page's own pane is titled exactly like the page, so the pane
@@ -38,7 +39,7 @@ export function WorkspaceHeader({ children }: { children: ReactNode }) {
       >
         {children}
       </div>
-      <div className="flex shrink-0 items-center gap-0.5">
+      {!isCantoneseStudio() && <div className="flex shrink-0 items-center gap-0.5">
         <Button
           variant="ghost"
           size="sm"
@@ -50,7 +51,7 @@ export function WorkspaceHeader({ children }: { children: ReactNode }) {
           <SearchIcon />
           <span className="hidden text-xs font-medium lg:inline">{isMac() ? '⌘K' : 'Ctrl K'}</span>
         </Button>
-      </div>
+      </div>}
     </header>
   );
 }

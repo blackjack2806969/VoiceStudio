@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,7 +14,28 @@ type AudioData = {
 const base = '/tools/lexical-pitch';
 const savedKey = 'cantonese-tone-project';
 
-export function LexicalPitch() {
+export function importPitchAudio(file: Blob, name: string, signal?: AbortSignal) {
+  const form = new FormData();
+  form.append('file', file, name);
+  return apiJson<AudioData>(base + '/import', { method: 'POST', body: form, signal });
+}
+
+function renderPitch(id: string, edits: Edit[], signal?: AbortSignal) {
+  return apiJson<AudioData>(`${base}/${id}/render`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ edits }), signal,
+  });
+}
+
+export function LexicalPitch({
+  sessionId,
+  showTitle = true,
+  onManualOpen,
+}: {
+  sessionId?: string;
+  showTitle?: boolean;
+  onManualOpen?: () => void;
+} = {}) {
   const { t } = useTranslation();
   const [source, setSource] = useState<AudioData | null>(null);
   const [audio, setAudio] = useState<AudioData | null>(null);
@@ -25,12 +46,39 @@ export function LexicalPitch() {
   const [points, setPoints] = useState<Point[]>([]);
   const [zoom, setZoom] = useState(1);
   const [error, setError] = useState('');
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState(Boolean(sessionId));
   const [beforeUrl, setBeforeUrl] = useState('');
   const [afterUrl, setAfterUrl] = useState('');
   const active = useRef(false);
   const drag = useRef<{ anchor: number; point?: number } | null>(null);
   const svg = useRef<SVGSVGElement>(null);
+  const setProject = useCallback((original: AudioData, edited: AudioData, next: Edit[]) => {
+    setSource(original); setAudio(edited); setEdits(next); setPoints([]);
+    setStart(0); setEnd(Math.min(0.5, original.duration)); setShift(0); setZoom(1);
+    localStorage.setItem(savedKey, JSON.stringify({ id: original.id, edits: next }));
+  }, []);
+
+  const reopen = useCallback(async (id?: string, signal?: AbortSignal) => {
+    const saved = JSON.parse(localStorage.getItem(savedKey) || 'null');
+    const target = id ?? saved?.id;
+    if (!target) return;
+    const original = await apiJson<AudioData>(`${base}/${encodeURIComponent(target)}`, { signal });
+    const next: Edit[] = saved?.id === target ? saved.edits : [];
+    const edited = next.length ? await renderPitch(original.id, next, signal) : original;
+    if (!signal?.aborted) setProject(original, edited, next);
+  }, [setProject]);
+
+  useEffect(() => {
+    if (!sessionId) return;
+    setBusy(true);
+    setError('');
+    const request = new AbortController();
+    const signal = AbortSignal.any([request.signal, AbortSignal.timeout(45_000)]);
+    void reopen(sessionId, signal)
+      .catch(error => { if (!request.signal.aborted) setError(describeError(error)); })
+      .finally(() => { if (!request.signal.aborted) setBusy(false); });
+    return () => request.abort();
+  }, [reopen, sessionId]);
 
   useEffect(() => {
     let disposed = false;
@@ -55,18 +103,9 @@ export function LexicalPitch() {
     finally { active.current = false; setBusy(false); }
   }
   async function render(id: string, next: Edit[]) {
-    const data = await apiJson<AudioData>(`${base}/${id}/render`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ edits: next }),
-    });
+    const data = await renderPitch(id, next);
     setAudio(data); setEdits(next); setPoints([]);
     localStorage.setItem(savedKey, JSON.stringify({ id, edits: next }));
-  }
-  async function restore() {
-    const saved = JSON.parse(localStorage.getItem(savedKey) || 'null');
-    if (!saved) return;
-    const original = await apiJson<AudioData>(`${base}/${encodeURIComponent(saved.id)}`);
-    await render(original.id, saved.edits);
-    setSource(original); setStart(0); setEnd(Math.min(0.5, original.duration));
   }
   const valid = audio && Number.isFinite(start) && Number.isFinite(end) && start >= 0 && end <= audio.duration && end - start >= 0.04 && Number.isFinite(shift) && Math.abs(shift) <= 12;
   function apply(tone?: string) {
@@ -88,21 +127,23 @@ export function LexicalPitch() {
     setPoints(current => current.map((p, i) => i === index ? { ...p, hz: Math.round(hz) } : p));
   }
   return <div className="mx-auto max-w-5xl space-y-5">
-    <h2 className="text-lg font-medium">{t('tone.title')}</h2>
+    {showTitle && <h2 className="text-lg font-medium">{t('tone.title')}</h2>}
     <p className="text-sm text-muted-foreground">{t('tone.help')}</p>
     <div className="flex flex-wrap gap-3">
       <label className="space-y-1 text-sm">{t('tone.import')}
         <Input type="file" accept=".wav,.mp3,.m4a" disabled={busy} onChange={event => {
           const file = event.target.files?.[0]; if (!file) return;
           void run(async () => {
-            const form = new FormData(); form.append('file', file);
-            const data = await apiJson<AudioData>(base + '/import', { method: 'POST', body: form });
-            setSource(data); setAudio(data); setEdits([]); setPoints([]); setStart(0); setEnd(Math.min(0.5, data.duration));
-            localStorage.setItem(savedKey, JSON.stringify({ id: data.id, edits: [] }));
+            const data = await importPitchAudio(file, file.name);
+            setProject(data, data, []);
+            onManualOpen?.();
           });
         }} />
       </label>
-      <Button variant="outline" disabled={busy} onClick={() => void run(restore)}>{t('tone.restore')}</Button>
+      <Button variant="outline" disabled={busy} onClick={() => void run(async () => {
+        await reopen();
+        onManualOpen?.();
+      })}>{t('tone.restore')}</Button>
     </div>
     {audio && <>
       <label className="flex items-center gap-3 text-sm">{t('tone.zoom')}

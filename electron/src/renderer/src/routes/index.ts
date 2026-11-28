@@ -2,6 +2,7 @@ import { createRootRoute, createRoute, lazyRouteComponent, redirect } from '@tan
 import { AppShell } from '@/components/app-shell/app-shell';
 import { readLastSettingsRoute } from '@/lib/settings-route';
 import { NotFoundPage } from '@/components/not-found-page';
+import { cantoneseSettings, isCantoneseStudio } from '@/lib/cantonese-studio';
 
 const HomePage = lazyRouteComponent(() => import('@/features/home/home-page'), 'HomePage');
 
@@ -54,7 +55,22 @@ const SettingsPage = lazyRouteComponent(
 );
 const ProPage = lazyRouteComponent(() => import('@/features/pro/pro-page'), 'ProPage');
 
-export const rootRoute = createRootRoute({ component: AppShell });
+const cantoneseWorkspaces = new Set(['/clone', '/tools', '/personas', '/history', '/settings']);
+
+export const rootRoute = createRootRoute({
+  component: AppShell,
+  beforeLoad: ({ location }) => {
+    if (!isCantoneseStudio()) return;
+    const path = location.pathname.replace(/\/+$/, '') || '/';
+    if (path === '/projects') throw redirect({ to: '/history', replace: true });
+    if (path === '/settings/models/tts') throw redirect({ to: '/settings/models', replace: true });
+    if (cantoneseSettings.has(path) || cantoneseWorkspaces.has(path)) return;
+    throw redirect({
+      to: path.startsWith('/settings/') ? '/settings/general' : '/clone',
+      replace: true,
+    });
+  },
+});
 
 export const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -77,11 +93,18 @@ export const cloneRoute = createRoute({
   component: ClonePage,
 });
 
+export const historyRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/history',
+  component: lazyRouteComponent(() => import('@/features/clone/history-page'), 'HistoryPage'),
+});
+
 export const settingsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/settings',
   beforeLoad: () => {
-    throw redirect({ to: readLastSettingsRoute() });
+    const last = readLastSettingsRoute();
+    throw redirect({ to: !isCantoneseStudio() || cantoneseSettings.has(last) ? last : '/settings/general' });
   },
 });
 
@@ -161,6 +184,8 @@ export const workflowsRoute = createRoute({
 export const toolsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/tools',
+  validateSearch: (search: Record<string, unknown>): { pitch?: string } =>
+    typeof search.pitch === 'string' ? { pitch: search.pitch } : {},
   component: ToolsPage,
 });
 export const integrationsRoute = createRoute({
@@ -294,6 +319,7 @@ export const routeTree = rootRoute.addChildren([
   projectsRoute,
   indexRoute,
   cloneRoute,
+  historyRoute,
   savedVoicesRoute,
   pronunciationRoute,
   mediaRoute,

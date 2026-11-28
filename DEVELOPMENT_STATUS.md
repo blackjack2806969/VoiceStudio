@@ -204,3 +204,14 @@ physical Mac remains open.
   contains the ARM64 DMG and app ZIP from that run. Prior releases remain
   available. Packages use ad-hoc signing. The CI run does not establish MPS
   performance or pronunciation quality on a physical M1 Ultra.
+
+## Focused voice production workspace
+
+- The Cantonese installer shows Clone, Cantonese Pitch Editor, Saved Voices,
+  History and Settings. The settings pages cover app preferences, OmniVoice,
+  storage and logs. The full upstream workspaces remain in the source tree.
+- Edit Pitch opens the selected generated WAV through the existing local import
+  and project APIs. The existing take remains available in History. Earlier
+  projects outside the focused History view keep their files.
+- Packaged acceptance covers both handoffs, the exact navigation in English and
+  Traditional Chinese, model setup and reuse, and the existing audio tests.

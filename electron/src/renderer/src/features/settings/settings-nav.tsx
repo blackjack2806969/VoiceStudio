@@ -1,3 +1,4 @@
+import { isCantoneseStudio } from '@/lib/cantonese-studio';
 import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from '@tanstack/react-router';
@@ -119,10 +120,11 @@ export function SettingsNav({
   const sections = preferenceSections.filter((section) => sectionMatches(t, section, needle));
   const extraMatches = extras.filter((item) => keysMatch(t, item.fields, needle));
   const onModels = location.kind === 'models';
-  const families = matchingFamilies(t, needle, onModels);
+  const focused = isCantoneseStudio();
+  const families = focused ? [] : matchingFamilies(t, needle, onModels);
   const pinned = {
     models: keysMatch(t, pinnedPages.models, needle),
-    media: keysMatch(t, pinnedPages.media, needle),
+    media: !focused && keysMatch(t, pinnedPages.media, needle),
     logs: keysMatch(t, pinnedPages.logs, needle),
   };
   const nothing =
@@ -248,7 +250,7 @@ export function SettingsNav({
         )}
       </div>
       <div className="shrink-0 space-y-1.5 border-t border-sidebar-border/50 bg-background/15 p-3">
-        <Link
+        {!focused && <Link
           to="/settings/support"
           title={t('donate.title')}
           aria-current={
@@ -261,7 +263,7 @@ export function SettingsNav({
         >
           <HeartHandshakeIcon className="size-4 shrink-0 text-primary transition-transform duration-200 group-hover:scale-110 motion-reduce:transition-none" />
           <NavLabel>{t('donate.title')}</NavLabel>
-        </Link>
+        </Link>}
         <NavLink
           to="/clone"
           label={t('preferences.back')}

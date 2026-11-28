@@ -47,6 +47,7 @@ import { SettingsNav, type SettingsLocation } from './settings-nav';
 import { AppearanceResetButton, AppearanceSettings, GeneralSettings } from './settings-preferences';
 import { ExistingPythonSettings } from './existing-python-settings';
 import { rememberSettingsRoute } from '@/lib/settings-route';
+import { cantoneseSettings, isCantoneseStudio } from '@/lib/cantonese-studio';
 
 function PerformanceAndPythonSettings() {
   return (
@@ -221,7 +222,9 @@ export function SettingsPage() {
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
-  const extras = extraSettingsFor(useAccount().state?.available === true);
+  const focused = isCantoneseStudio();
+  const availableExtras = extraSettingsFor(useAccount().state?.available === true);
+  const extras = focused ? availableExtras.filter((item) => cantoneseSettings.has(item.to)) : availableExtras;
   const extra = extras.find((item) => pathname === item.to);
   const isOpenApi = pathname === '/settings/openapi';
   const isModels = pathname.includes('/models');
@@ -302,8 +305,8 @@ export function SettingsPage() {
               <LogSettings />
             ) : isModels ? (
               <>
-                <ModelSettings key={modelFamily ?? 'all'} family={modelFamily} />
-                {!modelFamily && <MirrorSettings />}
+                <ModelSettings key={modelFamily ?? 'all'} family={focused ? 'tts' : modelFamily} />
+                {!focused && !modelFamily && <MirrorSettings />}
               </>
             ) : section === 'appearance' ? (
               <AppearanceSettings />

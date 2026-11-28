@@ -1,3 +1,4 @@
+import { isCantoneseStudio } from '@/lib/cantonese-studio';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
@@ -89,7 +90,7 @@ function engineItem(ctx: Context, engine: EngineBackend): FamilyItem {
   const linked = modelsForEngine(engine.id, ctx.models, engine.curated_models);
   const single = linked.length === 1 ? linked[0] : undefined;
   const licenseId = licensedEngine(engine.id, engine.license_required, engine.license_accepted);
-  const engineSelect = engine.available ? (
+  const engineSelect = engine.available && !isCantoneseStudio() ? (
     <SelectButton
       active={active}
       disabled={select.busy}
@@ -125,7 +126,7 @@ function engineItem(ctx: Context, engine: EngineBackend): FamilyItem {
         <>
           {engine.id === GGUF_ENGINE && engine.available && <GgufQuantPicker />}
           {engine.id === GGUF_ENGINE && engine.available && <GgufSelfTest />}
-          <LocalModelPath family={ctx.family} engineId={engine.id} />
+          {!isCantoneseStudio() && <LocalModelPath family={ctx.family} engineId={engine.id} />}
           <EngineHealth
             id={engine.id}
             available={engine.available}
@@ -278,7 +279,7 @@ function standaloneItem(ctx: Context, model: CatalogueModel): FamilyItem {
 /** Settings -> Models -> TTS / ASR: engines with their models, in one list. */
 export function EngineFamilyList({ family, footer }: { family: Family; footer?: ReactNode }) {
   const { t } = useTranslation();
-  const engines = useEngines();
+  const engines = useEngines(family === 'tts' ? 'tts' : undefined);
   const catalogue = useModelCatalogue();
   const ops = useModelOps();
   const select = useEngineSelect(family);

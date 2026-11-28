@@ -12,6 +12,7 @@ import { useWorkspace } from '@/lib/store/workspace';
 import { useWorkspaceSidebarState } from './use-workspace-sidebar';
 import { WorkspaceNavigation } from './workspace-menu';
 import { StatusBar } from './status-bar';
+import { isCantoneseStudio } from '@/lib/cantonese-studio';
 
 export function versionTranslationKey(development: boolean) {
   return development ? ('app.version_dev' as const) : ('app.version' as const);
@@ -19,6 +20,7 @@ export function versionTranslationKey(development: boolean) {
 
 export function WorkspaceSidebar() {
   const { t } = useTranslation();
+  const focused = isCantoneseStudio();
   const mac = isMac();
   // Fullscreen hides the traffic lights, so their reserved corner is given back to the brand.
   const trafficLights = mac && !useWindowFullscreen();
@@ -85,8 +87,8 @@ export function WorkspaceSidebar() {
             </Button>
           </div>
           <WorkspaceNavigation compact />
-          {!mac && <StatusBar compact />}
-          <div
+          {!focused && !mac && <StatusBar compact />}
+          {!focused && <div
             className={cn(
               // One centered column, like the navigation above it.
               'flex shrink-0 flex-col items-center gap-1 border-t border-border/50 py-2',
@@ -108,7 +110,7 @@ export function WorkspaceSidebar() {
               />
             </Link>
             {mac && <StatusBar compact inline />}
-          </div>
+          </div>}
         </aside>
       )}
       {libraryOpen && !compact && (
@@ -165,7 +167,7 @@ export function WorkspaceSidebar() {
           <div className="min-h-0 min-w-0 overflow-y-auto overflow-x-hidden">
             <WorkspaceNavigation />
           </div>
-          <div className="flex min-w-0 shrink-0 flex-col border-t border-border/50">
+          {!focused && <div className="flex min-w-0 shrink-0 flex-col border-t border-border/50">
             <StatusBar
               footerLeading={
                 mac ? (
@@ -210,7 +212,7 @@ export function WorkspaceSidebar() {
                 </Link>
               </div>
             )}
-          </div>
+          </div>}
         </aside>
       )}
     </>

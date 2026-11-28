@@ -67,7 +67,7 @@ jobs:
           bun run build
           bun run build:web
           bun x electron-builder --config electron-builder.config.mjs --mac --arm64 --publish never
-      - name: Verify packaged Clone with a fresh and reused OmniVoice cache
+      - name: Verify packaged OmniVoice, focused navigation and pitch editing
         run: node electron/tests/cantonese-packaged-smoke.mjs
       - name: Retain packaged test evidence
         if: always()
@@ -101,9 +101,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --verify-tag --prerelease \
-            --title "Cantonese Voice Studio for macOS — OmniVoice" \
+            --title "Cantonese Voice Studio for macOS — Voice Production" \
             --notes-file - installers/*.dmg installers/*arm64*.zip <<'NOTES'
           Open **Clone** to download about 2.4 GB of OmniVoice weights or reuse the original app’s Hugging Face cache. The OmniVoice weights are for non-commercial use and the audio tokenizer has separate terms. Review the disclosures in Clone.
 
-          Recordings, voice cloning, synthesis and pitch editing remain local. The macOS ARM64 CI test opened Clone with no weights, used the packaged downloader, reused the downloaded cache on restart, cloned mixed Cantonese–English speech locally and exercised pitch editing, playback and export. The app is ad-hoc signed and has no Developer ID notarization.
+          The app has five workspaces: Clone, Cantonese Pitch Editor, Saved Voices, History and Settings. Use **Edit Pitch** beside a take in Clone or History to open that audio directly in the editor.
+
+          The macOS ARM64 CI test verified model setup, offline cloning, both Edit Pitch actions, playback, undo and WAV export. The app uses ad-hoc signing and has no Developer ID notarization.
           NOTES

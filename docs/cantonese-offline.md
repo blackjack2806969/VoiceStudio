@@ -1,8 +1,8 @@
 # Cantonese Voice Studio for Apple Silicon
 
 This fork reuses VoiceStudio's Electron desktop, local voice profiles and TTS
-adapters. It adds a non-destructive Praat lexical-tone editor in **Tools →
-Cantonese lexical tones**. Set **Settings → Language → 繁體中文** for Traditional
+adapters. The five workspaces are **Clone**, **Cantonese Pitch Editor**,
+**Saved Voices**, **History** and **Settings**. Set **Settings → General → Language → 繁體中文** for Traditional
 Chinese; English is also supported. New editor strings in other UI languages
 currently fall back to English.
 
@@ -51,8 +51,9 @@ hardware coverage.
 2. Choose **Cantonese**. Enter colloquial Traditional Chinese,
    for example `聽日開 meeting，記得帶 laptop。`. Adjust speed and generate. If
    offline transcription has no installed model, enter the transcript manually.
-3. Preview and export the take using the existing Clone controls. Import that
-   exported file into **Tools → Cantonese lexical tones**.
+3. Preview the take, then choose **Edit Pitch** beside its audio in **Clone**
+   or **History**. The editor opens a separate project with that take. To edit
+   an external recording, open **Cantonese Pitch Editor** and choose **Import recording**.
 4. Drag across the waveform to select one syllable, zoom/scroll to refine the
    boundary, or enter start/end seconds. The lower graph shows measured F0 in Hz.
 5. Apply 55, 25, 33, 21, 23 or 22, or use a relative semitone shift. **Add pitch

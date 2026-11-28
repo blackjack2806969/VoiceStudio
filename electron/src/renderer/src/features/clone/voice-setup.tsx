@@ -122,7 +122,7 @@ function VoiceCard({
   );
 }
 
-export function VoiceSetup({ onChosen, onBack }: { onChosen: () => void; onBack: () => void }) {
+export function VoiceSetup({ onChosen, onBack }: { onChosen: () => void; onBack?: () => void }) {
   const { t, i18n } = useTranslation();
   const profiles = useProfiles();
   const selectedId = useCloneSetting('selectedProfileId');
@@ -181,7 +181,7 @@ export function VoiceSetup({ onChosen, onBack }: { onChosen: () => void; onBack:
   return (
     <section className="flex w-full flex-col gap-7">
       <div className="flex items-start gap-3">
-        <Button
+        {onBack && <Button
           variant="ghost"
           size="icon-sm"
           aria-label={t('preferences.back')}
@@ -190,7 +190,7 @@ export function VoiceSetup({ onChosen, onBack }: { onChosen: () => void; onBack:
           onClick={onBack}
         >
           <ArrowLeftIcon />
-        </Button>
+        </Button>}
         <div className="min-w-0">
           <h2 className="text-xl font-semibold tracking-tight">{t('cloneFlow.choose_voice')}</h2>
           <p className="mt-1 text-sm text-muted-foreground">{t('cloneFlow.choose_hint')}</p>

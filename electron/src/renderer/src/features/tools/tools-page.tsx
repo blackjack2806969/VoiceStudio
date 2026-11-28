@@ -6,7 +6,7 @@ import { SoundEffects } from './sound-effects';
 import { WorkspaceHeader } from '@/components/app-shell/workspace-header';
 import { CompareVoices } from './compare-voices';
 import { useEffect, useRef, useState } from 'react';
-import { Link } from '@tanstack/react-router';
+import { getRouteApi, Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { SparklesIcon, TargetIcon, ActivityIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,6 +16,7 @@ import { DisabledReason, firstReason } from '@/components/disabled-reason';
 import { apiJson, describeError } from '@/lib/api/client';
 import { LanguagePicker } from '@/features/clone/language-picker';
 import { LANG_CODES } from '@shared/utils/languages';
+import { isCantoneseStudio } from '@/lib/cantonese-studio';
 const options = LANG_CODES.map((item) => item.label);
 const tools = [
   {
@@ -42,6 +43,29 @@ const tools = [
 ] as const;
 type Tool = (typeof tools)[number];
 export function ToolsPage() {
+  return isCantoneseStudio() ? <PitchEditorPage /> : <FullToolsPage />;
+}
+
+function PitchEditorPage() {
+  const { t } = useTranslation();
+  const route = getRouteApi('/tools');
+  const { pitch } = route.useSearch();
+  const navigate = route.useNavigate();
+  return (
+    <div className="flex h-full min-h-0 flex-col">
+      <WorkspaceHeader><h1>{t('tone.editor')}</h1></WorkspaceHeader>
+      <section className="min-h-0 flex-1 overflow-y-auto p-6">
+        <LexicalPitch
+          sessionId={pitch}
+          showTitle={false}
+          onManualOpen={pitch ? () => void navigate({ search: {}, replace: true }) : undefined}
+        />
+      </section>
+    </div>
+  );
+}
+
+function FullToolsPage() {
   const { t } = useTranslation();
   const [toneEditing, setToneEditing] = useState(true);
   const [comparing, setComparing] = useState(false);

@@ -16,16 +16,21 @@ import {
   ChevronRightIcon,
   BlocksIcon,
   WorkflowIcon,
+  HistoryIcon,
+  SettingsIcon,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { setWorkspace } from '@/lib/store/workspace';
 import { cn } from '@/lib/utils';
+import { isCantoneseStudio } from '@/lib/cantonese-studio';
 import './workspace-menu.css';
 
 type Destination = readonly [
   to:
     | '/clone'
+    | '/history'
+    | '/settings'
     | '/stories'
     | '/audiobook'
     | '/projects'
@@ -66,6 +71,13 @@ const laterDestinations: Destination[] = [
   ['/tools', 'tools.title', WrenchIcon],
   ['/integrations', 'integrationCatalog.title', BlocksIcon],
 ];
+const cantoneseDestinations: Destination[] = [
+  ['/clone', 'nav.clone_short', FingerprintIcon],
+  ['/tools', 'tone.editor', AudioLinesIcon],
+  ['/personas', 'tone.saved_voices', UsersRoundIcon],
+  ['/history', 'tone.history', HistoryIcon],
+  ['/settings', 'nav.settings', SettingsIcon],
+];
 
 const itemClass =
   'workspace-nav-item group relative isolate flex h-8 min-w-0 items-center overflow-hidden rounded-md text-[13px] text-sidebar-foreground/80 outline-none transition-[color,background-color,box-shadow,backdrop-filter] duration-150 before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:rounded-[inherit] before:bg-gradient-to-r before:from-white/[0.07] before:via-white/[0.025] before:to-transparent before:opacity-0 before:transition-opacity before:duration-150 hover:bg-sidebar-accent/65 hover:text-sidebar-foreground hover:backdrop-blur-xl hover:shadow-[inset_0_1px_0_rgb(255_255_255/9%),0_6px_18px_rgb(0_0_0/10%)] hover:ring-1 hover:ring-inset hover:ring-sidebar-border/60 hover:before:opacity-100 focus-visible:ring-2 focus-visible:ring-ring';
@@ -74,6 +86,8 @@ const iconClass =
 
 const iconMotion: Record<Destination[0], string> = {
   '/clone': 'pulse',
+  '/history': 'lift',
+  '/settings': 'turn',
   '/design': 'tilt',
   '/personas': 'nudge',
   '/gallery': 'lift',
@@ -345,6 +359,9 @@ export function WorkspaceNavigation({ compact = false }: { compact?: boolean }) 
         compact ? 'space-y-0.5 px-1.5' : 'shrink-0 space-y-0.5 px-3',
       )}
     >
+      {isCantoneseStudio() ? cantoneseDestinations.map((destination) => (
+        <NavigationLink key={destination[0]} destination={destination} compact={compact} />
+      )) : <>
       <NavigationGroup
         label="nav.voice"
         icon={FingerprintIcon}
@@ -369,6 +386,7 @@ export function WorkspaceNavigation({ compact = false }: { compact?: boolean }) 
       {laterDestinations.map((destination) => (
         <NavigationLink key={destination[0]} destination={destination} compact={compact} />
       ))}
+      </>}
     </nav>
   );
 }

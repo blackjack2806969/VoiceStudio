@@ -50,6 +50,8 @@ import {
   writeDraft,
 } from '@/features/design/design-draft';
 import { useTtsReadiness } from '@/hooks/use-tts-readiness';
+import { EditPitchButton } from '@/features/tools/edit-pitch-button';
+import { isCantoneseStudio } from '@/lib/cantonese-studio';
 import {
   PreviewButton,
   VIRTUALIZE_ABOVE,
@@ -70,6 +72,7 @@ export function SavedVoices({
 }) {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+  const focused = isCantoneseStudio();
   const profiles = useProfiles();
   const ttsBlocker = useTtsReadiness();
   const deleteProfile = useDeleteProfile();
@@ -82,7 +85,10 @@ export function SavedVoices({
   const [query, setQuery] = useState('');
   const [kind, setKind] = useState<'all' | Profile['kind']>('all');
 
-  const allItems = profiles.data ?? [];
+  const allItems = useMemo(
+    () => (profiles.data ?? []).filter((profile) => !focused || profile.kind === 'clone'),
+    [focused, profiles.data],
+  );
   const items = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase();
     return allItems.filter(
@@ -185,7 +191,7 @@ export function SavedVoices({
               <FingerprintIcon />
               {t('clone.title')}
             </Button>
-            <Button
+            {!focused && <Button
               variant="outline"
               onClick={() =>
                 runRendererTask('Open voice design', () => navigate({ to: '/design' }))
@@ -193,7 +199,7 @@ export function SavedVoices({
             >
               <WandSparklesIcon />
               {t('designWorkspace.title')}
-            </Button>
+            </Button>}
           </div>
         ) : null}
       </div>
@@ -377,16 +383,19 @@ export function SavedVoices({
 
 interface TakeRowProps {
   item: HistoryItem;
+  onOpen?: (item: HistoryItem) => void;
+  selectedId?: string | null;
   onStar: (item: HistoryItem) => void;
   onReuse: (item: HistoryItem) => void | Promise<void>;
   onDelete: (item: HistoryItem) => void;
 }
 
-function TakeRow({ item, onStar, onReuse, onDelete }: TakeRowProps) {
+function TakeRow({ item, onOpen, selectedId, onStar, onReuse, onDelete }: TakeRowProps) {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const starred = Boolean(item.starred);
   const selected = useSelectedTake();
+  const active = (onOpen ? selectedId : selected?.id) === item.id;
   const isDesign = item.mode === 'design';
   const workspaceLabel = isDesign ? t('designWorkspace.title') : t('clone.title');
   const reopen = async () => {
@@ -397,14 +406,16 @@ function TakeRow({ item, onStar, onReuse, onDelete }: TakeRowProps) {
     <div
       className={cn(
         'group relative flex h-9 min-w-0 items-center rounded-lg px-2 transition-[background-color,box-shadow,backdrop-filter] duration-150 hover:bg-sidebar-accent/60 hover:shadow-[inset_0_1px_0_rgb(255_255_255/7%),0_6px_18px_rgb(0_0_0/9%)] hover:ring-1 hover:ring-inset hover:ring-sidebar-border/50 hover:backdrop-blur-xl',
-        selected?.id === item.id && 'bg-sidebar-accent',
+        active && 'bg-sidebar-accent',
       )}
     >
       <button
         type="button"
-        aria-pressed={selected?.id === item.id}
+        aria-pressed={active}
         onClick={() => {
-          if (isDesign) {
+          if (onOpen) {
+            onOpen(item);
+          } else if (isDesign) {
             openTake(item);
             runRendererTask('Open design take', () => navigate({ to: '/design' }));
           } else {
@@ -427,7 +438,8 @@ function TakeRow({ item, onStar, onReuse, onDelete }: TakeRowProps) {
         )}
         <span className="truncate">{displayTitle(item.text)}</span>
       </button>
-      <div className="pointer-events-none absolute right-1 z-10 flex items-center gap-0.5 rounded-md bg-sidebar bg-[linear-gradient(var(--sidebar-accent),var(--sidebar-accent))] p-0.5 opacity-0 shadow-sm ring-1 ring-sidebar-border/50 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100">
+      <div className={cn('flex shrink-0 items-center gap-0.5', !onOpen &&
+        'pointer-events-none absolute right-1 z-10 rounded-md bg-sidebar bg-[linear-gradient(var(--sidebar-accent),var(--sidebar-accent))] p-0.5 opacity-0 shadow-sm ring-1 ring-sidebar-border/50 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100')}>
         {item.audio_path && (
           <PlayInDockButton
             src={audioUrl(item.audio_path)}
@@ -437,6 +449,7 @@ function TakeRow({ item, onStar, onReuse, onDelete }: TakeRowProps) {
             duration={item.duration_seconds}
           />
         )}
+        {onOpen && item.audio_path && <EditPitchButton compact audioPath={item.audio_path} />}
         <Button
           variant="ghost"
           size="icon-xs"
@@ -507,9 +520,11 @@ function VirtualTakes({ items, scrollRef, rowProps }: VirtualTakesProps) {
 
 interface RecentTakesProps {
   scrollRef: RefObject<HTMLDivElement | null>;
+  onOpen?: TakeRowProps['onOpen'];
+  selectedId?: TakeRowProps['selectedId'];
 }
 
-function RecentTakes({ scrollRef }: RecentTakesProps) {
+export function RecentTakes({ scrollRef, onOpen, selectedId }: RecentTakesProps) {
   const { t } = useTranslation();
   const history = useHistory();
   const deleteItem = useDeleteHistoryItem();
@@ -520,15 +535,17 @@ function RecentTakes({ scrollRef }: RecentTakesProps) {
 
   const items = useMemo(() => {
     const all = (history.data ?? []).filter(
-      (item) => !item.mode || item.mode === 'clone' || item.mode === 'design',
+      (item) => !item.mode || item.mode === 'clone' || (!onOpen && item.mode === 'design'),
     );
     if (filter === 'starred') return all.filter((item) => Boolean(item.starred));
     if (filter === 'clone') return all.filter((item) => !item.mode || item.mode === 'clone');
     if (filter === 'design') return all.filter((item) => item.mode === 'design');
     return all;
-  }, [history.data, filter]);
+  }, [history.data, filter, onOpen]);
 
   const rowProps: Omit<TakeRowProps, 'item'> = {
+    onOpen,
+    selectedId,
     onStar: (item) => toggleStarred.mutate({ id: item.id, starred: !item.starred }),
     onReuse: (item) =>
       reuseWithFeedback(async () => {
@@ -557,16 +574,16 @@ function RecentTakes({ scrollRef }: RecentTakesProps) {
           aria-label={t('clone.history_title')}
         >
           <ToggleGroupItem value="all">{t('clone.history_all')}</ToggleGroupItem>
-          <ToggleGroupItem value="clone" aria-label={t('clone.title')} title={t('clone.title')}>
+          {!onOpen && <ToggleGroupItem value="clone" aria-label={t('clone.title')} title={t('clone.title')}>
             <FingerprintIcon />
-          </ToggleGroupItem>
-          <ToggleGroupItem
+          </ToggleGroupItem>}
+          {!onOpen && <ToggleGroupItem
             value="design"
             aria-label={t('designWorkspace.title')}
             title={t('designWorkspace.title')}
           >
             <WandSparklesIcon />
-          </ToggleGroupItem>
+          </ToggleGroupItem>}
           <ToggleGroupItem
             value="starred"
             aria-label={t('clone.history_starred')}
@@ -575,7 +592,7 @@ function RecentTakes({ scrollRef }: RecentTakesProps) {
             <StarIcon />
           </ToggleGroupItem>
         </ToggleGroup>
-        {(history.data?.length ?? 0) > 0 ? (
+        {!onOpen && (history.data?.length ?? 0) > 0 ? (
           <Button
             variant="ghost"
             size="xs"

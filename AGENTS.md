@@ -3,7 +3,7 @@
 These fork requirements override conflicting upstream instructions below and in CLAUDE.md:
 - macOS ARM64 desktop MVP only; English and Traditional Chinese UI are required.
 - Strict local inference and processing. No analytics, cloud, paid services, RVC or singing.
-- Online provisioning is allowed when the user explicitly confirms CosyVoice setup. The separate installer downloads only software and model assets.
+- Online provisioning is allowed when the user explicitly confirms OmniVoice setup. The separate installer downloads only model assets.
 - Reuse existing Electron UI, profiles, TTS engines and packaging.
 - Prioritize working TTS, lexical-tone editing and deployment by 2026-11-30.
 - Keep DEVELOPMENT_STATUS.md truthful; never claim physical Mac testing without evidence.

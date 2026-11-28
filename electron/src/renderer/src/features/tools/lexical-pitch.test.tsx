@@ -29,3 +29,13 @@ it('shows failed import without replacing the project', async () => {
   expect(await screen.findByRole('alert')).toHaveTextContent('invalid recording');
   expect(localStorage.getItem('cantonese-tone-project')).toBeNull();
 });
+it('opens the requested take even when the last project is a different recording', async () => {
+  localStorage.setItem('cantonese-tone-project', JSON.stringify({ id: 'other', edits: [] }));
+  mock.json.mockResolvedValue(data);
+  mock.fetch.mockImplementation(async () => ({ blob: async () => new Blob(['audio']) }));
+  URL.createObjectURL = vi.fn(() => 'blob:audio'); URL.revokeObjectURL = vi.fn();
+  render(<LexicalPitch sessionId="test" />);
+  await screen.findByText('tone.export');
+  expect(mock.json).toHaveBeenCalledWith('/tools/lexical-pitch/test', expect.anything());
+  expect(JSON.parse(localStorage.getItem('cantonese-tone-project')!)).toEqual({ id: 'test', edits: [] });
+});

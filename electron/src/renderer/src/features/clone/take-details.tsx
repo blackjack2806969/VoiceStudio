@@ -1,3 +1,5 @@
+import { EditPitchButton } from '@/features/tools/edit-pitch-button';
+import { isCantoneseStudio } from '@/lib/cantonese-studio';
 import { SaveTakeProfile } from './save-take-profile';
 import { LockVoice } from './lock-voice';
 import { useEffect, useState } from 'react';
@@ -229,6 +231,7 @@ export function TakeDetails({ item }: { item: HistoryItem }) {
       {/* One row: the primary save, then the secondary actions as quiet icon buttons. */}
       <div data-slot="take-actions" className="flex flex-wrap items-center gap-1.5">
         <SaveTakeProfile key={item.id + '-save'} item={item} />
+        {item.audio_path && isCantoneseStudio() && <EditPitchButton audioPath={item.audio_path} />}
         {item.audio_path && (
           <SaveAudioButton
             url={audioUrl(item.audio_path)}

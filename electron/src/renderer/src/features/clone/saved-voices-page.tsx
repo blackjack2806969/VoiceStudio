@@ -9,9 +9,11 @@ import { setWorkspace, useWorkspace } from '@/lib/store/workspace';
 import { SavedVoices } from './voices-sidebar';
 import { EditProfile } from './edit-profile';
 import { runRendererTask } from '@/lib/global-error-recovery';
+import { isCantoneseStudio } from '@/lib/cantonese-studio';
 
 export function SavedVoicesPage() {
   const { t } = useTranslation();
+  const focused = isCantoneseStudio();
   const navigate = useNavigate();
   const { editingProfileId } = useWorkspace();
   const profiles = useProfiles();
@@ -20,7 +22,7 @@ export function SavedVoicesPage() {
   return (
     <div className="flex h-full min-h-0 flex-col">
       <WorkspaceHeader>
-        <h1 className="text-sm font-medium">{t('clone.saved_profiles')}</h1>
+        <h1 className="text-sm font-medium">{t(focused ? 'tone.saved_voices' : 'clone.saved_profiles')}</h1>
         <div className="flex items-center gap-1">
           <Button
             size="sm"
@@ -33,7 +35,7 @@ export function SavedVoicesPage() {
             <FingerprintIcon />
             <span className="hidden sm:inline">{t('clone.title')}</span>
           </Button>
-          <Button
+          {!focused && <Button
             size="sm"
             variant="ghost"
             title={t('designWorkspace.title')}
@@ -43,7 +45,7 @@ export function SavedVoicesPage() {
           >
             <WandSparklesIcon />
             <span className="hidden sm:inline">{t('designWorkspace.title')}</span>
-          </Button>
+          </Button>}
         </div>
       </WorkspaceHeader>
       <div className="flex min-h-0 flex-1">

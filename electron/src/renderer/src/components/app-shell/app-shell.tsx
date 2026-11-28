@@ -10,9 +10,12 @@ import { useBackendStatus } from '@/hooks/use-backend-status';
 import { isBackendReachable } from '@shared/utils/backendStage';
 import { AccountCorner } from './account-corner';
 import { NowPlayingDock } from '@/components/now-playing-dock';
+import { isCantoneseStudio } from '@/lib/cantonese-studio';
 
 export function AppShell() {
   const backend = useBackendStatus();
+  const focused = isCantoneseStudio();
+  const repairDock = focused ? undefined : <RepairAgentDock />;
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
@@ -26,13 +29,13 @@ export function AppShell() {
     <div
       className={cn(
         'app-surface relative flex h-full flex-col bg-background text-foreground',
-        macWorkspace && 'macos-notification-safe-area',
+        !focused && macWorkspace && 'macos-notification-safe-area',
       )}
     >
       <div className="flex min-h-0 flex-1">
         {shellOnly ? (
           <>
-            <CommandPalette />
+            {!focused && <CommandPalette />}
             <WorkspaceSidebar />
             <SettingsWorkspace
               data-slot="workspace-content"
@@ -42,14 +45,14 @@ export function AppShell() {
               <div className="min-h-0 flex-1 overflow-hidden">
                 <Outlet />
               </div>
-              <RepairAgentDock />
+              {repairDock}
             </SettingsWorkspace>
           </>
         ) : (
-          <BackendGate repairDock={<RepairAgentDock />}>
-            <CommandPalette />
+          <BackendGate repairDock={repairDock}>
+            {!focused && <CommandPalette />}
             <WorkspaceSidebar />
-            <ContextSidebar />
+            {!focused && <ContextSidebar />}
             <main
               data-slot="workspace-content"
               className="@container relative flex min-w-0 flex-1 flex-col overflow-hidden"
@@ -57,7 +60,7 @@ export function AppShell() {
               <div className="min-h-0 flex-1 overflow-hidden">
                 <Outlet />
               </div>
-              <RepairAgentDock />
+              {repairDock}
             </main>
           </BackendGate>
         )}
@@ -66,7 +69,7 @@ export function AppShell() {
       {/* Native drag-region hit testing follows document order. Keep these
           no-drag controls after every workspace titlebar, outside BackendGate. */}
       {/* Top-right corner on every page and platform: account, then the notifications bell. */}
-      <AccountCorner notificationsEnabled={isBackendReachable(backend.stage)} />
+      {!focused && <AccountCorner notificationsEnabled={isBackendReachable(backend.stage)} />}
     </div>
   );
 }

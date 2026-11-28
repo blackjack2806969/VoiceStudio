@@ -689,16 +689,18 @@ if (singleInstance && !app.requestSingleInstanceLock()) {
       };
       if (!headlessOwner) mainWindow = createWindow();
       if (launchIntent.checkUpdates) handleLaunch(launchIntent);
-      closeWatch = installWatchFolders(
-        () => mainWindow,
-        () => backend.baseUrl,
-        () => backend.requestHeaders(),
-      );
       const icon = nativeImage.createFromPath(brandIconPath('icon-macos.png'));
       if (process.platform === 'darwin') app.dock?.setIcon(icon);
       tray = new Tray(createTrayIcon(brandIconPath('32x32.png')));
       tray.setToolTip(PRODUCT_NAME);
-      closeCapture = installNativeCapture(PRELOAD_PATH, tray, () => mainWindow);
+      if (process.env.VOICESTUDIO_CANTONESE_BUNDLED !== '1') {
+        closeWatch = installWatchFolders(
+          () => mainWindow,
+          () => backend.baseUrl,
+          () => backend.requestHeaders(),
+        );
+        closeCapture = installNativeCapture(PRELOAD_PATH, tray, () => mainWindow);
+      }
       tray.on('click', () => showWindow());
       if (headlessOwner) {
         idleShutdown = new IdleShutdown({

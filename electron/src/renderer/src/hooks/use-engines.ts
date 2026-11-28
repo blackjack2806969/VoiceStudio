@@ -44,6 +44,7 @@ type TtsEnginesResult = Omit<UseEnginesResult, 'data'> & { data?: Pick<EnginesRe
 
 export function useEngines(): UseEnginesResult;
 export function useEngines(family: 'tts'): TtsEnginesResult;
+export function useEngines(family: 'tts' | undefined): TtsEnginesResult;
 export function useEngines(family?: 'tts'): TtsEnginesResult {
   const status = useBackendStatus();
   const packagedTts = family === 'tts' && Boolean(window.voicestudio?.backend?.installOmniVoice);

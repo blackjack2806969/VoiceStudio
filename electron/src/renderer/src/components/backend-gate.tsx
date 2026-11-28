@@ -1,3 +1,4 @@
+import { isCantoneseStudio } from '@/lib/cantonese-studio';
 import { useVisibleInterval } from '@/lib/visible-interval';
 import { SetupProgressCard } from './setup-progress-card';
 import { ReportBug } from './report-bug';
@@ -122,6 +123,7 @@ export function delimitedDiagnostic(message?: string): string {
  * footer) stays mounted around it, so the splash-to-page swap shifts nothing.
  */
 export function BackendGate({ children, repairDock }: BackendGateProps) {
+  const focused = isCantoneseStudio();
   const { t } = useTranslation();
   const status = useBackendStatus();
   const [reachedReady, setReachedReady] = useState(false);
@@ -463,7 +465,7 @@ export function BackendGate({ children, repairDock }: BackendGateProps) {
           {setup ? <SetupUpdateNotice /> : null}
           {setup || installing || failed ? <DiagnosticConsent /> : null}
           {setup ? <SetupAnalyticsConsent analyticsDisabled={status.analyticsDisabled} /> : null}
-          {setupBlocked || (failed && status.diagnosis === 'auth_required') ? (
+          {!focused && (setupBlocked || (failed && status.diagnosis === 'auth_required')) ? (
             // Intel Macs only have a remote backend; an expired remote session is
             // repaired here because the gated workspace hides Settings.
             <RemoteBackendSettings />
@@ -492,7 +494,7 @@ export function BackendGate({ children, repairDock }: BackendGateProps) {
           ) : null}
           {/* A saved interpreter that broke later fails the launch, not setup: keep
               the way back to the managed runtime (or another interpreter) here. */}
-          {failed && !status.remote ? <ExistingPythonSettings onlyWhenSelected /> : null}
+          {!focused && failed && !status.remote ? <ExistingPythonSettings onlyWhenSelected /> : null}
 
           {/* 3. The one primary action, then the two disclosures. */}
           {setup || failed || canTroubleshoot ? (
@@ -662,7 +664,7 @@ export function BackendGate({ children, repairDock }: BackendGateProps) {
                 status={status}
                 regionDisabled={restarting || installStuck}
                 showPython={!setupBlocked}
-                showRemote={!setupBlocked}
+                showRemote={!focused && !setupBlocked}
               />
             </section>
           ) : null}

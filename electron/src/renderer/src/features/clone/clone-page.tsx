@@ -31,12 +31,14 @@ import { SynthesisDock } from '@/components/synthesis-dock';
 import { isSynthesizeShortcut } from './synthesize-shortcut';
 import { useModelCatalogue } from '@/features/settings/model-catalogue-query';
 import { ModelLicense } from '@/features/settings/model-license';
+import { isCantoneseStudio } from '@/lib/cantonese-studio';
 
 const DEMO_PROFILE_ID = 'demo0001';
 const DEMO_PROMPTED_KEY = 'omnivoice.demoClonePrompted';
 
 export function ClonePage() {
   const { t } = useTranslation();
+  const focused = isCantoneseStudio();
   const navigate = useNavigate();
   const selectedTake = useSelectedTake();
   const { generate, isGenerating } = useGenerateClone();
@@ -161,7 +163,7 @@ export function ClonePage() {
               <h1 className="truncate text-sm font-medium">{t('clone.title')}</h1>
             </div>
             <div className="flex shrink-0 items-center gap-1">
-              <Button
+              {!focused && <Button
                 variant="ghost"
                 size="icon-sm"
                 aria-label={t('preferences.search')}
@@ -169,17 +171,21 @@ export function ClonePage() {
                 onClick={() => window.dispatchEvent(new Event('voicestudio:commands'))}
               >
                 <SearchIcon />
-              </Button>
+              </Button>}
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => {
+                  if (focused) {
+                    runRendererTask('Open take history', () => navigate({ to: '/history' }));
+                    return;
+                  }
                   setLibraryTab('takes');
                   setWorkspace({ libraryOpen: true });
                 }}
               >
                 <HistoryIcon data-icon="inline-start" />
-                {t('clone.history_title')}
+                {t(focused ? 'tone.history' : 'clone.history_title')}
               </Button>
             </div>
           </header>
@@ -207,7 +213,7 @@ export function ClonePage() {
                 onBack={
                   hasVoice
                     ? finishChoice
-                    : () => runRendererTask('Leave voice selection', () => navigate({ to: '/' }))
+                    : focused ? undefined : () => runRendererTask('Leave voice selection', () => navigate({ to: '/' }))
                 }
               />
             ) : savingUpload && reference.file ? (

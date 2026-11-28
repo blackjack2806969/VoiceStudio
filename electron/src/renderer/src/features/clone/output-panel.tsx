@@ -10,6 +10,8 @@ import { formatSeconds } from './format';
 import { AudioQuality } from './audio-quality';
 import { AudioFileDetails } from './audio-file-details';
 import { SectionLabel } from './section-label';
+import { EditPitchButton } from '@/features/tools/edit-pitch-button';
+import { isCantoneseStudio } from '@/lib/cantonese-studio';
 
 export function OutputPanel() {
   const { t } = useTranslation();
@@ -38,6 +40,11 @@ export function OutputPanel() {
             )}
           </div>
           <div className="flex shrink-0 items-center gap-1">
+            {isCantoneseStudio() && (
+              result.audioPath
+                ? <EditPitchButton audioPath={result.audioPath} />
+                : <EditPitchButton audio={result.blob} />
+            )}
             <SaveAudioButton
               url={result.audioPath ? audioUrl(result.audioPath) : undefined}
               mp3Url={result.audioPath ? audioMp3Url(result.audioPath) : undefined}
