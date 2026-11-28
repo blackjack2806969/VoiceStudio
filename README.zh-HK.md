@@ -11,7 +11,7 @@
     <a href="#快速上手">快速上手</a> ·
     <a href="https://github.com/blackjack2806969/Cantonese-Voice-Studio/blob/cantonese-offline/docs/cantonese-offline.md">技術文件（英文）</a>
   </p>
-  <p><code>macOS arm64</code> · <code>OmniVoice</code> · <code>Praat / PSOLA</code> · <code>本地運算</code></p>
+  <p><code>macOS arm64</code> · <code>OmniVoice</code> · <code>Praat / PSOLA</code> · <code>本地運算</code> · <code>私隱優先</code></p>
 </div>
 
 ---
@@ -21,6 +21,16 @@
 本專案係 [VoiceStudio](https://github.com/debpalash/VoiceStudio) 嘅獨立廣東話特化版本，專注香港廣東話配音：匯入獲授權嘅參考聲音、生成廣東話及中英夾雜語音、修正個別音節嘅聲調，再輸出完成品。
 
 本版本只採用 OmniVoice 作為語音生成引擎。安裝模型之後，語音生成同修音都喺本機進行，唔需要雲端推理服務或者付費 API 額度。
+
+## 點解堅持本地運算？資訊保安與私隱
+
+**本地運算唔單止係為咗慳 API 費用，更重要係保護未公開內容同敏感資料。** 配音稿、參考錄音、聲線及製作中嘅音訊可能涉及機密資訊或者未發佈作品，因此本專案採用 local-first 設計，減低內容外流及傳送至第三方服務嘅風險。
+
+- **內容留喺本機：** 語音複製、TTS、修音及輸出均在本機處理，毋須將錄音、文字稿或生成音訊上載至雲端 AI 服務。
+- **限制網絡存取：** macOS 沙盒限制後端及音訊處理程序只使用本地連線；App 亦封鎖外部網絡請求，停用分析追蹤及雲端帳戶功能。
+- **模型下載例外：** 首次下載 OmniVoice 時，需要由用戶明確確認，透過獨立下載程序連接網絡。模型安裝完成後，可完全離線進行配音及修音。
+
+本設計旨在減低資料外流風險，並非保證所有情況下絕無外洩；裝置安全、檔案權限、備份及機構資訊保安政策仍然重要。詳見[離線網絡限制技術說明](https://github.com/blackjack2806969/Cantonese-Voice-Studio/blob/cantonese-macos-0.3.1/docs/cantonese-offline.md#offline-enforcement)（英文）。
 
 > [!TIP]
 > **最重要嘅使用建議：一次 Render 完整句子，唔好逐一兩個字生成。**
