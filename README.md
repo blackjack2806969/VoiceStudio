@@ -11,7 +11,7 @@
     <a href="#quick-start">Quick start</a> ·
     <a href="https://github.com/blackjack2806969/Cantonese-Voice-Studio/blob/cantonese-offline/docs/cantonese-offline.md">Documentation</a>
   </p>
-  <p><code>macOS arm64</code> · <code>OmniVoice</code> · <code>Praat / PSOLA</code> · <code>Local inference</code></p>
+  <p><code>macOS arm64</code> · <code>OmniVoice</code> · <code>Praat / PSOLA</code> · <code>Local inference</code> · <code>Privacy-first</code></p>
 </div>
 
 ---
@@ -21,6 +21,16 @@
 An independent, Cantonese-focused fork of [VoiceStudio](https://github.com/debpalash/VoiceStudio), designed for a simple workflow: clone an authorised reference voice, generate Hong Kong Cantonese speech (including English words), correct individual syllable tones and export the finished audio.
 
 The distribution uses OmniVoice as its only TTS engine. Once the model is installed, speech generation and audio editing run locally, without a cloud inference service or paid API credits.
+
+## Why local? Security and privacy by design
+
+**Local processing is a security decision, not just a way to avoid API costs.** Voice recordings, scripts, voice profiles and work-in-progress audio may contain confidential information or unreleased content. Cantonese Voice Studio is designed to minimise the risk of content leakage and exposure to third-party services.
+
+- **Keep content on your device:** Voice cloning, TTS, pitch editing and audio export are processed locally, without uploading reference recordings, scripts or generated audio to cloud AI services.
+- **Restricted network access:** macOS sandboxing limits backend and audio workers to local connections. The app also blocks external renderer requests and disables analytics and cloud account features.
+- **Explicit model download:** A separate, user-confirmed installer can access the internet to download OmniVoice. Once the model is installed, generation and editing can run entirely offline.
+
+This design reduces the risk of data leakage; it is not a guarantee against every possible security threat. Device security, file permissions, backups and organisational security policies still matter. See [offline enforcement](https://github.com/blackjack2806969/Cantonese-Voice-Studio/blob/cantonese-macos-0.3.1/docs/cantonese-offline.md#offline-enforcement) for technical details.
 
 > [!TIP]
 > **Most important generation tip: render complete sentences, not isolated words.** Give OmniVoice a full sentence or a natural phrase instead of generating one or two words at a time. Sentence-level context helps the model produce more natural Cantonese pronunciation, rhythm and intonation. If a single syllable has the wrong tone, generate the whole sentence first and then correct that syllable in the Pitch Editor. If regeneration is needed, regenerate the full sentence rather than splicing isolated words together.
