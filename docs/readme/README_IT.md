@@ -400,7 +400,7 @@ Aggiungi questo repository in un client compatibile con F-Droid; verificare l'im
 https://debpalash.github.io/VoiceStudio/fdroid/repo
 ```
 
-[Guida](../../store/fdroid/README.md)
+[Guida](../../app/store/fdroid/README.md)
 
 </details>
 
@@ -477,7 +477,7 @@ bun run dev
 
 `bun run dev` installa le dipendenze JavaScript e, quando si utilizza un backend locale supportato, le dipendenze Python prima di avviare Electron. Esegui direttamente `bun run setup:api` quando devi solo ricostruire l'ambiente Python.
 
-Vedere [Configurazione dell'elettrone](../../electron/README.md).
+Vedere [Configurazione dell'elettrone](../../app/electron/README.md).
 
 **Con un agente di codifica** (Claude Code, Codex, Cursor, …), incolla:
 
@@ -501,9 +501,9 @@ Aggiornamento dalla 0.5.3 o precedente (l'app Tauri)? [Installa la nuova app sep
 | Aiuto per la configurazione | [Risoluzione dei problemi](../../docs/install/troubleshooting.md) · [Download dei modelli](../../docs/downloading-models.md) |
 | Guide | [Doppiaggio con più parlanti](../../docs/dubbing/multi-speaker-guide.md) · [Voce espressiva](../../docs/expressive-speech.md) · [Esportare i doppiaggi](../../docs/dubbing/export.md) |
 | Modelli e qualità | [Guide motore](../../docs/engines/README.md) · [whisper.cpp ASR](../../docs/engines/whisper-cpp.md) · [Benchmarks](../../docs/benchmarks.md) |
-| Integrazioni | [CLI](../../docs/install/script.md#terminal-command) · [API locale](../../docs/speech-platform.md) · [MCP](../../docs/mcp.md) · [Esempi](../../examples/README.md) |
+| Integrazioni | [CLI](../../docs/install/script.md#terminal-command) · [API locale](../../docs/speech-platform.md) · [MCP](../../docs/mcp.md) · [Esempi](../../app/examples/README.md) |
 | App del telefono | [iOS e Android](../../docs/mobile.md) |
-| Sviluppo | [Contribuire](../../.github/CONTRIBUTING.md) ([firmare il CLA](../../.github/CONTRIBUTING.md#contribution-licensing) prima del tuo primo PR) · [Changelog](../../CHANGELOG.md) · [Criteri di firma del codice](../code-signing-policy.md) |
+| Sviluppo | [Contribuire](../../.github/CONTRIBUTING.md) ([firmare il CLA](../../.github/CONTRIBUTING.md#contribution-licensing) prima del tuo primo PR) · [Changelog](../../app/CHANGELOG.md) · [Criteri di firma del codice](../code-signing-policy.md) |
 
 Competenze per gli agenti: `npx skills add debpalash/VoiceStudio` (**voicestudio** per l’audio, **voicestudio-maintainer** per il repository).
 

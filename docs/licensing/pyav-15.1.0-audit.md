@@ -38,7 +38,7 @@ alone also cannot establish that no other attribution text exists in a binary.
 
 The [accompanying JSON](pyav-15.1.0-wheels.json) records each wheel URL/hash, each inspected library's
 member path/hash, build configuration, reported licence string, and notice-file
-inventory. The [inspection script](../../scripts/audit_pyav_wheels.py) can regenerate that evidence from `uv.lock`:
+inventory. The [inspection script](../../app/scripts/audit_pyav_wheels.py) can regenerate that evidence from `uv.lock`:
 
 ```sh
 python3.11 scripts/audit_pyav_wheels.py --cache-dir /tmp/pyav-audit-wheels --output /tmp/pyav-audit.json

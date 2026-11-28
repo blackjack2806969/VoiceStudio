@@ -400,7 +400,7 @@ Dodaj to repozytorium w kliencie kompatybilnym z F-Droid; sprawdź odcisk palca 
 https://debpalash.github.io/VoiceStudio/fdroid/repo
 ```
 
-[Przewodnik](../../store/fdroid/README.md)
+[Przewodnik](../../app/store/fdroid/README.md)
 
 </details>
 
@@ -477,7 +477,7 @@ bun run dev
 
 `bun run dev` instaluje zależności JavaScript i, w przypadku korzystania z obsługiwanego lokalnego backendu, zależności Pythona przed uruchomieniem Electrona. Uruchom `bun run setup:api` bezpośrednio, gdy potrzebujesz jedynie odbudować środowisko Pythona.
 
-Zobacz [Konfiguracja elektronów](../../electron/README.md).
+Zobacz [Konfiguracja elektronów](../../app/electron/README.md).
 
 **Za pomocą środka kodującego** (Claude Code, Codex, Cursor,…) wklej:
 
@@ -501,9 +501,9 @@ Aktualizujesz wersję 0.5.3 lub starszą (aplikacja Tauri)? [Zainstaluj nową ap
 | Pomoc w konfiguracji | [Rozwiązywanie problemów](../../docs/install/troubleshooting.md) · [Pobieranie modelu](../../docs/downloading-models.md) |
 | Przewodniki | [Dubbing z wieloma mówcami](../../docs/dubbing/multi-speaker-guide.md) · [Ekspresyjna mowa](../../docs/expressive-speech.md) · [Eksport dubbingu](../../docs/dubbing/export.md) |
 | Modele i jakość | [Przewodniki po silniku](../../docs/engines/README.md) · [whisper.cpp ASR](../../docs/engines/whisper-cpp.md) · [Benchmarki](../../docs/benchmarks.md) |
-| Integracje | [CLI](../../docs/install/script.md#terminal-command) · [Lokalny interfejs API](../../docs/speech-platform.md) · [MCP](../../docs/mcp.md) · [Przykłady](../../examples/README.md) |
+| Integracje | [CLI](../../docs/install/script.md#terminal-command) · [Lokalny interfejs API](../../docs/speech-platform.md) · [MCP](../../docs/mcp.md) · [Przykłady](../../app/examples/README.md) |
 | Aplikacje na telefon | [iOS i Android](../../docs/mobile.md) |
-| Rozwój | [Contributing](../../.github/CONTRIBUTING.md) ([podpisz umowę CLA](../../.github/CONTRIBUTING.md#contribution-licensing) przed pierwszym PR) · [Dziennik zmian](../../CHANGELOG.md) · [Zasady podpisywania kodu](../code-signing-policy.md) |
+| Rozwój | [Contributing](../../.github/CONTRIBUTING.md) ([podpisz umowę CLA](../../.github/CONTRIBUTING.md#contribution-licensing) przed pierwszym PR) · [Dziennik zmian](../../app/CHANGELOG.md) · [Zasady podpisywania kodu](../code-signing-policy.md) |
 
 Umiejętności agentów: `npx skills add debpalash/VoiceStudio` (**voicestudio** do pracy z dźwiękiem, **voicestudio-maintainer** do repozytorium).
 

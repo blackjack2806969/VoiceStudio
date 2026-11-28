@@ -104,7 +104,7 @@ speed. `OMNIVOICE_TORCH_VARIANT=cuda|cpu|rocm` overrides the detection (on Linux
 existing install keeps working untouched. Source setup (`bun run setup:api`)
 also selects the locked CPU wheels on x86-64 hosts without NVIDIA. Linux ARM
 source installs keep their native PyPI wheels. See
-[CPU setup and overrides](../../electron/README.md#running-without-a-gpu).
+[CPU setup and overrides](../../app/electron/README.md#running-without-a-gpu).
 
 ## Building from source
 
@@ -148,8 +148,8 @@ Prerequisites:
 Then, from a clone of the repository:
 
 ```bash
-git clone https://github.com/debpalash/VoiceStudio.git
-cd VoiceStudio
+git clone https://github.com/blackjack2806969/Cantonese-Voice-Studio.git
+cd Cantonese-Voice-Studio/app
 node electron/scripts/node-version.mjs
 ```
 
@@ -172,7 +172,7 @@ already listening on port 3900, otherwise it starts its own. Other commands:
 | `bun run dist` | Build local installers (AppImage and `.deb`) in `electron/release/` without publishing |
 | `bun run smoke-test` | Build and launch an isolated packaged app |
 
-See [Electron setup](../../electron/README.md) for backend configuration and
+See [Electron setup](../../app/electron/README.md) for backend configuration and
 quality gates. The first launch downloads model weights only when you install
 a model.
 
@@ -190,7 +190,7 @@ sources. Install one variant at a time. The Git package builds the Electron
 app, native desktop bridge and pinned OmniVoice GGUF runtime; it needs a
 native toolchain, network access and sufficient disk space for the build.
 Its recipe and build instructions live in
-[`packaging/aur`](../../packaging/aur/README.md).
+[`packaging/aur`](../../app/packaging/aur/README.md).
 
 The Git-package launcher sets `VOICESTUDIO_DISABLE_UPDATER=1` so `pacman`
 handles application updates. Set the same variable for other package-managed

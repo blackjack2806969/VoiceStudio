@@ -76,6 +76,7 @@ jobs:
           # admins can edit Actions variables, so the owner stays in control of it.
           UNSIGNED_PUBLISHERS: ${{ vars.UNSIGNED_RELEASE_PUBLISHERS }}
           SIGNPATH_POLICY: ${{ inputs.signpath_policy }}
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           may_publish_unsigned() {
             [ -n "$1" ] || return 1
@@ -103,6 +104,7 @@ jobs:
           PUBLISH: ${{ inputs.publish }}
           RELEASE_TAG_OVERRIDE: ${{ inputs.release_tag }}
           ALLOW_UNSIGNED: ${{ inputs.allow_unsigned }}
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           # A rehearsal builds the dispatched commit and publishes nothing.
           test "$PUBLISH" != true || { echo "A rehearsal never publishes; dispatch it without publish"; exit 1; }
@@ -111,6 +113,7 @@ jobs:
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA" || { echo "Checkout does not match the dispatched commit"; exit 1; }
       - name: Resolve the release channel
         id: channel
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           # stable (X.Y.Z) or beta (X.Y.Z-beta.N); any other shape fails here,
           # for a rehearsal as for a tag.
@@ -216,7 +219,7 @@ jobs:
           targets: ${{ matrix.target }}
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
-          workspaces: native/desktop-bridge -> target
+          workspaces: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}/native/desktop-bridge -> target
           key: electron-${{ matrix.target }}
       - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
         with:
@@ -226,8 +229,9 @@ jobs:
         if: runner.os == 'Linux'
         env:
           GH_TOKEN: ${{ github.token }}
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
-          helper=.github/scripts/apt-retry.sh
+          helper="$GITHUB_WORKSPACE/.github/scripts/apt-retry.sh"
           # An older release tag predates the helper; take it from this workflow's commit.
           if [ ! -f "$helper" ]; then
             helper="$RUNNER_TEMP/apt-retry.sh"
@@ -241,9 +245,10 @@ jobs:
         # ci.yml's release smoke runs the same script on every pull request.
         env:
           GH_TOKEN: ${{ github.token }}
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           gh api -H 'Accept: application/vnd.github.raw+json' \
-            "repos/$GITHUB_REPOSITORY/contents/electron/scripts/stage-bundled-uv.mjs?ref=$GITHUB_SHA" \
+            "repos/$GITHUB_REPOSITORY/contents/app/electron/scripts/stage-bundled-uv.mjs?ref=$GITHUB_SHA" \
             > "$RUNNER_TEMP/stage-bundled-uv.mjs"
           node "$RUNNER_TEMP/stage-bundled-uv.mjs"
       - name: Stage the OmniVoice GGUF runtime
@@ -251,18 +256,21 @@ jobs:
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: omnivoice-tts-${{ matrix.gguf_platform }}
-          path: electron/build/omnivoice-tts
+          path: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}/electron/build/omnivoice-tts
       - name: Install locked dependencies
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: bun install --frozen-lockfile
       - name: Validate and build Electron
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: bun run check:electron
       - name: Load notarization helper from workflow
         if: matrix.platform == 'darwin'
         env:
           GH_TOKEN: ${{ github.token }}
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           gh api -H 'Accept: application/vnd.github.raw+json' \
-            "repos/$GITHUB_REPOSITORY/contents/scripts/prepare-apple-notarization.sh?ref=$GITHUB_SHA" \
+            "repos/$GITHUB_REPOSITORY/contents/app/scripts/prepare-apple-notarization.sh?ref=$GITHUB_SHA" \
             > "$RUNNER_TEMP/prepare-apple-notarization.sh"
       - name: Package without publishing
         env:
@@ -276,7 +284,7 @@ jobs:
           APPLE_API_ISSUER: ${{ matrix.platform == 'darwin' && secrets.APPLE_API_ISSUER || '' }}
           PUBLISH: ${{ inputs.publish }}
           ALLOW_UNSIGNED: ${{ inputs.allow_unsigned }}
-        working-directory: electron
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}/electron
         run: |
           if [ "${{ matrix.platform }}" = darwin ] && [ "$PUBLISH" = true ] && [ "$ALLOW_UNSIGNED" != true ]; then
             if [ -z "${CSC_LINK:-}" ] || [ -z "${CSC_KEY_PASSWORD:-}" ] || [ -z "${APPLE_API_KEY:-}" ] || [ -z "${APPLE_API_KEY_ID:-}" ] || [ -z "${APPLE_API_ISSUER:-}" ]; then
@@ -335,7 +343,7 @@ jobs:
           name: signpath-unsigned-${{ matrix.platform }}-${{ matrix.arch }}
           retention-days: ${{ inputs.rehearsal && 3 || 7 }}
           if-no-files-found: error
-          path: electron/release/VoiceStudio-*.exe
+          path: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}/electron/release/VoiceStudio-*.exe
       - name: Sign the Windows installer with SignPath
         if: env.SIGNPATH_ENABLED == 'true'
         timeout-minutes: 70
@@ -351,7 +359,7 @@ jobs:
           output-artifact-directory: electron/release-signed
       - name: Replace the installer with the signed one and refresh the update feed
         if: env.SIGNPATH_ENABLED == 'true'
-        working-directory: electron
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}/electron
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -360,7 +368,7 @@ jobs:
           # from the workflow's own commit, like the other release helpers. It
           # resolves electron-builder from the working directory (electron/).
           gh api -H 'Accept: application/vnd.github.raw+json' \
-            "repos/$GITHUB_REPOSITORY/contents/electron/scripts/apply-signed-windows.mjs?ref=$GITHUB_SHA" \
+            "repos/$GITHUB_REPOSITORY/contents/app/electron/scripts/apply-signed-windows.mjs?ref=$GITHUB_SHA" \
             > "$RUNNER_TEMP/apply-signed-windows.mjs"
           node "$RUNNER_TEMP/apply-signed-windows.mjs" release-signed release
           node tests/update-package-contract.mjs --platform ${{ matrix.platform }} --arch ${{ matrix.arch }}
@@ -370,6 +378,7 @@ jobs:
         env:
           HAS_CREDENTIALS: ${{ secrets.ELECTRON_MACOS_CSC_LINK != '' }}
           ALLOW_UNSIGNED: ${{ inputs.allow_unsigned }}
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           # A Windows unsigned exception must not bypass a signed Mac's assessment.
           if [ "$ALLOW_UNSIGNED" = true ] && [ "$HAS_CREDENTIALS" != true ]; then
@@ -384,6 +393,7 @@ jobs:
       - name: Verify Windows installer signature before publication
         if: inputs.publish == true && inputs.allow_unsigned != true && matrix.platform == 'win32'
         shell: pwsh
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           $installers = @(Get-ChildItem electron/release/VoiceStudio-*.exe)
           if ($installers.Count -eq 0) { throw "No installer to verify" }
@@ -397,6 +407,7 @@ jobs:
         if: matrix.platform == 'darwin'
         env:
           HAS_CREDENTIALS: ${{ secrets.ELECTRON_MACOS_CSC_LINK != '' }}
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           APP=$(find electron/release -maxdepth 2 -name VoiceStudio.app -type d -print -quit)
           test -n "$APP" || { echo "No VoiceStudio.app to verify"; exit 1; }
@@ -426,6 +437,7 @@ jobs:
         env:
           HAS_CREDENTIALS: ${{ secrets.ELECTRON_WINDOWS_CSC_LINK != '' || env.SIGNPATH_ENABLED == 'true' }}
           TEST_SIGNED: ${{ env.REHEARSAL == 'true' && env.SIGNPATH_ENABLED == 'true' && env.SIGNPATH_POLICY == 'test-signing' }}
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           $installers = @(Get-ChildItem electron/release/VoiceStudio-*.exe)
           if ($installers.Count -eq 0) { throw "No installer to verify" }
@@ -458,6 +470,7 @@ jobs:
           Set-Content "electron/release-signing/signing-win32-${{ matrix.arch }}.json" ('{"platform":"win32","arch":"${{ matrix.arch }}","status":"' + $status + '"}')
       - name: Report Linux signing
         if: matrix.platform == 'linux'
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           mkdir -p electron/release-signing
           printf '{"platform":"linux","arch":"%s","status":"not-applicable"}\n' "${{ matrix.arch }}" > "electron/release-signing/signing-linux-${{ matrix.arch }}.json"
@@ -467,12 +480,13 @@ jobs:
           name: electron-signing-${{ matrix.platform }}-${{ matrix.arch }}
           retention-days: ${{ env.ARTIFACT_RETENTION_DAYS }}
           if-no-files-found: error
-          path: electron/release-signing/signing-*.json
+          path: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}/electron/release-signing/signing-*.json
       - name: Bundled native code must run on the Snap base (glibc <= 2.35)
         if: matrix.platform == 'linux'
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: python3 scripts/check_glibc_floor.py electron/release/linux-unpacked/resources/native
       - name: Packaged startup smoke test
-        working-directory: electron
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}/electron
         run: |
           if [ "$RUNNER_OS" = Linux ]; then
             for image in release/VoiceStudio-*-linux-x64.AppImage; do
@@ -488,9 +502,9 @@ jobs:
           retention-days: ${{ env.ARTIFACT_RETENTION_DAYS }}
           if-no-files-found: error
           path: |
-            electron/release/VoiceStudio-*
-            electron/release/electron-*.yml
-            electron/release/store-artifact-manifest-*.json
+            ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}/electron/release/VoiceStudio-*
+            ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}/electron/release/electron-*.yml
+            ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}/electron/release/store-artifact-manifest-*.json
 
   # Both phone apps are required on the same tag as desktop. App Store uploads
   # remain separate; GitHub users sideload the unsigned IPA with their Apple ID.
@@ -537,7 +551,7 @@ jobs:
         with:
           pattern: electron-release-*
           merge-multiple: true
-          path: release-assets
+          path: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}/release-assets
       # One download per phone app, each into its own folder: a pattern that
       # matches a single artifact extracts it without the artifact-name folder,
       # which would lose the surviving app when the other phone leg fails.
@@ -545,13 +559,14 @@ jobs:
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: VoiceStudio-android-release
-          path: phone-assets/VoiceStudio-android-release
+          path: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}/phone-assets/VoiceStudio-android-release
       - name: Download the iPhone build
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: VoiceStudio-ios-unsigned
-          path: phone-assets/VoiceStudio-ios-unsigned
+          path: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}/phone-assets/VoiceStudio-ios-unsigned
       - name: Collect phone binaries
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           VERSION="${TAG#v}"
           mkdir -p release-assets
@@ -566,6 +581,7 @@ jobs:
           collect phone-assets/VoiceStudio-android-release/VoiceStudio.aab "release-assets/VoiceStudio-${VERSION}-android.aab"
           collect phone-assets/VoiceStudio-ios-unsigned/VoiceStudio-unsigned.ipa "release-assets/VoiceStudio-${VERSION}-ios-unsigned.ipa"
       - name: Validate all platforms before creating a release
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           if [ "$REHEARSAL" = true ]; then
             python3 scripts/prepare_electron_release.py --assets release-assets --rehearsal --missing-report "$RUNNER_TEMP/rehearsal-missing-desktop.txt" --repo "$GITHUB_REPOSITORY"
@@ -576,6 +592,7 @@ jobs:
         # Archived Tauri clients read `latest/download`, which never serves a
         # prerelease, so only Stable releases carry the sunset feeds.
         if: env.CHANNEL == 'stable'
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           test "$SUNSET_TAG" = "v0.5.3" || { echo "TAURI_SUNSET_TAG must be v0.5.3 before releasing"; exit 1; }
           # Every release carries copies pointing to immutable v0.5.3 payloads
@@ -591,13 +608,14 @@ jobs:
         with:
           pattern: electron-signing-*
           merge-multiple: true
-          path: release-signing
+          path: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}/release-signing
       - name: Describe downloads and signing per platform
         # The checkout is the release tag, which predates this helper when an older
         # tag is rebuilt from main; use the helper from the workflow's own commit.
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           gh api -H "Accept: application/vnd.github.raw" \
-            "repos/$GITHUB_REPOSITORY/contents/scripts/release_signing_notes.py?ref=$GITHUB_SHA" \
+            "repos/$GITHUB_REPOSITORY/contents/app/scripts/release_signing_notes.py?ref=$GITHUB_SHA" \
             > "$RUNNER_TEMP/release_signing_notes.py"
           # One download-and-signing table (desktop and phones) leads the notes, so
           # downloaders see it before the changelog section and its Highlights.
@@ -610,6 +628,7 @@ jobs:
           mv "$RUNNER_TEMP/RELEASE_NOTES.md" release-assets/RELEASE_NOTES.md
       - name: Rehearsal - check the feeds the release would carry
         if: inputs.rehearsal == true
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           # What the draft check below reads from GitHub, read from the local assets.
           find release-assets -maxdepth 1 -type f ! -name RELEASE_NOTES.md -printf '%f\n' | python3 scripts/check_electron_release_assets.py --foreign-feeds "$CHANNEL"
@@ -630,12 +649,13 @@ jobs:
           retention-days: 3
           if-no-files-found: error
           path: |
-            release-assets/RELEASE_NOTES.md
-            release-assets/SHA256SUMS.txt
+            ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}/release-assets/RELEASE_NOTES.md
+            ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}/release-assets/SHA256SUMS.txt
       # Runs even when an earlier rehearsal step failed, so the missing legs
       # are always listed.
       - name: Rehearsal - fail when a build leg produced nothing
         if: ${{ !cancelled() && inputs.rehearsal == true }}
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           cat "$RUNNER_TEMP"/rehearsal-missing-*.txt 2>/dev/null > "$RUNNER_TEMP/rehearsal-missing.txt" || true
           if [ -s "$RUNNER_TEMP/rehearsal-missing.txt" ]; then
@@ -646,6 +666,7 @@ jobs:
           fi
       - name: Create or update draft
         if: inputs.rehearsal != true
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           # Rehearsals never publish (tests/test_release_rehearsal.py).
           if [ "$REHEARSAL" != false ]; then echo "::error::A rehearsal run reached a publishing step"; exit 1; fi
@@ -664,6 +685,7 @@ jobs:
       - name: Publish only when explicitly requested
         id: publish_release
         if: github.event_name == 'workflow_dispatch' && inputs.publish == true && inputs.rehearsal != true
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           # Rehearsals never publish (tests/test_release_rehearsal.py).
           if [ "$REHEARSAL" != false ]; then echo "::error::A rehearsal run reached a publishing step"; exit 1; fi
@@ -690,6 +712,7 @@ jobs:
       # GITHUB_TOKEN publication does not emit another workflow's release event.
       - name: Update the Android repository after stable publication
         if: github.event_name == 'workflow_dispatch' && inputs.publish == true && inputs.rehearsal != true
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           # Rehearsals never publish (tests/test_release_rehearsal.py).
           if [ "$REHEARSAL" != false ]; then echo "::error::A rehearsal run reached a publishing step"; exit 1; fi
@@ -701,6 +724,7 @@ jobs:
       # Only Stable moves `:stable`; a beta gets `:beta` and its exact tag.
       - name: Publish release container images
         if: ${{ !cancelled() && steps.publish_release.outcome == 'success' && github.event_name == 'workflow_dispatch' && inputs.publish == true && inputs.rehearsal != true }}
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           # Rehearsals never publish (tests/test_release_rehearsal.py).
           if [ "$REHEARSAL" != false ]; then echo "::error::A rehearsal run reached a publishing step"; exit 1; fi

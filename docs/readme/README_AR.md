@@ -400,7 +400,7 @@ Android 10+ · معاينة · على الجهاز، دون اتصال بالإ�
 https://debpalash.github.io/VoiceStudio/fdroid/repo
 ```
 
-[الدليل](../../store/fdroid/README.md)
+[الدليل](../../app/store/fdroid/README.md)
 
 </details>
 
@@ -477,7 +477,7 @@ bun run dev
 
 `bun run dev` يقوم بتثبيت تبعيات JavaScript، وعند استخدام واجهة خلفية محلية مدعومة، يتم تثبيت تبعيات Python قبل تشغيل Electron. قم بتشغيل `bun run setup:api` مباشرة عندما تحتاج فقط إلى إعادة بناء بيئة Python.
 
-راجع [إعداد الإلكترون](../../electron/README.md).
+راجع [إعداد الإلكترون](../../app/electron/README.md).
 
 **باستخدام وكيل ترميز** (Claude Code، Codex، Cursor، ...)، الصق:
 
@@ -501,9 +501,9 @@ https://github.com/debpalash/VoiceStudio/blob/main/docs/install/agent.md
 | مساعدة الإعداد | [استكشاف الأخطاء وإصلاحها](../../docs/install/troubleshooting.md) · [تنزيلات النماذج](../../docs/downloading-models.md) |
 | أدلة | [دبلجة متعددة المتحدثين](../../docs/dubbing/multi-speaker-guide.md) · [كلام معبّر](../../docs/expressive-speech.md) · [تصدير الدبلجة](../../docs/dubbing/export.md) |
 | النماذج والجودة | [أدلة المحرك](../../docs/engines/README.md) · [whisper.cpp ASR](../../docs/engines/whisper-cpp.md) · [المعايير](../../docs/benchmarks.md) |
-| التكامل | [CLI](../../docs/install/script.md#terminal-command) · [واجهة API المحلية](../../docs/speech-platform.md) · [MCP](../../docs/mcp.md) · [أمثلة](../../examples/README.md) |
+| التكامل | [CLI](../../docs/install/script.md#terminal-command) · [واجهة API المحلية](../../docs/speech-platform.md) · [MCP](../../docs/mcp.md) · [أمثلة](../../app/examples/README.md) |
 | تطبيقات الهاتف | [iOS وAndroid](../../docs/mobile.md) |
-| تطوير | [المساهمة](../../.github/CONTRIBUTING.md) ([قم بالتوقيع على CLA](../../.github/CONTRIBUTING.md#contribution-licensing) قبل العلاقات العامة الأولى) · [سجل التغيير](../../CHANGELOG.md) · [سياسة توقيع الشيفرة](../code-signing-policy.md) |
+| تطوير | [المساهمة](../../.github/CONTRIBUTING.md) ([قم بالتوقيع على CLA](../../.github/CONTRIBUTING.md#contribution-licensing) قبل العلاقات العامة الأولى) · [سجل التغيير](../../app/CHANGELOG.md) · [سياسة توقيع الشيفرة](../code-signing-policy.md) |
 
 مهارات الوكيل: `npx skills add debpalash/VoiceStudio` (**voicestudio** لأعمال الصوت، و**voicestudio-maintainer** للمستودع).
 

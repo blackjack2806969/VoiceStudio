@@ -70,7 +70,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: voicestudio
-          sparse-checkout: scripts/windows-rocm-recipe.json
+          sparse-checkout: app/scripts/windows-rocm-recipe.json
           sparse-checkout-cone-mode: false
           persist-credentials: false
 
@@ -88,7 +88,7 @@ jobs:
           python -m venv smoke
           python - <<'PY' > runtime.txt
           import json
-          variant = json.load(open("voicestudio/scripts/windows-rocm-recipe.json", encoding="utf-8"))["rocm10"]
+          variant = json.load(open("voicestudio/app/scripts/windows-rocm-recipe.json", encoding="utf-8"))["rocm10"]
           base, runtime = variant["torch"]["find_links"], variant["runtime"]
           for name in runtime["wheel_files"]:
               if name.startswith(("rocm-sdk-core/", "rocm-sdk-libraries/")):

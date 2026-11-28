@@ -13,7 +13,7 @@ choose, per task, to run on **This phone** or **My computer**.
 | | iOS | Android |
 |---|---|---|
 | Minimum OS | iOS 17 (iPhone, iPad) | Android 10 (API 29) |
-| Source | [`mobile/ios/`](../mobile/ios/README.md) | [`mobile/android/`](../mobile/android/README.md) |
+| Source | [`mobile/ios/`](../app/mobile/ios/README.md) | [`mobile/android/`](../app/mobile/android/README.md) |
 
 ## Install
 
@@ -24,7 +24,7 @@ Each release attaches the phone apps next to the desktop installers on the
   it and allow installs from that source when Android asks.
   For release updates, add `https://github.com/debpalash/VoiceStudio` in
   [Obtainium](https://obtainium.imranr.dev/), or add the
-  [publisher-operated F-Droid repository](../store/fdroid/README.md). It carries
+  [publisher-operated F-Droid repository](../app/store/fdroid/README.md). It carries
   the same release-signed APK; it is separate from F-Droid.org's main catalogue.
 - **iPhone:** download `VoiceStudio-<version>-ios-unsigned.ipa` and install it
   with a sideloading tool that signs it with your own Apple ID (for example
@@ -314,7 +314,7 @@ Send, and reports are deleted after 180 days.
 
 ## For developers
 
-Both apps follow one contract, [`mobile/contract/SPEC.md`](../mobile/contract/SPEC.md):
+Both apps follow one contract, [`mobile/contract/SPEC.md`](../app/mobile/contract/SPEC.md):
 a feature ships on both or neither. Colors, the API description and the text
 are generated from the desktop app and backend, never copied by hand:
 
@@ -433,7 +433,7 @@ The `Android Play internal testing` workflow is the Android counterpart: it
 signs a release bundle with the Play upload key and uploads it to the Play
 Console **internal testing** track. It is dispatched by hand from `main` and
 never sends a release to production. The store listing, graphics and Play Console
-answers are in [`store/google-play.md`](../store/google-play.md). One-time setup:
+answers are in [`store/google-play.md`](../app/store/google-play.md). One-time setup:
 
 1. Create the app in the Play Console with the package name
    `sh.voicestudio.mobile` and keep Play App Signing on (Google holds the app

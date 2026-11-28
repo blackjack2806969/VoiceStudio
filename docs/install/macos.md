@@ -186,8 +186,8 @@ Prerequisites (use a native arm64 terminal on Apple Silicon):
   Electron native helper.
 
 ```bash
-git clone https://github.com/debpalash/VoiceStudio.git
-cd VoiceStudio
+git clone https://github.com/blackjack2806969/Cantonese-Voice-Studio.git
+cd Cantonese-Voice-Studio/app
 node electron/scripts/node-version.mjs
 ```
 
@@ -204,7 +204,7 @@ bun run dev         # Electron with hot reload; it starts and supervises the bac
 Use `bun run desktop-prod` to build and launch the production bundle, or
 `bun run dist` to create local DMG/zip packages in `electron/release/` without
 publishing. Local packages are unsigned. See
-[Electron setup](../../electron/README.md) for backend configuration.
+[Electron setup](../../app/electron/README.md) for backend configuration.
 
 ## Apple Silicon vs Intel
 

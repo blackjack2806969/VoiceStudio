@@ -24,19 +24,19 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - scripts/windows-rocm-recipe.json
-      - backend/core/windows_rocm/**
-      - backend/core/device_caps.py
-      - tests/test_windows_rocm_*.py
+      - app/scripts/windows-rocm-recipe.json
+      - app/backend/core/windows_rocm/**
+      - app/backend/core/device_caps.py
+      - app/tests/test_windows_rocm_*.py
       - docs/install/windows-rocm.md
       - .github/workflows/windows-rocm-recipe.yml
   push:
     branches: [main]
     paths:
-      - scripts/windows-rocm-recipe.json
-      - backend/core/windows_rocm/**
-      - backend/core/device_caps.py
-      - tests/test_windows_rocm_*.py
+      - app/scripts/windows-rocm-recipe.json
+      - app/backend/core/windows_rocm/**
+      - app/backend/core/device_caps.py
+      - app/tests/test_windows_rocm_*.py
       - docs/install/windows-rocm.md
       - .github/workflows/windows-rocm-recipe.yml
   workflow_dispatch:
@@ -56,6 +56,9 @@ jobs:
     name: Recipe contracts (no GPU)
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: app
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -159,7 +162,7 @@ jobs:
       - name: Docs mention the recipes they describe
         run: |
           set -euo pipefail
-          doc=docs/install/windows-rocm.md
+          doc=../docs/install/windows-rocm.md
           test -f "$doc"
           # A recipe change that leaves the install guide describing another
           # architecture is the drift this repo has hit before.

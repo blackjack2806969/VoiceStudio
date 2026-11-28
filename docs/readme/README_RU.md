@@ -401,7 +401,7 @@ Android 10+ · Предварительная версия · После заг�
 https://debpalash.github.io/VoiceStudio/fdroid/repo
 ```
 
-[Руководство](../../store/fdroid/README.md)
+[Руководство](../../app/store/fdroid/README.md)
 
 </details>
 
@@ -480,7 +480,7 @@ bun run dev
 
 `bun run dev` устанавливает зависимости JavaScript, а при использовании поддерживаемого локального бэкенда — также зависимости Python, после чего запускает Electron. Если нужно только пересоздать окружение Python, выполните `bun run setup:api` напрямую.
 
-Зависимости и настройка бэкенда описаны в [инструкции к Electron](../../electron/README.md).
+Зависимости и настройка бэкенда описаны в [инструкции к Electron](../../app/electron/README.md).
 
 **Через ИИ-агента** (например, Claude Code, Codex или Cursor) — передайте ему такой запрос:
 
@@ -504,9 +504,9 @@ https://github.com/debpalash/VoiceStudio/blob/main/docs/install/agent.md
 | Проблемы при установке | [Решение проблем](../../docs/install/troubleshooting.md) · [Скачивание моделей](../../docs/downloading-models.md) |
 | Пошаговые инструкции | [Дубляж с несколькими дикторами](../../docs/dubbing/multi-speaker-guide.md) · [Выразительная речь](../../docs/expressive-speech.md) · [Экспорт дубляжа](../../docs/dubbing/export.md) |
 | Движки и качество | [Обзор движков](../../docs/engines/README.md) · [whisper.cpp ASR](../../docs/engines/whisper-cpp.md) · [Бенчмарки](../../docs/benchmarks.md) |
-| Связка с другими инструментами | [CLI](../../docs/install/script.md#terminal-command) · [API речевой платформы](../../docs/speech-platform.md) · [MCP](../../docs/mcp.md) · [Образцы кода](../../examples/README.md) |
+| Связка с другими инструментами | [CLI](../../docs/install/script.md#terminal-command) · [API речевой платформы](../../docs/speech-platform.md) · [MCP](../../docs/mcp.md) · [Образцы кода](../../app/examples/README.md) |
 | Мобильные приложения | [Android и iOS](../../docs/mobile.md) |
-| Для разработчиков | [Правила для контрибьюторов](../../.github/CONTRIBUTING.md) ([подпишите CLA](../../.github/CONTRIBUTING.md#contribution-licensing) перед первым PR) · [История версий](../../CHANGELOG.md) · [Политика подписи кода](../code-signing-policy.md) |
+| Для разработчиков | [Правила для контрибьюторов](../../.github/CONTRIBUTING.md) ([подпишите CLA](../../.github/CONTRIBUTING.md#contribution-licensing) перед первым PR) · [История версий](../../app/CHANGELOG.md) · [Политика подписи кода](../code-signing-policy.md) |
 
 Скиллы для ИИ-агентов ставятся командой `npx skills add debpalash/VoiceStudio`: **voicestudio** — для аудиозадач, **voicestudio-maintainer** — для поддержки самого репозитория.
 

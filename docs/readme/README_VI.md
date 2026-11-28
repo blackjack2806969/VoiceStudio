@@ -400,7 +400,7 @@ Thêm kho này vào ứng dụng tương thích với F-Droid; kiểm tra dấu 
 https://debpalash.github.io/VoiceStudio/fdroid/repo
 ```
 
-[Hướng dẫn](../../store/fdroid/README.md)
+[Hướng dẫn](../../app/store/fdroid/README.md)
 
 </details>
 
@@ -477,7 +477,7 @@ bun run dev
 
 `bun run dev` cài đặt các gói phụ thuộc JavaScript và, khi dùng backend cục bộ được hỗ trợ, các gói phụ thuộc Python trước khi khởi chạy Electron. Nếu chỉ cần tạo lại môi trường Python, hãy chạy trực tiếp `bun run setup:api`.
 
-Xem [Thiết lập Electron](../../electron/README.md).
+Xem [Thiết lập Electron](../../app/electron/README.md).
 
 **Với trợ lý lập trình** (Claude Code, Codex, Cursor, …), hãy dán:
 
@@ -501,9 +501,9 @@ Nâng cấp từ phiên bản 0.5.3 trở xuống (ứng dụng Tauri)? [Cài ri
 | Trợ giúp cài đặt | [Khắc phục sự cố](../../docs/install/troubleshooting.md) · [Tải xuống mô hình](../../docs/downloading-models.md) |
 | Hướng dẫn | [Lồng tiếng cho nhiều người nói](../../docs/dubbing/multi-speaker-guide.md) · [Giọng nói biểu cảm](../../docs/expressive-speech.md) · [Xuất âm thanh lồng tiếng](../../docs/dubbing/export.md) |
 | Mô hình và chất lượng | [Hướng dẫn các công cụ](../../docs/engines/README.md) · [whisper.cpp ASR](../../docs/engines/whisper-cpp.md) · [Đo hiệu năng](../../docs/benchmarks.md) |
-| Tích hợp | [CLI](../../docs/install/script.md#terminal-command) · [API cục bộ](../../docs/speech-platform.md) · [MCP](../../docs/mcp.md) · [Ví dụ](../../examples/README.md) |
+| Tích hợp | [CLI](../../docs/install/script.md#terminal-command) · [API cục bộ](../../docs/speech-platform.md) · [MCP](../../docs/mcp.md) · [Ví dụ](../../app/examples/README.md) |
 | Ứng dụng điện thoại | [iOS và Android](../../docs/mobile.md) |
-| Phát triển | [Đóng góp](../../.github/CONTRIBUTING.md) ([ký CLA](../../.github/CONTRIBUTING.md#contribution-licensing) trước PR đầu tiên) · [Nhật ký thay đổi](../../CHANGELOG.md) · [Chính sách ký mã](../code-signing-policy.md) |
+| Phát triển | [Đóng góp](../../.github/CONTRIBUTING.md) ([ký CLA](../../.github/CONTRIBUTING.md#contribution-licensing) trước PR đầu tiên) · [Nhật ký thay đổi](../../app/CHANGELOG.md) · [Chính sách ký mã](../code-signing-policy.md) |
 
 Kỹ năng cho trợ lý lập trình: `npx skills add debpalash/VoiceStudio` (**voicestudio** cho công việc âm thanh, **voicestudio-maintainer** cho kho mã).
 

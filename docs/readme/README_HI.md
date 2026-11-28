@@ -400,7 +400,7 @@ Android 10+ · पूर्वावलोकन · ऑन-डिवाइस, �
 https://debpalash.github.io/VoiceStudio/fdroid/repo
 ```
 
-[गाइड](../../store/fdroid/README.md)
+[गाइड](../../app/store/fdroid/README.md)
 
 </details>
 
@@ -477,7 +477,7 @@ bun run dev
 
 `bun run dev` जावास्क्रिप्ट निर्भरताएँ स्थापित करता है और, समर्थित स्थानीय बैकएंड का उपयोग करते समय, इलेक्ट्रॉन लॉन्च करने से पहले पायथन निर्भरताएँ स्थापित करता है। जब आपको केवल Python वातावरण का पुनर्निर्माण करने की आवश्यकता हो तो सीधे `bun run setup:api` चलाएँ।
 
-[इलेक्ट्रॉन सेटअप](../../electron/README.md) देखें।
+[इलेक्ट्रॉन सेटअप](../../app/electron/README.md) देखें।
 
 **एक कोडिंग एजेंट के साथ** (क्लाउड कोड, कोडेक्स, कर्सर,…), पेस्ट करें:
 
@@ -501,9 +501,9 @@ https://github.com/debpalash/VoiceStudio/blob/main/docs/install/agent.md
 | सेटअप सहायता | [समस्या निवारण](../../docs/install/troubleshooting.md) · [मॉडल डाउनलोड](../../docs/downloading-models.md) |
 | गाइड | [कई वक्ताओं की डबिंग](../../docs/dubbing/multi-speaker-guide.md) · [भावपूर्ण आवाज़](../../docs/expressive-speech.md) · [डब किए गए ऑडियो का निर्यात](../../docs/dubbing/export.md) |
 | मॉडल और गुणवत्ता | [इंजन गाइड](../../docs/engines/README.md) · [whisper.cpp ASR](../../docs/engines/whisper-cpp.md) · [बेंचमार्क](../../docs/benchmarks.md) |
-| एकीकरण | [CLI](../../docs/install/script.md#terminal-command) · [स्थानीय एपीआई](../../docs/speech-platform.md) · [MCP](../../docs/mcp.md) · [उदाहरण](../../examples/README.md) |
+| एकीकरण | [CLI](../../docs/install/script.md#terminal-command) · [स्थानीय एपीआई](../../docs/speech-platform.md) · [MCP](../../docs/mcp.md) · [उदाहरण](../../app/examples/README.md) |
 | फ़ोन ऐप्स | [आईओएस और एंड्रॉइड](../../docs/mobile.md) |
-| विकास | [योगदान](../../.github/CONTRIBUTING.md) ([अपने पहले पीआर से पहले CLA पर हस्ताक्षर करें](../../.github/CONTRIBUTING.md#contribution-licensing)) · [Changelog](../../CHANGELOG.md) · [कोड साइनिंग नीति](../code-signing-policy.md) |
+| विकास | [योगदान](../../.github/CONTRIBUTING.md) ([अपने पहले पीआर से पहले CLA पर हस्ताक्षर करें](../../.github/CONTRIBUTING.md#contribution-licensing)) · [Changelog](../../app/CHANGELOG.md) · [कोड साइनिंग नीति](../code-signing-policy.md) |
 
 एजेंट स्किल: `npx skills add debpalash/VoiceStudio` (ऑडियो कार्य के लिए **voicestudio** और रिपॉजिटरी के लिए **voicestudio-maintainer**)।
 

@@ -15,25 +15,25 @@ on:
   # `main` below still builds on those paths.
   pull_request:
     paths:
-      - "mobile/**"
+      - "app/mobile/**"
       - "docs/logo.svg"
-      - "scripts/prepare_mobile_contributors.py"
-      - "scripts/export-mobile-contributors.ts"
-      - "electron/src/renderer/src/components/brand-icons.tsx"
-      - "electron/src/renderer/src/features/home/contributors/**"
+      - "app/scripts/prepare_mobile_contributors.py"
+      - "app/scripts/export-mobile-contributors.ts"
+      - "app/electron/src/renderer/src/components/brand-icons.tsx"
+      - "app/electron/src/renderer/src/features/home/contributors/**"
       - ".github/workflows/mobile.yml"
   push:
     branches: [main]
     paths:
-      - "mobile/**"
+      - "app/mobile/**"
       - "docs/logo.svg"
-      - "scripts/prepare_mobile_contributors.py"
-      - "scripts/export-mobile-contributors.ts"
-      - "electron/src/renderer/src/components/brand-icons.tsx"
-      - "electron/src/renderer/src/features/home/contributors/**"
-      - "electron/src/renderer/src/i18n/locales/**"
-      - "electron/src/shared/languages.json"
-      - "package.json"
+      - "app/scripts/prepare_mobile_contributors.py"
+      - "app/scripts/export-mobile-contributors.ts"
+      - "app/electron/src/renderer/src/components/brand-icons.tsx"
+      - "app/electron/src/renderer/src/features/home/contributors/**"
+      - "app/electron/src/renderer/src/i18n/locales/**"
+      - "app/electron/src/shared/languages.json"
+      - "app/package.json"
       - ".github/workflows/mobile.yml"
   workflow_dispatch:
 
@@ -76,7 +76,7 @@ jobs:
     timeout-minutes: 40
     defaults:
       run:
-        working-directory: mobile/android
+        working-directory: app/mobile/android
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -89,8 +89,8 @@ jobs:
         with:
           job: mobile-android
           content: |
-            mobile package.json LICENSE docs/logo.svg docs/logo.png scripts electron/public electron/src/shared electron/src/renderer/src/i18n electron/src/renderer/src/components/brand-icons.tsx electron/src/renderer/src/features/home/contributors
-            config/analytics.json config/diagnostics.json tests/fixtures/diagnostic-app-events.json
+            app/mobile app/package.json LICENSE docs/logo.svg docs/logo.png app/scripts app/electron/public app/electron/src/shared app/electron/src/renderer/src/i18n app/electron/src/renderer/src/components/brand-icons.tsx app/electron/src/renderer/src/features/home/contributors
+            app/config/analytics.json app/config/diagnostics.json app/tests/fixtures/diagnostic-app-events.json
 
       - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
         if: steps.pass.outputs.hit != 'true'
@@ -110,14 +110,14 @@ jobs:
       # CMake; Gradle's preBuild runs mobile/native/android/build.sh.
       - name: NDK and CMake
         if: steps.pass.outputs.hit != 'true'
-        run: bash "$GITHUB_WORKSPACE/mobile/android/install-sdk-packages.sh"
+        run: bash "$GITHUB_WORKSPACE/app/mobile/android/install-sdk-packages.sh"
 
       - name: Cache native runtimes
         if: steps.pass.outputs.hit != 'true'
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: mobile/native/android/build
-          key: android-native-${{ hashFiles('mobile/native/pins.json', 'mobile/native/android/**', '!mobile/native/android/build/**', 'mobile/native/mp3/**', 'mobile/ios/VoiceStudioKit/Sources/VSNative/Lame/**', 'mobile/ios/VoiceStudioKit/Sources/VSNative/Mp3Encoder.c', 'mobile/ios/VoiceStudioKit/Sources/VSNative/include/Mp3Encoder.h') }}
+          path: app/mobile/native/android/build
+          key: android-native-${{ hashFiles('app/mobile/native/pins.json', 'app/mobile/native/android/**', '!app/mobile/native/android/build/**', 'app/mobile/native/mp3/**', 'app/mobile/ios/VoiceStudioKit/Sources/VSNative/Lame/**', 'app/mobile/ios/VoiceStudioKit/Sources/VSNative/Mp3Encoder.c', 'app/mobile/ios/VoiceStudioKit/Sources/VSNative/include/Mp3Encoder.h') }}
 
       # Robolectric's android-all jars (~100 MB each) come from Maven Central, which
       # rate-limits (HTTP 429) shared runner IPs. setup-gradle's cache is read-only
@@ -135,7 +135,7 @@ jobs:
         if: steps.pass.outputs.hit != 'true'
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: mobile/android/app/build/robolectric-sdk
+          path: app/mobile/android/app/build/robolectric-sdk
           key: ${{ steps.robolectric.outputs.key }}
 
       # It also resolves every other dependency (Robolectric's native runtime,
@@ -151,7 +151,7 @@ jobs:
         if: steps.pass.outputs.hit != 'true' && steps.robolectric-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: mobile/android/app/build/robolectric-sdk
+          path: app/mobile/android/app/build/robolectric-sdk
           key: ${{ steps.robolectric.outputs.key }}
 
       - name: Build, unit tests, lint
@@ -176,7 +176,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: android-reports
-          path: mobile/android/**/build/reports/
+          path: app/mobile/android/**/build/reports/
           retention-days: 7
       - name: Wait before retrying android-reports upload
         if: steps.pass.outputs.hit != 'true' && !cancelled() && steps.android_reports_upload.outcome == 'failure'
@@ -186,7 +186,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: android-reports
-          path: mobile/android/**/build/reports/
+          path: app/mobile/android/**/build/reports/
           retention-days: 7
 
       # Last: record that these inputs passed, for later runs to skip.
@@ -205,6 +205,9 @@ jobs:
     # native-runtime cache miss adds about 21 minutes (main, 2026-11-12: 92 minutes).
     # Keep the full validation run bounded without relaxing UI-test deadlines.
     timeout-minutes: 120
+    defaults:
+      run:
+        working-directory: app
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -217,9 +220,9 @@ jobs:
         with:
           job: mobile-ios
           content: |
-            mobile :(exclude)mobile/android :(exclude)mobile/native/android
-            package.json LICENSE docs/logo.svg docs/logo.png scripts electron/public electron/src/shared electron/src/renderer/src/i18n electron/src/renderer/src/components/brand-icons.tsx electron/src/renderer/src/features/home/contributors
-            config/analytics.json config/diagnostics.json tests/fixtures/diagnostic-app-events.json
+            app/mobile :(exclude)app/mobile/android :(exclude)app/mobile/native/android
+            app/package.json LICENSE docs/logo.svg docs/logo.png app/scripts app/electron/public app/electron/src/shared app/electron/src/renderer/src/i18n app/electron/src/renderer/src/components/brand-icons.tsx app/electron/src/renderer/src/features/home/contributors
+            app/config/analytics.json app/config/diagnostics.json app/tests/fixtures/diagnostic-app-events.json
 
       - name: Bundle and validate iOS resources
         if: steps.pass.outputs.hit != 'true'
@@ -227,13 +230,13 @@ jobs:
 
       - name: Build VoiceStudioKit tests
         if: steps.pass.outputs.hit != 'true'
-        working-directory: mobile/ios/VoiceStudioKit
+        working-directory: app/mobile/ios/VoiceStudioKit
         timeout-minutes: 20
         run: swift build --build-tests
 
       - name: VoiceStudioKit tests
         if: steps.pass.outputs.hit != 'true'
-        working-directory: mobile/ios/VoiceStudioKit
+        working-directory: app/mobile/ios/VoiceStudioKit
         # Serial on purpose: in parallel the suite hangs on the 3-core runner. The
         # watchdog runs it on a terminal so each test's start line reaches the log at
         # once; a test that prints nothing for 120 s is named, its process stacks are
@@ -248,8 +251,8 @@ jobs:
         id: native-cache
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: mobile/native/ios/build
-          key: ios-native-${{ hashFiles('mobile/native/pins.json', 'mobile/native/ios/**', '!mobile/native/ios/build/**') }}
+          path: app/mobile/native/ios/build
+          key: ios-native-${{ hashFiles('app/mobile/native/pins.json', 'app/mobile/native/ios/**', '!app/mobile/native/ios/build/**') }}
 
       - name: Build native runtimes
         if: steps.pass.outputs.hit != 'true'
@@ -265,7 +268,7 @@ jobs:
         if: steps.pass.outputs.hit != 'true' && steps.native-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: mobile/native/ios/build
+          path: app/mobile/native/ios/build
           key: ${{ steps.native-cache.outputs.cache-primary-key }}
 
       - name: Generate Xcode project
@@ -397,6 +400,9 @@ jobs:
     # The verified OmniVoice pack requires 8 GB, including inference headroom.
     runs-on: macos-15-intel
     timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: app
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -409,18 +415,18 @@ jobs:
         with:
           job: mobile-ios-inference
           content: |
-            mobile :(exclude)mobile/android :(exclude)mobile/native/android
-            package.json LICENSE docs/logo.svg docs/logo.png scripts electron/public electron/src/shared electron/src/renderer/src/i18n electron/src/renderer/src/components/brand-icons.tsx electron/src/renderer/src/features/home/contributors
-            config/analytics.json config/diagnostics.json tests/fixtures/diagnostic-app-events.json
+            app/mobile :(exclude)app/mobile/android :(exclude)app/mobile/native/android
+            app/package.json LICENSE docs/logo.svg docs/logo.png app/scripts app/electron/public app/electron/src/shared app/electron/src/renderer/src/i18n app/electron/src/renderer/src/components/brand-icons.tsx app/electron/src/renderer/src/features/home/contributors
+            app/config/analytics.json app/config/diagnostics.json app/tests/fixtures/diagnostic-app-events.json
 
       - name: Cache native runtimes and smoke models
         if: steps.pass.outputs.hit != 'true'
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
-            mobile/native/ios/build/macos
-            mobile/ios/.cache/inference-models
-          key: ios-inference-${{ runner.arch }}-${{ hashFiles('mobile/native/pins.json', 'mobile/native/ios/build.py', 'mobile/native/ios/patches/**', 'mobile/contract/models.json') }}
+            app/mobile/native/ios/build/macos
+            app/mobile/ios/.cache/inference-models
+          key: ios-inference-${{ runner.arch }}-${{ hashFiles('app/mobile/native/pins.json', 'app/mobile/native/ios/build.py', 'app/mobile/native/ios/patches/**', 'app/mobile/contract/models.json') }}
 
       - name: Fetch smallest models
         if: steps.pass.outputs.hit != 'true'
@@ -483,7 +489,7 @@ jobs:
     timeout-minutes: 75
     defaults:
       run:
-        working-directory: mobile/android
+        working-directory: app/mobile/android
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -496,8 +502,8 @@ jobs:
         with:
           job: mobile-android-inference
           content: |
-            mobile package.json LICENSE docs/logo.svg docs/logo.png scripts electron/public electron/src/shared electron/src/renderer/src/i18n electron/src/renderer/src/components/brand-icons.tsx electron/src/renderer/src/features/home/contributors
-            config/analytics.json config/diagnostics.json tests/fixtures/diagnostic-app-events.json
+            app/mobile app/package.json LICENSE docs/logo.svg docs/logo.png app/scripts app/electron/public app/electron/src/shared app/electron/src/renderer/src/i18n app/electron/src/renderer/src/components/brand-icons.tsx app/electron/src/renderer/src/features/home/contributors
+            app/config/analytics.json app/config/diagnostics.json app/tests/fixtures/diagnostic-app-events.json
 
       - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
         if: steps.pass.outputs.hit != 'true'
@@ -512,14 +518,14 @@ jobs:
         if: steps.pass.outputs.hit != 'true'
         run: |
           printf 'sdk.dir=%s\n' "$ANDROID_HOME" > local.properties
-          bash "$GITHUB_WORKSPACE/mobile/android/install-sdk-packages.sh"
+          bash "$GITHUB_WORKSPACE/app/mobile/android/install-sdk-packages.sh"
 
       - name: Cache native runtimes
         if: steps.pass.outputs.hit != 'true'
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: mobile/native/android/build
-          key: android-native-${{ hashFiles('mobile/native/pins.json', 'mobile/native/android/**', '!mobile/native/android/build/**', 'mobile/native/mp3/**', 'mobile/ios/VoiceStudioKit/Sources/VSNative/Lame/**', 'mobile/ios/VoiceStudioKit/Sources/VSNative/Mp3Encoder.c', 'mobile/ios/VoiceStudioKit/Sources/VSNative/include/Mp3Encoder.h') }}
+          path: app/mobile/native/android/build
+          key: android-native-${{ hashFiles('app/mobile/native/pins.json', 'app/mobile/native/android/**', '!app/mobile/native/android/build/**', 'app/mobile/native/mp3/**', 'app/mobile/ios/VoiceStudioKit/Sources/VSNative/Lame/**', 'app/mobile/ios/VoiceStudioKit/Sources/VSNative/Mp3Encoder.c', 'app/mobile/ios/VoiceStudioKit/Sources/VSNative/include/Mp3Encoder.h') }}
 
       # Maven Central rate-limits (HTTP 429) shared runner IPs; download every
       # dependency here, with backoff, rather than inside the emulator run.
@@ -543,7 +549,7 @@ jobs:
           arch: x86_64
           ram-size: 4096M
           disk-size: 6G
-          working-directory: mobile/android
+          working-directory: app/mobile/android
           script: ./gradlew --no-daemon connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.voicestudio.mobile.LocalInferenceTest#smallestModelsProduceSpeechAndRecognizeItOffline,com.voicestudio.mobile.LocalInferenceTest#speechPresetAndReferenceModelsProduceAudioOffline -Pandroid.testInstrumentationRunnerArguments.speechInferenceSmoke=true -Pandroid.testInstrumentationRunnerArguments.localInferenceSmoke=true -Pandroid.testInstrumentationRunnerArguments.downloadSmokeModels=true -Pandroid.testInstrumentationRunnerArguments.acceptModelLicencesForSmoke=true
 
       # Last: record that these inputs passed, for later runs to skip.
@@ -563,7 +569,7 @@ jobs:
     timeout-minutes: 75
     defaults:
       run:
-        working-directory: mobile/android
+        working-directory: app/mobile/android
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -579,13 +585,13 @@ jobs:
       - name: SDK, NDK and CMake
         run: |
           printf 'sdk.dir=%s\n' "$ANDROID_HOME" > local.properties
-          bash "$GITHUB_WORKSPACE/mobile/android/install-sdk-packages.sh"
+          bash "$GITHUB_WORKSPACE/app/mobile/android/install-sdk-packages.sh"
 
       - name: Cache native runtimes
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: mobile/native/android/build
-          key: android-native-${{ hashFiles('mobile/native/pins.json', 'mobile/native/android/**', '!mobile/native/android/build/**', 'mobile/native/mp3/**', 'mobile/ios/VoiceStudioKit/Sources/VSNative/Lame/**', 'mobile/ios/VoiceStudioKit/Sources/VSNative/Mp3Encoder.c', 'mobile/ios/VoiceStudioKit/Sources/VSNative/include/Mp3Encoder.h') }}
+          path: app/mobile/native/android/build
+          key: android-native-${{ hashFiles('app/mobile/native/pins.json', 'app/mobile/native/android/**', '!app/mobile/native/android/build/**', 'app/mobile/native/mp3/**', 'app/mobile/ios/VoiceStudioKit/Sources/VSNative/Lame/**', 'app/mobile/ios/VoiceStudioKit/Sources/VSNative/Mp3Encoder.c', 'app/mobile/ios/VoiceStudioKit/Sources/VSNative/include/Mp3Encoder.h') }}
 
       # Maven Central rate-limits (HTTP 429) shared runner IPs; download every
       # dependency here, with backoff, rather than inside the emulator run.
@@ -610,7 +616,7 @@ jobs:
           ram-size: 4096M
           disk-size: 6G
           disable-animations: true
-          working-directory: mobile/android
+          working-directory: app/mobile/android
           script: |
             ./gradlew --no-daemon connectedDebugAndroidTest -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true -Pandroid.testInstrumentationRunnerArguments.class=com.voicestudio.mobile.PlayScreenshotTour -Pandroid.testInstrumentationRunnerArguments.playScreenshots=true -Pandroid.testInstrumentationRunnerArguments.downloadSmokeModels=true -Pandroid.testInstrumentationRunnerArguments.acceptModelLicencesForSmoke=true; status=$?; adb pull /sdcard/Android/data/sh.voicestudio.mobile/files/play-screenshots "$RUNNER_TEMP"; exit $status
 

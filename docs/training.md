@@ -14,11 +14,11 @@ commands through it with `uv run --extra train ...` (for example
 
 All training is controlled by a JSON training config file and a JSON data config file. 
 
-See [examples/config/](../examples/config/) for ready-to-use configs.
+See [examples/config/](../app/examples/config/) for ready-to-use configs.
 
-Training config file on Emilia is: [examples/config/train_config_emilia.json](../examples/config/train_config_emilia.json)
+Training config file on Emilia is: [examples/config/train_config_emilia.json](../app/examples/config/train_config_emilia.json)
 
-Data config file for Emilia is: [examples/config/data_config_emilia.json](../examples/config/data_config_emilia.json)
+Data config file for Emilia is: [examples/config/data_config_emilia.json](../app/examples/config/data_config_emilia.json)
 
 
 Key fields in training config file:

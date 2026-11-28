@@ -14,7 +14,7 @@ The four-scene GIF is 1120 × 778 at 16 fps, with soft transitions and a seamles
 Its linked, silent MP4 is 1440 × 1000 at 30 fps and retains more detail and color.
 Readers who prefer reduced motion see the cloning still instead of the GIF.
 The extra overview and model-pack images sit in a collapsed README gallery.
-The same six images supply the canonical [store catalog](../../../store/assets.json).
+The same six images supply the canonical [store catalog](../../../app/store/assets.json).
 
 ## Demo state and privacy
 

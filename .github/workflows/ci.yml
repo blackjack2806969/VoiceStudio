@@ -119,7 +119,7 @@ jobs:
               echo "a file was deleted, renamed, copied or changed type (status check rc=$status_rc): running everything"
             else
               rc=0
-              outside=$(printf '%s\n' "$rows" | cut -f2 | grep -v -P '^(backend/(?!assets/)|omnivoice/|docs/|mobile/|\.github/ISSUE_TEMPLATE/|\.github/scripts/|\.github/[^/]+\.md$|tests/.*\.py$|scripts/(?!(freeze_cli|check_glibc_floor|smoke_windows_rocm)\.py$)[^/]+\.py$|[^/]+\.md$|Makefile$|\.github/workflows/(?!(ci|electron-[a-z-]+)\.yml$)[^/]+\.yml$)') || rc=$?
+              outside=$(printf '%s\n' "$rows" | cut -f2 | sed 's#^app/##' | grep -v -P '^(backend/(?!assets/)|omnivoice/|docs/|mobile/|\.github/ISSUE_TEMPLATE/|\.github/scripts/|\.github/[^/]+\.md$|tests/.*\.py$|scripts/(?!(freeze_cli|check_glibc_floor|smoke_windows_rocm)\.py$)[^/]+\.py$|[^/]+\.md$|Makefile$|\.github/workflows/(?!(ci|electron-[a-z-]+)\.yml$)[^/]+\.yml$)') || rc=$?
               if [ "$rc" -eq 1 ]; then
                 electron=false
               elif [ "$rc" -eq 0 ]; then
@@ -139,13 +139,16 @@ jobs:
     needs: changes
     if: ${{ !cancelled() && needs.changes.result != 'skipped' && needs.changes.outputs.runtime != 'false' }}
     runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: app
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '22'
       - name: Shell installers and Worker routing
-        working-directory: electron
+        working-directory: app/electron
         run: |
           sh -n ../scripts/install.sh && bash -n ../scripts/uninstall.sh
           node --test tests/shell-installer.test.mjs tests/installer-worker.test.mjs
@@ -184,6 +187,9 @@ jobs:
       # is why it was the one that kept dying (see scripts/uv-sync-retry.sh).
       UV_HTTP_TIMEOUT: "120"
       UV_HTTP_RETRIES: "5"
+    defaults:
+      run:
+        working-directory: app
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -209,7 +215,7 @@ jobs:
         uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
         with:
           enable-cache: true
-          cache-dependency-glob: "uv.lock"
+          cache-dependency-glob: "app/uv.lock"
 
       # Node 22 is needed for --experimental-strip-types so node:test can
       # import .ts files directly from electron/src/shared/api/*.
@@ -255,7 +261,7 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          key: ${{ runner.os }}-bun-${{ hashFiles('app/bun.lock') }}
           restore-keys: |
             ${{ runner.os }}-bun-
 
@@ -320,6 +326,9 @@ jobs:
     needs: changes
     if: ${{ !cancelled() && needs.changes.result != 'skipped' && needs.changes.outputs.electron != 'false' && needs.changes.outputs.runtime != 'false' }}
     runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: app
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -331,10 +340,10 @@ jobs:
         with:
           job: test-electron
           content: |
-            . :(exclude)mobile :(exclude)backend :(exclude)omnivoice :(exclude,glob)tests/**/*.py :(exclude)changelog.d
-            backend/assets backend/core/windows_rocm backend/engines/omnivoice_gguf backend/main.py
+            . :(exclude)app/mobile :(exclude)app/backend :(exclude)app/omnivoice :(exclude,glob)app/tests/**/*.py :(exclude)app/changelog.d
+            app/backend/assets app/backend/core/windows_rocm app/backend/engines/omnivoice_gguf app/backend/main.py
           names: |
-            backend omnivoice :(exclude)backend/tests
+            app/backend app/omnivoice :(exclude)app/backend/tests
 
       - name: Setup Node 22
         if: steps.pass.outputs.hit != 'true'
@@ -363,7 +372,7 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          key: ${{ runner.os }}-bun-${{ hashFiles('app/bun.lock') }}
           restore-keys: |
             ${{ runner.os }}-bun-
 
@@ -407,6 +416,9 @@ jobs:
     needs: changes
     if: ${{ !cancelled() && needs.changes.result != 'skipped' && needs.changes.outputs.electron != 'false' && needs.changes.outputs.runtime != 'false' }}
     runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: app
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -418,10 +430,10 @@ jobs:
         with:
           job: electron-smokes
           content: |
-            . :(exclude)mobile :(exclude)backend :(exclude)omnivoice :(exclude,glob)tests/**/*.py :(exclude)changelog.d
-            backend/assets backend/core/windows_rocm backend/engines/omnivoice_gguf backend/main.py
+            . :(exclude)app/mobile :(exclude)app/backend :(exclude)app/omnivoice :(exclude,glob)app/tests/**/*.py :(exclude)app/changelog.d
+            app/backend/assets app/backend/core/windows_rocm app/backend/engines/omnivoice_gguf app/backend/main.py
           names: |
-            backend omnivoice :(exclude)backend/tests
+            app/backend app/omnivoice :(exclude)app/backend/tests
 
       - name: Setup Node 22
         if: steps.pass.outputs.hit != 'true'
@@ -450,7 +462,7 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          key: ${{ runner.os }}-bun-${{ hashFiles('app/bun.lock') }}
           restore-keys: |
             ${{ runner.os }}-bun-
 
@@ -465,8 +477,8 @@ jobs:
       - name: Install Playwright chromium
         if: steps.pass.outputs.hit != 'true'
         run: |
-          bash .github/scripts/apt-retry.sh retry bunx playwright install-deps chromium
-          bash .github/scripts/apt-retry.sh retry bunx playwright install chromium
+          bash "$GITHUB_WORKSPACE/.github/scripts/apt-retry.sh" retry bunx playwright install-deps chromium
+          bash "$GITHUB_WORKSPACE/.github/scripts/apt-retry.sh" retry bunx playwright install chromium
       - name: Electron renderer workflow smokes
         if: steps.pass.outputs.hit != 'true'
         shell: bash
@@ -572,6 +584,9 @@ jobs:
       fail-fast: false
       matrix:
         shard: [1, 2, 3]
+    defaults:
+      run:
+        working-directory: app
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -583,10 +598,10 @@ jobs:
         with:
           job: ui-crawler-${{ matrix.shard }}
           content: |
-            . :(exclude)mobile :(exclude)backend :(exclude)omnivoice :(exclude,glob)tests/**/*.py :(exclude)changelog.d
-            backend/assets backend/core/windows_rocm backend/engines/omnivoice_gguf backend/main.py
+            . :(exclude)app/mobile :(exclude)app/backend :(exclude)app/omnivoice :(exclude,glob)app/tests/**/*.py :(exclude)app/changelog.d
+            app/backend/assets app/backend/core/windows_rocm app/backend/engines/omnivoice_gguf app/backend/main.py
           names: |
-            backend omnivoice :(exclude)backend/tests
+            app/backend app/omnivoice :(exclude)app/backend/tests
 
       - name: Setup Node 22
         if: steps.pass.outputs.hit != 'true'
@@ -605,7 +620,7 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          key: ${{ runner.os }}-bun-${{ hashFiles('app/bun.lock') }}
           restore-keys: |
             ${{ runner.os }}-bun-
 
@@ -616,8 +631,8 @@ jobs:
       - name: Install Playwright chromium
         if: steps.pass.outputs.hit != 'true'
         run: |
-          bash .github/scripts/apt-retry.sh retry bunx playwright install-deps chromium
-          bash .github/scripts/apt-retry.sh retry bunx playwright install chromium
+          bash "$GITHUB_WORKSPACE/.github/scripts/apt-retry.sh" retry bunx playwright install-deps chromium
+          bash "$GITHUB_WORKSPACE/.github/scripts/apt-retry.sh" retry bunx playwright install chromium
 
       - name: Crawl every button
         if: steps.pass.outputs.hit != 'true'
@@ -653,6 +668,9 @@ jobs:
     needs: changes
     if: ${{ !cancelled() && needs.changes.result != 'skipped' && needs.changes.outputs.electron != 'false' && needs.changes.outputs.runtime != 'false' }}
     runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: app
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -664,10 +682,10 @@ jobs:
         with:
           job: linux-native-package
           content: |
-            . :(exclude)mobile :(exclude)backend :(exclude)omnivoice :(exclude,glob)tests/**/*.py :(exclude)changelog.d
-            backend/assets backend/core/windows_rocm backend/engines/omnivoice_gguf backend/main.py
+            . :(exclude)app/mobile :(exclude)app/backend :(exclude)app/omnivoice :(exclude,glob)app/tests/**/*.py :(exclude)app/changelog.d
+            app/backend/assets app/backend/core/windows_rocm app/backend/engines/omnivoice_gguf app/backend/main.py
           names: |
-            backend omnivoice :(exclude)backend/tests
+            app/backend app/omnivoice :(exclude)app/backend/tests
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         if: steps.pass.outputs.hit != 'true'
@@ -678,12 +696,12 @@ jobs:
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         if: steps.pass.outputs.hit != 'true'
         with:
-          workspaces: native/desktop-bridge -> target
+          workspaces: app/native/desktop-bridge -> target
           key: linux-native-package
       - name: Install native build dependencies
         if: steps.pass.outputs.hit != 'true'
         run: |
-          bash .github/scripts/apt-retry.sh install libxdo-dev libxtst-dev libx11-dev libxkbcommon-dev libwayland-dev libssl-dev pkg-config
+          bash "$GITHUB_WORKSPACE/.github/scripts/apt-retry.sh" install libxdo-dev libxtst-dev libx11-dev libxkbcommon-dev libwayland-dev libssl-dev pkg-config
       - name: Verify relocation without build-time libraries
         if: steps.pass.outputs.hit != 'true'
         run: node --test electron/tests/native-linux-libraries.test.mjs
@@ -720,6 +738,7 @@ jobs:
           - { os: ubuntu-24.04, label: Linux }
     defaults:
       run:
+        working-directory: app
         shell: bash
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -732,10 +751,10 @@ jobs:
         with:
           job: desktop-ui-${{ matrix.label }}
           content: |
-            . :(exclude)mobile :(exclude)backend :(exclude)omnivoice :(exclude,glob)tests/**/*.py :(exclude)changelog.d
-            backend/assets backend/core/windows_rocm backend/engines/omnivoice_gguf backend/main.py
+            . :(exclude)app/mobile :(exclude)app/backend :(exclude)app/omnivoice :(exclude,glob)app/tests/**/*.py :(exclude)app/changelog.d
+            app/backend/assets app/backend/core/windows_rocm app/backend/engines/omnivoice_gguf app/backend/main.py
           names: |
-            backend omnivoice :(exclude)backend/tests
+            app/backend app/omnivoice :(exclude)app/backend/tests
 
       - name: Setup Node 22
         if: steps.pass.outputs.hit != 'true'
@@ -754,7 +773,7 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          key: ${{ runner.os }}-bun-${{ hashFiles('app/bun.lock') }}
           restore-keys: |
             ${{ runner.os }}-bun-
 
@@ -767,7 +786,7 @@ jobs:
       # (v0.5.8-beta.3's Windows package failed on #3701's discovery tests).
       - name: Main-process unit tests
         if: steps.pass.outputs.hit != 'true' && runner.os != 'Linux'
-        working-directory: electron
+        working-directory: app/electron
         run: bunx --no-install vp test --run src/main
 
       # The standalone CLI every installer ships, built by the release's afterPack step
@@ -825,7 +844,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: desktop-ui-${{ matrix.label }}
-          path: electron/test-results/
+          path: app/electron/test-results/
           if-no-files-found: ignore
 
       # Last: record that these inputs passed, for later runs to skip.
@@ -856,6 +875,7 @@ jobs:
           - { runner: macos-15, label: macOS, platform: darwin, arch: arm64, target: aarch64-apple-darwin, flags: --mac --arm64 }
     defaults:
       run:
+        working-directory: app
         shell: bash
     env:
       VOICESTUDIO_RUST_TARGET: ${{ matrix.target }}
@@ -880,10 +900,10 @@ jobs:
         with:
           job: release-smoke-${{ matrix.label }}
           content: |
-            . :(exclude)mobile :(exclude)backend :(exclude)omnivoice :(exclude,glob)tests/**/*.py :(exclude)changelog.d
-            backend/assets backend/core/windows_rocm backend/engines/omnivoice_gguf backend/main.py
+            . :(exclude)app/mobile :(exclude)app/backend :(exclude)app/omnivoice :(exclude,glob)app/tests/**/*.py :(exclude)app/changelog.d
+            app/backend/assets app/backend/core/windows_rocm app/backend/engines/omnivoice_gguf app/backend/main.py
           names: |
-            backend omnivoice :(exclude)backend/tests
+            app/backend app/omnivoice :(exclude)app/backend/tests
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         if: steps.pass.outputs.hit != 'true'
@@ -901,7 +921,7 @@ jobs:
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         if: steps.pass.outputs.hit != 'true'
         with:
-          workspaces: native/desktop-bridge -> target
+          workspaces: app/native/desktop-bridge -> target
           key: release-smoke-${{ matrix.target }}
       - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
         if: steps.pass.outputs.hit != 'true'
@@ -911,7 +931,7 @@ jobs:
       - name: Linux native dependencies
         if: steps.pass.outputs.hit != 'true' && runner.os == 'Linux'
         run: |
-          bash .github/scripts/apt-retry.sh install libasound2-dev libxdo-dev libxtst-dev libx11-dev libxkbcommon-dev libwayland-dev libssl-dev pkg-config xvfb
+          bash "$GITHUB_WORKSPACE/.github/scripts/apt-retry.sh" install libasound2-dev libxdo-dev libxtst-dev libx11-dev libxkbcommon-dev libwayland-dev libssl-dev pkg-config xvfb
       - name: Bundle pinned uv for the host architecture
         if: steps.pass.outputs.hit != 'true'
         run: node electron/scripts/stage-bundled-uv.mjs
@@ -921,7 +941,7 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          key: ${{ runner.os }}-bun-${{ hashFiles('app/bun.lock') }}
           restore-keys: |
             ${{ runner.os }}-bun-
       # The Electron distribution electron-builder unpacks into the app
@@ -933,7 +953,7 @@ jobs:
           path: |
             ~/.cache/electron
             ~/Library/Caches/electron
-          key: ${{ runner.os }}-${{ runner.arch }}-electron-${{ hashFiles('bun.lock') }}
+          key: ${{ runner.os }}-${{ runner.arch }}-electron-${{ hashFiles('app/bun.lock') }}
       - name: Install locked dependencies
         if: steps.pass.outputs.hit != 'true'
         run: bun install --frozen-lockfile
@@ -951,7 +971,7 @@ jobs:
       # the bundle; macOS signs ad hoc, as an unsigned release does.
       - name: Package the unpacked app
         if: steps.pass.outputs.hit != 'true'
-        working-directory: electron
+        working-directory: app/electron
         run: |
           bun x electron-builder --config electron-builder.config.mjs ${{ matrix.flags }} --dir --publish never
           node tests/packaging-contract.mjs --artifact
@@ -971,7 +991,7 @@ jobs:
       # release's AppImage does; macOS starts the app itself.
       - name: Packaged startup smoke test
         if: steps.pass.outputs.hit != 'true'
-        working-directory: electron
+        working-directory: app/electron
         run: |
           if [ "$RUNNER_OS" = Linux ]; then
             VOICESTUDIO_PACKAGED_EXE=electron/release/linux-unpacked/voicestudio xvfb-run -a node tests/packaged-smoke.mjs --setup
@@ -1042,6 +1062,9 @@ jobs:
       # giving up on the first slow PyPI / python-build-standalone fetch.
       UV_HTTP_TIMEOUT: "120"
       UV_HTTP_RETRIES: "5"
+    defaults:
+      run:
+        working-directory: app
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -1052,7 +1075,7 @@ jobs:
         with:
           job: smoke-${{ matrix.label }}
           content: |
-            . :(exclude)electron/src/main :(exclude)electron/src/preload :(exclude)electron/tests :(exclude)electron/src/renderer/src/features :(exclude)electron/src/renderer/src/routes :(exclude)electron/src/renderer/src/hooks :(exclude)electron/src/renderer/src/lib :(exclude)electron/src/renderer/src/styles :(exclude)mobile/android :(exclude)changelog.d
+            . :(exclude)app/electron/src/main :(exclude)app/electron/src/preload :(exclude)app/electron/tests :(exclude)app/electron/src/renderer/src/features :(exclude)app/electron/src/renderer/src/routes :(exclude)app/electron/src/renderer/src/hooks :(exclude)app/electron/src/renderer/src/lib :(exclude)app/electron/src/renderer/src/styles :(exclude)app/mobile/android :(exclude)app/changelog.d
 
       - name: Setup Python 3.11
         if: steps.pass.outputs.hit != 'true'
@@ -1065,7 +1088,7 @@ jobs:
         uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
         with:
           enable-cache: true
-          cache-dependency-glob: "uv.lock"
+          cache-dependency-glob: "app/uv.lock"
 
       # ffmpeg + libsndfile are needed by soundfile / audio fixtures even
       # though the silence WAV doesn't decode anything heavy — keeps test
@@ -1147,7 +1170,7 @@ jobs:
           assert extra == [
               "pocket-tts==2.1.0 ; sys_platform != 'darwin' or platform_machine != 'x86_64'"
           ]
-          docs = (root / "docs/install/macos.md").read_text("utf-8")
+          docs = (root.parent / "docs/install/macos.md").read_text("utf-8")
           assert "Intel Macs are not supported" in docs
           PY
 

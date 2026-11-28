@@ -60,8 +60,8 @@ def run(gh: GitHub, event: dict, root: Path = ROOT) -> bool:
         metadata = Path(directory) / "event.json"
         metadata.write_text(json.dumps({"pull_request": {"body": pr.get("body")}}), encoding="utf-8")
         result = subprocess.run([
-            sys.executable, str(root / "scripts/check_commit_identities.py"),
-            "--hash-file", str(root / "scripts/blocked_identity_hashes.txt"),
+            sys.executable, str(root / "app/scripts/check_commit_identities.py"),
+            "--hash-file", str(root / "app/scripts/blocked_identity_hashes.txt"),
             "--range", f"{base}..{sha}", "--event", str(metadata),
         ], cwd=root, env=environment)
     if result.returncode not in (0, 1):

@@ -29,6 +29,9 @@ env:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -79,6 +82,7 @@ jobs:
             experimental: true
     defaults:
       run:
+        working-directory: app
         shell: bash
     env:
       VOICESTUDIO_RUST_TARGET: ${{ matrix.target }}
@@ -100,7 +104,7 @@ jobs:
           targets: ${{ matrix.target }}
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
-          workspaces: native/desktop-bridge -> target
+          workspaces: app/native/desktop-bridge -> target
           key: microsoft-store-${{ matrix.target }}
       - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
         with:
@@ -131,7 +135,7 @@ jobs:
           SUPERMETRY_APP_HOST: ${{ vars.SUPERMETRY_APP_HOST || secrets.SUPERMETRY_APP_HOST }}
           CSC_LINK: ${{ secrets.ELECTRON_WINDOWS_CSC_LINK }}
           CSC_KEY_PASSWORD: ${{ secrets.ELECTRON_WINDOWS_CSC_KEY_PASSWORD }}
-        working-directory: electron
+        working-directory: app/electron
         run: |
           test -n "$CSC_LINK" && test -n "$CSC_KEY_PASSWORD" || {
             echo "Microsoft Store packages require Authenticode credentials"; exit 1;
@@ -210,7 +214,7 @@ jobs:
           $result = Start-Process -FilePath $uninstaller -ArgumentList '/S' -Wait -PassThru
           if ($result.ExitCode -ne 0) { throw "Post-upgrade uninstall failed: $($result.ExitCode)" }
       - name: Record artifact provenance
-        working-directory: electron
+        working-directory: app/electron
         run: node ../scripts/create_store_artifact_manifest.mjs --distribution=microsoft-store --platform=win32 --arch=${{ matrix.arch }} --signing-evidence=authenticode-win32-${{ matrix.arch }}.json
       - name: Save validated Store package
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -219,15 +223,18 @@ jobs:
           retention-days: 30
           if-no-files-found: error
           path: |
-            electron/release/VoiceStudio-MicrosoftStore-*-win-${{ matrix.arch }}.exe
-            electron/release/VoiceStudio-MicrosoftStore-*-win-${{ matrix.arch }}.exe.blockmap
-            electron/release/electron-microsoft-store-stable-win32-${{ matrix.arch }}.yml
-            electron/release/store-artifact-manifest-win32-${{ matrix.arch }}.json
-            electron/release/authenticode-win32-${{ matrix.arch }}.json
+            app/electron/release/VoiceStudio-MicrosoftStore-*-win-${{ matrix.arch }}.exe
+            app/electron/release/VoiceStudio-MicrosoftStore-*-win-${{ matrix.arch }}.exe.blockmap
+            app/electron/release/electron-microsoft-store-stable-win32-${{ matrix.arch }}.yml
+            app/electron/release/store-artifact-manifest-win32-${{ matrix.arch }}.json
+            app/electron/release/authenticode-win32-${{ matrix.arch }}.json
 
   handoff:
     needs: package
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -240,7 +247,7 @@ jobs:
         with:
           pattern: microsoft-store-*
           merge-multiple: true
-          path: microsoft-store-handoff
+          path: app/microsoft-store-handoff
       - name: Create Partner Center handoff
         env:
           RELEASE_TAG: ${{ inputs.release_tag }}
@@ -251,12 +258,12 @@ jobs:
       - name: Add canonical listing assets
         run: |
           mkdir -p microsoft-store-handoff/listing/screenshots
-          cp docs/logo.png microsoft-store-handoff/listing/box-art.png
+          cp ../docs/logo.png microsoft-store-handoff/listing/box-art.png
           node --input-type=module <<'NODE'
           import { copyFileSync, readFileSync } from 'node:fs';
           import { basename, join } from 'node:path';
           const assets = JSON.parse(readFileSync('store/assets.json', 'utf8'));
-          for (const screenshot of assets.screenshots) copyFileSync(screenshot.source, join('microsoft-store-handoff/listing/screenshots', basename(screenshot.source)));
+          for (const screenshot of assets.screenshots) copyFileSync('../' + screenshot.source, join('microsoft-store-handoff/listing/screenshots', basename(screenshot.source)));
           NODE
       - name: Save Partner Center handoff
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -264,7 +271,7 @@ jobs:
           name: microsoft-store-partner-center-handoff
           retention-days: 30
           if-no-files-found: error
-          path: microsoft-store-handoff
+          path: app/microsoft-store-handoff
 
   stage:
     if: inputs.stage_package_urls == true
@@ -275,6 +282,9 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       RELEASE_TAG: ${{ inputs.release_tag }}
+    defaults:
+      run:
+        working-directory: app
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -299,7 +309,7 @@ jobs:
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: microsoft-store-partner-center-handoff
-          path: microsoft-store-handoff
+          path: app/microsoft-store-handoff
       - name: Stage immutable versioned package URLs
         run: |
           gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null

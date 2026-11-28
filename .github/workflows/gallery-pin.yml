@@ -6,7 +6,7 @@ name: Gallery pin
 on:
   pull_request:
     paths:
-      - "omnivoice-gallery"
+      - "app/omnivoice-gallery"
       - ".gitmodules"
       - ".github/scripts/gallery_pin.py"
       - ".github/workflows/gallery-pin.yml"
@@ -34,8 +34,8 @@ jobs:
           if [ "$url" != "$GALLERY" ]; then
             echo "::error file=.gitmodules::omnivoice-gallery must point at $GALLERY, not $url"; exit 1
           fi
-          old=$(git rev-parse "$BASE:omnivoice-gallery")
-          new=$(git rev-parse "HEAD:omnivoice-gallery")
+          old=$(git rev-parse --verify "$BASE:app/omnivoice-gallery" 2>/dev/null || git rev-parse --verify "$BASE:omnivoice-gallery")
+          new=$(git rev-parse --verify "HEAD:app/omnivoice-gallery")
           git clone -q --bare --filter=blob:none "$GALLERY" gallery.git
           git -C gallery.git fetch -q origin '+refs/heads/main:refs/remotes/origin/main' 2>/dev/null \
             || git -C gallery.git update-ref refs/remotes/origin/main refs/heads/main

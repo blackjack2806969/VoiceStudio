@@ -116,7 +116,7 @@ stt = OpenAISTTService(
 
 Drop those into any pipecat pipeline (VAD, turn-taking, and LLM stay local
 too). A minimal runnable example is in
-[`examples/agentic/pipecat_minimal.py`](../examples/agentic/pipecat_minimal.py).
+[`examples/agentic/pipecat_minimal.py`](../app/examples/agentic/pipecat_minimal.py).
 
 ## LiveKit Agents
 

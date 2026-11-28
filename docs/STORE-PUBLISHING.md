@@ -55,7 +55,7 @@ The Mac App Store sandbox target and private packaging workflow are scaffolded
 in `electron/electron-builder.config.mjs` and `.github/workflows/mac-app-store.yml`.
 The workflow remains blocked by the bundled-runtime compliance gate and never
 submits to App Store Connect. Current blockers and owner actions are in the
-[`Mac App Store runbook`](../store/mac-app-store.md).
+[`Mac App Store runbook`](../app/store/mac-app-store.md).
 
 ## Artifact and release contract
 

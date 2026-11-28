@@ -37,7 +37,7 @@ source in [CONTRIBUTING.md](CONTRIBUTING.md) or [CLAUDE.md](../CLAUDE.md).
    changes. ([Docs-sync](../CLAUDE.md#conventions))
 9. **Add a changelog fragment** for user-visible changes:
    `changelog.d/<PR#>.<type>.md`, one line ending with `(#<PR#>)`. Don't edit
-   `CHANGELOG.md`. ([changelog.d](../changelog.d/README.md))
+   `CHANGELOG.md`. ([changelog.d](../app/changelog.d/README.md))
 10. **Commit under the contributor's own identity only.** No AI
     `Co-authored-by:` trailers, no "Generated with" lines, no agent session
     links, in commits or the pull request description.

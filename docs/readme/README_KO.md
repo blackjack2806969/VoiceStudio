@@ -401,7 +401,7 @@ F-Droid 호환 클라이언트에 이 저장소를 추가하고 가이드에서 
 https://debpalash.github.io/VoiceStudio/fdroid/repo
 ```
 
-[가이드](../../store/fdroid/README.md)
+[가이드](../../app/store/fdroid/README.md)
 
 </details>
 
@@ -480,7 +480,7 @@ bun run dev
 
 `bun run dev`는 JavaScript 의존성을 설치하고, 지원되는 로컬 백엔드를 사용하는 경우 Python 의존성도 설치한 뒤 Electron을 실행합니다. Python 환경만 다시 구성하려면 `bun run setup:api`를 직접 실행하세요.
 
-[Electron 설정](../../electron/README.md)을 참고하세요.
+[Electron 설정](../../app/electron/README.md)을 참고하세요.
 
 **코딩 에이전트로 설치** (Claude Code, Codex, Cursor 등): 다음 내용을 붙여 넣으세요.
 
@@ -504,9 +504,9 @@ https://github.com/debpalash/VoiceStudio/blob/main/docs/install/agent.md
 | 설치 도움말 | [문제 해결](../../docs/install/troubleshooting.md) · [모델 다운로드](../../docs/downloading-models.md) |
 | 가이드 | [다중 화자 더빙](../../docs/dubbing/multi-speaker-guide.md) · [표현력 있는 음성](../../docs/expressive-speech.md) · [더빙 내보내기](../../docs/dubbing/export.md) |
 | 모델과 음질 | [엔진 가이드](../../docs/engines/README.md) · [whisper.cpp ASR](../../docs/engines/whisper-cpp.md) · [벤치마크](../../docs/benchmarks.md) |
-| 연동 | [CLI](../../docs/install/script.md#terminal-command) · [로컬 API](../../docs/speech-platform.md) · [MCP](../../docs/mcp.md) · [예제](../../examples/README.md) |
+| 연동 | [CLI](../../docs/install/script.md#terminal-command) · [로컬 API](../../docs/speech-platform.md) · [MCP](../../docs/mcp.md) · [예제](../../app/examples/README.md) |
 | 휴대폰 앱 | [iOS 및 Android](../../docs/mobile.md) |
-| 개발 | [기여하기](../../.github/CONTRIBUTING.md) (첫 PR 전에 [CLA 서명](../../.github/CONTRIBUTING.md#contribution-licensing) 필요) · [변경 기록](../../CHANGELOG.md) · [코드 서명 정책](../code-signing-policy.md) |
+| 개발 | [기여하기](../../.github/CONTRIBUTING.md) (첫 PR 전에 [CLA 서명](../../.github/CONTRIBUTING.md#contribution-licensing) 필요) · [변경 기록](../../app/CHANGELOG.md) · [코드 서명 정책](../code-signing-policy.md) |
 
 에이전트 스킬: `npx skills add debpalash/VoiceStudio` (오디오 작업에는 **voicestudio**, 저장소 관리에는 **voicestudio-maintainer**).
 

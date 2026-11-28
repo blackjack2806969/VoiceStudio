@@ -4,6 +4,13 @@ Every folder has a single job. Every file at the root earns its place.
 
 ## Layout
 
+The repository root holds the two project READMEs, licence notices, `docs/` and
+repository-level configuration, including `.github/` and the Nix flake.
+The build workspace is `app/`. Run Bun, uv and Make from there. The application
+paths below, including `package.json`, `uv.lock`, `CHANGELOG.md` and `tests/`,
+are relative to `app/`. GitHub workflows and documentation paths are relative
+to the repository root.
+
 ```
 VoiceStudio/
 │

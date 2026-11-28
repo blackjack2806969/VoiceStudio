@@ -400,7 +400,7 @@ Android 10+ · ดูตัวอย่าง · บนอุปกรณ์ อ
 https://debpalash.github.io/VoiceStudio/fdroid/repo
 ```
 
-[คำแนะนำ](../../store/fdroid/README.md)
+[คำแนะนำ](../../app/store/fdroid/README.md)
 
 </details>
 
@@ -477,7 +477,7 @@ bun run dev
 
 `bun run dev` จะติดตั้งการขึ้นต่อกันของ JavaScript และเมื่อใช้แบ็กเอนด์ในเครื่องที่รองรับ จะติดตั้งการขึ้นต่อกันของ Python ก่อนที่จะเรียกใช้ Electron เรียกใช้ `bun run setup:api` โดยตรงเมื่อคุณต้องการสร้างสภาพแวดล้อม Python ใหม่เท่านั้น
 
-ดู [การตั้งค่า Electron](../../electron/README.md).
+ดู [การตั้งค่า Electron](../../app/electron/README.md).
 
 **ใช้เอเจนต์ช่วยเขียนโปรแกรม** (Claude Code, Codex, Cursor, …) โดยวางข้อความนี้:
 
@@ -501,9 +501,9 @@ https://github.com/debpalash/VoiceStudio/blob/main/docs/install/agent.md
 | ความช่วยเหลือในการติดตั้ง | [การแก้ไขปัญหา](../../docs/install/troubleshooting.md) · [ดาวน์โหลดแบบจำลอง](../../docs/downloading-models.md) |
 | คู่มือ | [การพากย์เสียงสำหรับผู้พูดหลายคน](../../docs/dubbing/multi-speaker-guide.md) · [เสียงพูดที่แสดงอารมณ์](../../docs/expressive-speech.md) · [ส่งออกเสียงพากย์](../../docs/dubbing/export.md) |
 | โมเดลและคุณภาพ | [คู่มือเครื่องยนต์](../../docs/engines/README.md) · [whisper.cpp ASR](../../docs/engines/whisper-cpp.md) · [เกณฑ์มาตรฐาน](../../docs/benchmarks.md) |
-| การเชื่อมต่อกับเครื่องมืออื่น | [CLI](../../docs/install/script.md#terminal-command) · [API ท้องถิ่น](../../docs/speech-platform.md) · [MCP](../../docs/mcp.md) · [ตัวอย่าง](../../examples/README.md) |
+| การเชื่อมต่อกับเครื่องมืออื่น | [CLI](../../docs/install/script.md#terminal-command) · [API ท้องถิ่น](../../docs/speech-platform.md) · [MCP](../../docs/mcp.md) · [ตัวอย่าง](../../app/examples/README.md) |
 | แอปบนโทรศัพท์ | [iOS และ Android](../../docs/mobile.md) |
-| การพัฒนา | [การสนับสนุน](../../.github/CONTRIBUTING.md) ([ลงนาม CLA](../../.github/CONTRIBUTING.md#contribution-licensing) ก่อน PR ครั้งแรกของคุณ) · [บันทึกการเปลี่ยนแปลง](../../CHANGELOG.md) · [นโยบายการลงนามโค้ด](../code-signing-policy.md) |
+| การพัฒนา | [การสนับสนุน](../../.github/CONTRIBUTING.md) ([ลงนาม CLA](../../.github/CONTRIBUTING.md#contribution-licensing) ก่อน PR ครั้งแรกของคุณ) · [บันทึกการเปลี่ยนแปลง](../../app/CHANGELOG.md) · [นโยบายการลงนามโค้ด](../code-signing-policy.md) |
 
 ทักษะสำหรับเอเจนต์: `npx skills add debpalash/VoiceStudio` (**voicestudio** สำหรับงานเสียง และ **voicestudio-maintainer** สำหรับดูแลคลังโค้ด)
 

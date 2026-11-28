@@ -400,7 +400,7 @@ Bu depoyu F-Droid uyumlu bir istemciye ekleyin; Kılavuzdaki parmak izini doğru
 https://debpalash.github.io/VoiceStudio/fdroid/repo
 ```
 
-[Kılavuz](../../store/fdroid/README.md)
+[Kılavuz](../../app/store/fdroid/README.md)
 
 </details>
 
@@ -477,7 +477,7 @@ bun run dev
 
 `bun run dev`, Electron'u başlatmadan önce JavaScript bağımlılıklarını ve desteklenen bir yerel arka uç kullanıldığında Python bağımlılıklarını yükler. Yalnızca Python ortamını yeniden oluşturmanız gerektiğinde `bun run setup:api`'yu doğrudan çalıştırın.
 
-Bkz. [Electron kurulumu](../../electron/README.md).
+Bkz. [Electron kurulumu](../../app/electron/README.md).
 
 **Kodlama aracısıyla** ( Claude Code, Codex, Cursor, …), şunu yapıştırın:
 
@@ -501,9 +501,9 @@ https://github.com/debpalash/VoiceStudio/blob/main/docs/install/agent.md
 | Kurulum yardımı | [Sorun giderme](../../docs/install/troubleshooting.md) · [Model indirmeleri](../../docs/downloading-models.md) |
 | Kılavuzlar | [Birden fazla konuşmacıyla dublaj](../../docs/dubbing/multi-speaker-guide.md) · [Duygulu konuşma](../../docs/expressive-speech.md) · [Dublajları dışa aktarma](../../docs/dubbing/export.md) |
 | Modeller ve kalite | [Motor kılavuzları](../../docs/engines/README.md) · [whisper.cpp ASR](../../docs/engines/whisper-cpp.md) · [Karşılaştırmalar](../../docs/benchmarks.md) |
-| Entegrasyonlar | [CLI](../../docs/install/script.md#terminal-command) · [Yerel API](../../docs/speech-platform.md) · [MCP](../../docs/mcp.md) · [Örnekler](../../examples/README.md) |
+| Entegrasyonlar | [CLI](../../docs/install/script.md#terminal-command) · [Yerel API](../../docs/speech-platform.md) · [MCP](../../docs/mcp.md) · [Örnekler](../../app/examples/README.md) |
 | Telefon uygulamaları | [iOS ve Android](../../docs/mobile.md) |
-| Geliştirme | [Katkıda bulunuyor](../../.github/CONTRIBUTING.md) ([CLA'yı imzalayın](../../.github/CONTRIBUTING.md#contribution-licensing) ilk PR'ınızdan önce) · [Değişiklik günlüğü](../../CHANGELOG.md) · [Kod imzalama politikası](../code-signing-policy.md) |
+| Geliştirme | [Katkıda bulunuyor](../../.github/CONTRIBUTING.md) ([CLA'yı imzalayın](../../.github/CONTRIBUTING.md#contribution-licensing) ilk PR'ınızdan önce) · [Değişiklik günlüğü](../../app/CHANGELOG.md) · [Kod imzalama politikası](../code-signing-policy.md) |
 
 Ajan becerileri: `npx skills add debpalash/VoiceStudio` (ses çalışmaları için **voicestudio**, depo bakımı için **voicestudio-maintainer**).
 

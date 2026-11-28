@@ -1,5 +1,7 @@
 # Releasing VoiceStudio
 
+Run source build and release commands from the `app/` directory. GitHub workflow definitions remain in `.github/workflows/` at the repository root.
+
 Electron is the only maintained desktop distribution. Tauri ended at v0.5.3;
 its signed updater feeds and installers are immutable compatibility assets.
 
@@ -31,7 +33,7 @@ immutable versioned URL requires owner approval; Partner Center submission and
 publication remain manual owner actions.
 
 Mac App Store preparation uses the manual, private `mac-app-store.yml` workflow
-and the [`Mac App Store runbook`](../store/mac-app-store.md). The workflow cannot
+and the [`Mac App Store runbook`](../app/store/mac-app-store.md). The workflow cannot
 build while the bundled-runtime compliance gate is unresolved and never uploads
 to App Store Connect. MAS packages use App Store updates; direct macOS packages
 keep the existing application updater and Developer ID notarization path.

@@ -25,16 +25,16 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - backend/engines/omnivoice_gguf/quant_map.json
-      - scripts/build-omnivoice-tts.sh
-      - scripts/lib/omnivoice-vulkan.sh
+      - app/backend/engines/omnivoice_gguf/quant_map.json
+      - app/scripts/build-omnivoice-tts.sh
+      - app/scripts/lib/omnivoice-vulkan.sh
       - .github/workflows/build-omnivoice-tts.yml
   push:
     branches: [main]
     paths:
-      - backend/engines/omnivoice_gguf/quant_map.json
-      - scripts/build-omnivoice-tts.sh
-      - scripts/lib/omnivoice-vulkan.sh
+      - app/backend/engines/omnivoice_gguf/quant_map.json
+      - app/scripts/build-omnivoice-tts.sh
+      - app/scripts/lib/omnivoice-vulkan.sh
       - .github/workflows/build-omnivoice-tts.yml
   workflow_dispatch:
   workflow_call:
@@ -85,6 +85,7 @@ jobs:
       - name: Read pinned omnivoice.cpp SHA from quant_map.json
         id: pin
         shell: bash
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           sha=$(python -c "import json; print(json.load(open('backend/engines/omnivoice_gguf/quant_map.json'))['_meta']['runtime_commit_sha'])")
           # Validate it's a git SHA before it ever reaches a shell command —
@@ -103,10 +104,11 @@ jobs:
         if: startsWith(matrix.platform, 'linux-')
         env:
           GH_TOKEN: ${{ github.token }}
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           # Rebuilding an older release tag checks out a tree that predates the
           # helper; take it from the workflow's own commit instead.
-          helper=.github/scripts/apt-retry.sh
+          helper="$GITHUB_WORKSPACE/.github/scripts/apt-retry.sh"
           if [ ! -f "$helper" ]; then
             helper="$RUNNER_TEMP/apt-retry.sh"
             gh api -H "Accept: application/vnd.github.raw" \
@@ -151,6 +153,7 @@ jobs:
         env:
           PIN_SHA: ${{ steps.pin.outputs.sha }}
           PLATFORM: ${{ matrix.platform }}
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           bash scripts/build-omnivoice-tts.sh \
             --platform "$PLATFORM" \
@@ -163,6 +166,7 @@ jobs:
         shell: bash
         env:
           PLATFORM: ${{ matrix.platform }}
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           if ls bin/ | grep -q 'ggml-vulkan'; then
             echo "Vulkan module: $(ls bin/ | grep 'ggml-vulkan')"
@@ -175,6 +179,7 @@ jobs:
         shell: bash
         env:
           PLATFORM: ${{ matrix.platform }}
+        working-directory: ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}
         run: |
           ext=""
           if [[ "$PLATFORM" == windows-* ]]; then ext=".exe"; fi
@@ -190,11 +195,11 @@ jobs:
           retention-days: ${{ inputs.retention_days || '' }}
           if-no-files-found: error
           path: |
-            bin/omnivoice-tts-${{ matrix.platform }}*
-            bin/tts-server-${{ matrix.platform }}*
-            bin/libggml*
-            bin/ggml*.dll
-            bin/vcruntime140*.dll
-            bin/msvcp140*.dll
-            bin/vcomp140.dll
-            bin/checksums.sha256
+            ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}/bin/omnivoice-tts-${{ matrix.platform }}*
+            ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}/bin/tts-server-${{ matrix.platform }}*
+            ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}/bin/libggml*
+            ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}/bin/ggml*.dll
+            ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}/bin/vcruntime140*.dll
+            ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}/bin/msvcp140*.dll
+            ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}/bin/vcomp140.dll
+            ${{ hashFiles('app/package.json') != '' && 'app' || '.' }}/bin/checksums.sha256

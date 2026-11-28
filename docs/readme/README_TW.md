@@ -400,7 +400,7 @@ Android 10+ · 預覽版 · 下載模型後可在裝置上離線執行。
 https://debpalash.github.io/VoiceStudio/fdroid/repo
 ```
 
-[指南](../../store/fdroid/README.md)
+[指南](../../app/store/fdroid/README.md)
 
 </details>
 
@@ -479,7 +479,7 @@ bun run dev
 
 `bun run dev` 會先安裝 JavaScript 依賴；使用受支援的本地後端時，還會在啟動 Electron 前安裝 Python 依賴。如果只需重建 Python 環境，可直接執行 `bun run setup:api`。
 
-參見 [Electron 設定](../../electron/README.md)。
+參見 [Electron 設定](../../app/electron/README.md)。
 
 **透過編碼智慧體安裝**（Claude Code、Codex、Cursor 等），貼上：
 
@@ -503,9 +503,9 @@ https://github.com/debpalash/VoiceStudio/blob/main/docs/install/agent.md
 | 安裝幫助 | [故障排查](../../docs/install/troubleshooting.md) · [模型下載](../../docs/downloading-models.md) |
 | 指南 | [多說話人配音](../../docs/dubbing/multi-speaker-guide.md) · [富有表現力的語音](../../docs/expressive-speech.md) · [匯出配音](../../docs/dubbing/export.md) |
 | 模型與音質 | [引擎指南](../../docs/engines/README.md) · [whisper.cpp ASR](../../docs/engines/whisper-cpp.md) · [效能基準](../../docs/benchmarks.md) |
-| 整合 | [CLI](../../docs/install/script.md#terminal-command) · [本地 API](../../docs/speech-platform.md) · [MCP](../../docs/mcp.md) · [示例](../../examples/README.md) |
+| 整合 | [CLI](../../docs/install/script.md#terminal-command) · [本地 API](../../docs/speech-platform.md) · [MCP](../../docs/mcp.md) · [示例](../../app/examples/README.md) |
 | 手機應用 | [iOS 與 Android](../../docs/mobile.md) |
-| 開發 | [參與貢獻](../../.github/CONTRIBUTING.md)（首次提交 PR 前請[簽署 CLA](../../.github/CONTRIBUTING.md#contribution-licensing)）· [更新日誌](../../CHANGELOG.md) · [程式碼簽署政策](../code-signing-policy.md) |
+| 開發 | [參與貢獻](../../.github/CONTRIBUTING.md)（首次提交 PR 前請[簽署 CLA](../../.github/CONTRIBUTING.md#contribution-licensing)）· [更新日誌](../../app/CHANGELOG.md) · [程式碼簽署政策](../code-signing-policy.md) |
 
 智慧體技能：`npx skills add debpalash/VoiceStudio`（音訊工作用 **voicestudio**，倉庫維護用 **voicestudio-maintainer**）。
 

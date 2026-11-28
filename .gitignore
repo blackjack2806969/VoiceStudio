@@ -21,9 +21,9 @@ build/
 node_modules/
 node_modules
 bun.lockb
-frontend/src-tauri/
-electron/.tmp-native-target/
-native/**/target*/
+app/frontend/src-tauri/
+app/electron/.tmp-native-target/
+app/native/**/target*/
 
 # ─────────────────────────────────────────────────────────────────────────
 #  Secrets & env
@@ -91,21 +91,21 @@ omnivoice_data/
 #  creates runtime subdirs (dub_jobs/, outputs/, preview/, etc.) when the
 #  smoke test boots — those stay ignored.
 # ─────────────────────────────────────────────────────────────────────────
-!tests/fixtures/omnivoice_data/
-!tests/fixtures/omnivoice_data/README.md
-!tests/fixtures/omnivoice_data/omnivoice.db
-!tests/fixtures/omnivoice_data/voices/
-!tests/fixtures/omnivoice_data/voices/test-voice/
-!tests/fixtures/omnivoice_data/voices/test-voice/profile.json
-!tests/fixtures/omnivoice_data/voices/test-voice/sample.wav
+!app/tests/fixtures/omnivoice_data/
+!app/tests/fixtures/omnivoice_data/README.md
+!app/tests/fixtures/omnivoice_data/omnivoice.db
+!app/tests/fixtures/omnivoice_data/voices/
+!app/tests/fixtures/omnivoice_data/voices/test-voice/
+!app/tests/fixtures/omnivoice_data/voices/test-voice/profile.json
+!app/tests/fixtures/omnivoice_data/voices/test-voice/sample.wav
 
 # ─────────────────────────────────────────────────────────────────────────
 #  Bundled demo assets (synthetic, rendered by scripts/build_demos.sh).
 #  Ship with the installer so first-run users have working demos before any
 #  model weights download. *.wav above would hide these.
 # ─────────────────────────────────────────────────────────────────────────
-!backend/assets/samples/**/*.wav
-!backend/assets/samples/*.wav
+!app/backend/assets/samples/**/*.wav
+!app/backend/assets/samples/*.wav
 *.jsonl
 demo_recording.webp
 cloudflared
@@ -116,9 +116,9 @@ cloudflared.tgz
 # ─────────────────────────────────────────────────────────────────────────
 /exp*/
 example.py
-examples/data*
-examples/download*
-examples/exp*/
+app/examples/data*
+app/examples/download*
+app/examples/exp*/
 omnivoice.zip
 
 # cuDNN 8 compat libs (auto-installed by scripts/setup_cudnn.py)
@@ -161,7 +161,7 @@ playwright-report/
 .last-run.json
 
 # probe — generated HTML reports
-tests/probe/reports/
+app/tests/probe/reports/
 
 # Local architecture/planning scratch (goal docs, review briefs, council
 # reports). Working notes for whoever is driving a change, not a repo artifact.
@@ -177,7 +177,7 @@ bin/omnivoice-tts-linux-aarch64
 # Dubbing-demo intermediates. The .mp4/.srt/manifest.json in this directory ARE
 # committed (they ship with the app); the per-language source WAVs are just the
 # inputs scripts/render_dub_demo_audio.py hands to scripts/build_dub_demo.sh.
-backend/assets/samples/demo/dubbing/*.src.wav
+app/backend/assets/samples/demo/dubbing/*.src.wav
 
 # Stray sqlite session artifacts (`<db-path>.ses`). An in-memory DB yields the
 # literal name `:memory:.ses`, and a path containing `:` cannot be checked out

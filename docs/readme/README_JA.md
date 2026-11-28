@@ -401,7 +401,7 @@ F-Droid 対応クライアントにこのリポジトリを追加し、ガイド
 https://debpalash.github.io/VoiceStudio/fdroid/repo
 ```
 
-[ガイド](../../store/fdroid/README.md)
+[ガイド](../../app/store/fdroid/README.md)
 
 </details>
 
@@ -480,7 +480,7 @@ bun run dev
 
 `bun run dev` は JavaScript の依存関係をインストールし、対応するローカルバックエンドを使用する場合は Python の依存関係もインストールしてから Electron を起動します。Python 環境だけを再構築する場合は、`bun run setup:api` を直接実行してください。
 
-[Electron のセットアップ](../../electron/README.md)を参照してください。
+[Electron のセットアップ](../../app/electron/README.md)を参照してください。
 
 **コーディングエージェントで**（Claude Code、Codex、Cursor など）、次の内容を貼り付けます：
 
@@ -504,9 +504,9 @@ https://github.com/debpalash/VoiceStudio/blob/main/docs/install/agent.md
 | セットアップのヘルプ | [トラブルシューティング](../../docs/install/troubleshooting.md) · [モデルのダウンロード](../../docs/downloading-models.md) |
 | ガイド | [複数話者の吹き替え](../../docs/dubbing/multi-speaker-guide.md) · [表現豊かな音声](../../docs/expressive-speech.md) · [吹き替えの書き出し](../../docs/dubbing/export.md) |
 | モデルと音質 | [エンジンガイド](../../docs/engines/README.md) · [whisper.cpp ASR](../../docs/engines/whisper-cpp.md) · [ベンチマーク](../../docs/benchmarks.md) |
-| 連携 | [CLI](../../docs/install/script.md#terminal-command) · [ローカル API](../../docs/speech-platform.md) · [MCP](../../docs/mcp.md) · [サンプル](../../examples/README.md) |
+| 連携 | [CLI](../../docs/install/script.md#terminal-command) · [ローカル API](../../docs/speech-platform.md) · [MCP](../../docs/mcp.md) · [サンプル](../../app/examples/README.md) |
 | スマートフォンアプリ | [iOS と Android](../../docs/mobile.md) |
-| 開発 | [コントリビューション](../../.github/CONTRIBUTING.md)（初めての PR の前に [CLA への署名](../../.github/CONTRIBUTING.md#contribution-licensing)が必要です）· [変更履歴](../../CHANGELOG.md) · [コード署名ポリシー](../code-signing-policy.md) |
+| 開発 | [コントリビューション](../../.github/CONTRIBUTING.md)（初めての PR の前に [CLA への署名](../../.github/CONTRIBUTING.md#contribution-licensing)が必要です）· [変更履歴](../../app/CHANGELOG.md) · [コード署名ポリシー](../code-signing-policy.md) |
 
 エージェントスキル：`npx skills add debpalash/VoiceStudio`（音声作業には **voicestudio**、リポジトリのメンテナンスには **voicestudio-maintainer**）。
 

@@ -24,13 +24,15 @@
 
 | Need | Reference |
 | --- | --- |
-| Contribute | [Contributing](../.github/CONTRIBUTING.md) · [Electron development](../electron/README.md) · [Sponsorship](sponsors/SPONSORS.md) |
+| Contribute | [Contributing](../.github/CONTRIBUTING.md) · [Electron development](../app/electron/README.md) · [Sponsorship](sponsors/SPONSORS.md) |
 | Repository layout | [Project structure](STRUCTURE.md) |
-| Shipping capabilities | [Feature catalog](feature-catalog.md) · [Electron parity](../electron/PARITY.md) |
+| Shipping capabilities | [Feature catalog](feature-catalog.md) · [Electron parity](../app/electron/PARITY.md) |
 | Planned work | [Live roadmap](ROADMAP.md) |
 | Release and distribution | [Release checklist](RELEASING.md) · [Store publishing](STORE-PUBLISHING.md) |
 | Model licensing | [Inventory](licensing/model-inventory.md) · [Review workflow](licensing/model-review-workflow.md) |
 | Designs and decisions | [Design references](specs/README.md) · [Architecture decisions](adr/) |
+
+Upstream coding-agent skills are available through `npx skills add debpalash/VoiceStudio`.
 
 ## Documentation maintenance
 
@@ -51,5 +53,6 @@ git show <commit>:docs/maintenance-pages-modularization.md
 Validate relative links with:
 
 ```sh
+cd app
 uv run pytest -q tests/test_docs_links.py
 ```

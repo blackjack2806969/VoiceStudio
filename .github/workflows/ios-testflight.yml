@@ -32,6 +32,9 @@ jobs:
     env:
       # Unique and increasing per upload, including reruns of the same run.
       VOICESTUDIO_IOS_BUILD_NUMBER: ${{ github.run_number }}.${{ github.run_attempt }}
+    defaults:
+      run:
+        working-directory: app
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -55,8 +58,8 @@ jobs:
       - name: Cache native runtimes
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: mobile/native/ios/build
-          key: ios-native-${{ hashFiles('mobile/native/pins.json', 'mobile/native/ios/**', '!mobile/native/ios/build/**') }}
+          path: app/mobile/native/ios/build
+          key: ios-native-${{ hashFiles('app/mobile/native/pins.json', 'app/mobile/native/ios/**', '!app/mobile/native/ios/build/**') }}
 
       - name: Build native runtimes
         env:

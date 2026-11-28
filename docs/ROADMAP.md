@@ -6,7 +6,7 @@ Use the [open issues](https://github.com/debpalash/VoiceStudio/issues) and
 scope, decisions, dependencies and implementation status.
 
 For what the app supports today, see the [feature catalog](feature-catalog.md),
-[Electron parity tracker](../electron/PARITY.md) and [mobile guide](mobile.md).
+[Electron parity tracker](../app/electron/PARITY.md) and [mobile guide](mobile.md).
 [Design references](specs/README.md) provide context for specific proposals;
 they do not replace current implementation or issue status.
 

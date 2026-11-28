@@ -166,7 +166,7 @@ your host and `docker logs` output.
 To build it yourself on an arm64 host:
 
 ```bash
-docker build -f deploy/Dockerfile --build-arg BASE_IMAGE=cuda-arm64-base -t voicestudio:cuda-arm64 .
+docker build -f app/deploy/Dockerfile --build-arg BASE_IMAGE=cuda-arm64-base -t voicestudio:cuda-arm64 app
 ```
 
 All image variants verify installed dependency versions against
@@ -337,13 +337,13 @@ mounts.
 export OMNIVOICE_API_KEY="$(python3 -c 'import secrets; print(secrets.token_urlsafe(32))')"
 
 # CPU
-docker compose -f deploy/docker-compose.yml --profile cpu up -d
+docker compose -f app/deploy/docker-compose.yml --profile cpu up -d
 
 # NVIDIA GPU
-docker compose -f deploy/docker-compose.yml --profile gpu up -d
+docker compose -f app/deploy/docker-compose.yml --profile gpu up -d
 
 # AMD GPU (ROCm)
-docker compose -f deploy/docker-compose.yml --profile rocm up -d
+docker compose -f app/deploy/docker-compose.yml --profile rocm up -d
 ```
 
 > **ARM64 hosts:** Compose has no per-command `--platform` flag, so the
@@ -355,8 +355,8 @@ docker compose -f deploy/docker-compose.yml --profile rocm up -d
 >
 > ```bash
 > export DOCKER_DEFAULT_PLATFORM=linux/amd64
-> docker compose -f deploy/docker-compose.yml --profile cpu pull
-> docker compose -f deploy/docker-compose.yml --profile cpu up -d
+> docker compose -f app/deploy/docker-compose.yml --profile cpu pull
+> docker compose -f app/deploy/docker-compose.yml --profile cpu up -d
 > ```
 >
 > In PowerShell, set both the administrator key and target platform for the
@@ -375,8 +375,8 @@ docker compose -f deploy/docker-compose.yml --profile rocm up -d
 > # where an unescaped plus sign would otherwise decode as a space.
 > $env:OMNIVOICE_API_KEY = [Convert]::ToBase64String($randomBytes).Replace('+', '-').Replace('/', '_').TrimEnd('=')
 > $env:DOCKER_DEFAULT_PLATFORM = 'linux/amd64'
-> docker compose -f deploy/docker-compose.yml --profile cpu pull
-> docker compose -f deploy/docker-compose.yml --profile cpu up -d
+> docker compose -f app/deploy/docker-compose.yml --profile cpu pull
+> docker compose -f app/deploy/docker-compose.yml --profile cpu up -d
 > ```
 >
 > Either way the setting lives only in that shell and the processes it starts.

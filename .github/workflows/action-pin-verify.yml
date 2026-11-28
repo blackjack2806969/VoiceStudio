@@ -33,4 +33,4 @@ jobs:
       - name: Resolve every pinned SHA against the version it names
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python3 scripts/verify_action_pins.py
+        run: python3 app/scripts/verify_action_pins.py

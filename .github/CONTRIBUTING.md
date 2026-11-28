@@ -66,15 +66,15 @@ for Fedora and Arch packages.
 ### Clone & Run
 
 ```bash
-git clone https://github.com/debpalash/VoiceStudio.git
-cd VoiceStudio
+git clone https://github.com/blackjack2806969/Cantonese-Voice-Studio.git
+cd Cantonese-Voice-Studio/app
 bun run dev
 ```
 
 This installs the source dependencies (skipping local API setup for an external
 backend or Intel Mac) and launches Electron with hot reload. The supervisor
 manages backend startup; do not launch a second backend. See [Electron
-setup](../electron/README.md).
+setup](../app/electron/README.md).
 
 For screenshots, use the maintained Electron capture script described in
 [README media](../docs/media/electron/README.md). To share a runnable app, use
@@ -82,7 +82,7 @@ the release installers or `bun run dist`; source users should clone the
 repository with its lockfiles and follow the setup commands above.
 
 CPU-only Linux/Windows hosts automatically select CPU wheels; see
-[CPU setup and overrides](../electron/README.md#running-without-a-gpu).
+[CPU setup and overrides](../app/electron/README.md#running-without-a-gpu).
 When regenerating `uv.lock` for compute variants, preserve unrelated package
 versions: NumPy remains 2.0.2 on Python 3.12 Linux/Windows and 2.2.6 elsewhere.
 Validate both frozen CPU/CUDA exports with `tests/test_cpu_install.py`; a NumPy
@@ -244,7 +244,7 @@ Batch related small fixes into one pull request rather than opening many.
    bun run check:electron
    ```
 6. **Write a clear PR title** — it becomes the squash-merge commit message
-7. **Add a changelog fragment** if users will notice the change: one line in `changelog.d/<PR#>.<type>.md` (see [`changelog.d/README.md`](../changelog.d/README.md)). Don't edit `CHANGELOG.md` directly, so your PR never conflicts with others
+7. **Add a changelog fragment** if users will notice the change: one line in `changelog.d/<PR#>.<type>.md` (see [`changelog.d/README.md`](../app/changelog.d/README.md)). Don't edit `CHANGELOG.md` directly, so your PR never conflicts with others
 8. **Don't include** local machine stats, file paths, or private system info in PR descriptions
 
 ### Adding a New TTS Engine
@@ -434,17 +434,18 @@ The first run downloads container images and dependencies (as CI does); after
 that your code and results stay on your machine. CI is unchanged: `ci.yml`
 stays the gate.
 
-The module has its own dependency lockfile, `.dagger/uv.lock`; the root Python
+Run these Dagger commands from the repository root.
+
+The module has its own dependency lockfile, `app/.dagger/uv.lock`; the root Python
 lockfile does not update it. When refreshing module dependencies, use the SDK
 matching `dagger.json`'s engine version and keep the generated `.dagger/sdk/`
 directory untracked. `tests/test_dependency_security_floors.py` checks both
 lockfiles against reviewed security fixes.
 
 ```bash
-dagger call check             # all of the above, in parallel
-dagger call check --git=.git  # also run tests that read real git history
-                              # (in a linked worktree: --git=$(git rev-parse --git-common-dir))
-dagger call frontend-tests    # or: mobile-tokens, python-tests
+dagger -m app call check --source=.
+dagger -m app call check --source=. --git="$(git rev-parse --git-common-dir)"
+dagger -m app call frontend-tests --source=.
 ```
 
 ---

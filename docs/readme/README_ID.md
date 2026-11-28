@@ -400,7 +400,7 @@ Tambahkan repositori ini di klien yang kompatibel dengan F-Droid; verifikasi sid
 https://debpalash.github.io/VoiceStudio/fdroid/repo
 ```
 
-[Panduan](../../store/fdroid/README.md)
+[Panduan](../../app/store/fdroid/README.md)
 
 </details>
 
@@ -477,7 +477,7 @@ bun run dev
 
 `bun run dev` menginstal dependensi JavaScript dan, saat menggunakan backend lokal yang didukung, dependensi Python sebelum meluncurkan Electron. Jalankan `bun run setup:api` secara langsung ketika Anda hanya perlu membangun kembali lingkungan Python.
 
-Lihat [Pengaturan elektron](../../electron/README.md).
+Lihat [Pengaturan elektron](../../app/electron/README.md).
 
 **Dengan agen pengkodean** (Claude Code, Codex, Cursor, …), tempel:
 
@@ -501,9 +501,9 @@ Mengupgrade dari 0.5.3 atau lebih lama (aplikasi Tauri)? [Instal aplikasi baru s
 | Bantuan pengaturan | [Pemecahan Masalah](../../docs/install/troubleshooting.md) · [Unduhan model](../../docs/downloading-models.md) |
 | Panduan | [Sulih suara multi-pembicara](../../docs/dubbing/multi-speaker-guide.md) · [Ucapan ekspresif](../../docs/expressive-speech.md) · [Mengekspor sulih suara](../../docs/dubbing/export.md) |
 | Model & kualitas | [Panduan mesin](../../docs/engines/README.md) · [whisper.cpp ASR](../../docs/engines/whisper-cpp.md) · [Tolok ukur](../../docs/benchmarks.md) |
-| Integrasi | [CLI](../../docs/install/script.md#terminal-command) · [API Lokal](../../docs/speech-platform.md) · [MCP](../../docs/mcp.md) · [Contoh](../../examples/README.md) |
+| Integrasi | [CLI](../../docs/install/script.md#terminal-command) · [API Lokal](../../docs/speech-platform.md) · [MCP](../../docs/mcp.md) · [Contoh](../../app/examples/README.md) |
 | Aplikasi telepon | [iOS dan Android](../../docs/mobile.md) |
-| Perkembangan | [Berkontribusi](../../.github/CONTRIBUTING.md) ([menandatangani CLA](../../.github/CONTRIBUTING.md#contribution-licensing) sebelum PR pertama Anda) · [Changelog](../../CHANGELOG.md) · [Kebijakan penandatanganan kode](../code-signing-policy.md) |
+| Perkembangan | [Berkontribusi](../../.github/CONTRIBUTING.md) ([menandatangani CLA](../../.github/CONTRIBUTING.md#contribution-licensing) sebelum PR pertama Anda) · [Changelog](../../app/CHANGELOG.md) · [Kebijakan penandatanganan kode](../code-signing-policy.md) |
 
 Skill agen: `npx skills add debpalash/VoiceStudio` (**voicestudio** untuk pekerjaan audio, **voicestudio-maintainer** untuk repositori).
 

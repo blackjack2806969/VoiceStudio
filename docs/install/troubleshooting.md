@@ -780,7 +780,7 @@ If you don't have an NVIDIA GPU, you don't need the CUDA build at all — a CPU 
 Apple-Silicon install skips this index entirely. Electron source and packaged
 setup select CPU wheels when no NVIDIA driver is detected. Set
 `OMNIVOICE_TORCH_VARIANT=cpu` before `bun run setup:api` or the packaged install
-action to choose them explicitly; see [CPU setup](../../electron/README.md#running-without-a-gpu).
+action to choose them explicitly; see [CPU setup](../../app/electron/README.md#running-without-a-gpu).
 An unusable NVIDIA driver is a setup warning for CPU-capable engines;
 GPU-only engines still require supported hardware.
 
@@ -1173,7 +1173,7 @@ mounts it as the `omnivoice_data` volume).
 
 ### Google Colab: the UI loads but every action fails with 403
 
-The [Colab notebook](../../notebooks/OmniVoice_Studio_Colab.ipynb) opens the UI
+The [Colab notebook](../../app/notebooks/OmniVoice_Studio_Colab.ipynb) opens the UI
 through Colab's port proxy, on a per-session
 `https://<id>-3900-colab.googleusercontent.com` address. The backend refuses
 browser API calls from host names and origins it does not know (DNS-rebinding

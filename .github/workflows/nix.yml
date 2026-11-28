@@ -16,10 +16,10 @@ on:
       - '**'
       - '!**/*.md'
       - '!docs/**'
-      - '!mobile/**'
-      - '!tests/**'
-      - '!backend/tests/**'
-      - '!changelog.d/**'
+      - '!app/mobile/**'
+      - '!app/tests/**'
+      - '!app/backend/tests/**'
+      - '!app/changelog.d/**'
       - '!.github/**'
       - 'docs/install/nix.md'
       - 'docs/logo.svg'
@@ -33,10 +33,10 @@ on:
       - '**'
       - '!**/*.md'
       - '!docs/**'
-      - '!mobile/**'
-      - '!tests/**'
-      - '!backend/tests/**'
-      - '!changelog.d/**'
+      - '!app/mobile/**'
+      - '!app/tests/**'
+      - '!app/backend/tests/**'
+      - '!app/changelog.d/**'
       - '!.github/**'
       - 'docs/install/nix.md'
       - 'docs/logo.svg'
@@ -106,7 +106,7 @@ jobs:
                   paths.append(file.get("previous_filename"))
               return all(isinstance(path, str) and path and not PurePosixPath(path).is_absolute()
                          and not any(part in {".", ".."} for part in path.split("/"))
-                         and path.startswith(("mobile/", ".github/"))
+                         and path.startswith(("app/mobile/", ".github/"))
                          and path != ".github/workflows/nix.yml" for path in paths)
 
 

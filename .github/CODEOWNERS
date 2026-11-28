@@ -15,18 +15,18 @@
 /.github/CCLA-*.md                     @debpalash
 
 # Release, packaging, and container builds
-/electron/electron-builder.config.mjs  @debpalash
-/electron/build/                       @debpalash
-/electron/scripts/embed-appimage-update.mjs @debpalash
-/scripts/prepare_electron_release.py   @debpalash
-/scripts/check_electron_release_assets.py @debpalash
-/scripts/verify-macos-signing.sh       @debpalash
-/deploy/                               @debpalash
+/app/electron/electron-builder.config.mjs  @debpalash
+/app/electron/build/                       @debpalash
+/app/electron/scripts/embed-appimage-update.mjs @debpalash
+/app/scripts/prepare_electron_release.py   @debpalash
+/app/scripts/check_electron_release_assets.py @debpalash
+/app/scripts/verify-macos-signing.sh       @debpalash
+/app/deploy/                               @debpalash
 /docs/RELEASING.md                     @debpalash
 
 # Version source, its mirrors, and lockfiles
-/package.json                          @debpalash
-/pyproject.toml                        @debpalash
-/backend/core/version.py               @debpalash
-/bun.lock                              @debpalash
-/uv.lock                               @debpalash
+/app/package.json                          @debpalash
+/app/pyproject.toml                        @debpalash
+/app/backend/core/version.py               @debpalash
+/app/bun.lock                              @debpalash
+/app/uv.lock                               @debpalash

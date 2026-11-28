@@ -55,11 +55,11 @@
                 && lib.any (extension: lib.hasSuffix extension name)
                   [ ".js" ".jsx" ".mjs" ".cjs" ".ts" ".tsx" ".mts" ".cts" ]
               ) child
-            ) (builtins.readDir "${self}/${relative}"));
+            ) (builtins.readDir "${self}/app/${relative}"));
         in
         collect "";
       missingSourceModules = lib.filter (
-        relative: !(builtins.pathExists "${src}/${relative}")
+        relative: !(builtins.pathExists "${src}/app/${relative}")
       ) sourceModules;
 
       # Only what `bun install` reads: the root manifest and lockfile, each
@@ -68,23 +68,23 @@
       # this, so ordinary source edits cannot reach its pinned hash. Both lists
       # are read from package.json, so a new workspace or patch is picked up
       # without touching this file.
-      rootManifest = lib.importJSON ./package.json;
+      rootManifest = lib.importJSON ./app/package.json;
       nodeDepsSrc = lib.fileset.toSource {
-        root = ./.;
+        root = ./app;
         fileset = lib.fileset.unions (
           [
-            ./package.json
-            ./bun.lock
-            (lib.fileset.maybeMissing ./bunfig.toml)
-            (lib.fileset.maybeMissing ./.npmrc)
+            ./app/package.json
+            ./app/bun.lock
+            (lib.fileset.maybeMissing ./app/bunfig.toml)
+            (lib.fileset.maybeMissing ./app/.npmrc)
           ]
           ++ map (
             ws:
             assert lib.assertMsg (!lib.hasInfix "*" ws)
               "flake.nix: workspace glob \"${ws}\" in package.json; list workspaces explicitly.";
-            ./. + "/${ws}/package.json"
+            ./app + "/${ws}/package.json"
           ) (rootManifest.workspaces or [ ])
-          ++ map (patch: ./. + "/${patch}") (lib.attrValues (rootManifest.patchedDependencies or { }))
+          ++ map (patch: ./app + "/${patch}") (lib.attrValues (rootManifest.patchedDependencies or { }))
         );
       };
 
@@ -498,7 +498,7 @@
       omnivoiceRuntimeRev = "040c8b344d8c670ce1475194751d119b5ef82c78";
       omnivoiceGgmlRev = "d5152bf4348453068aa8de0d479caef40a613b9d";
       pinnedRuntimeRev =
-        (lib.importJSON ./backend/engines/omnivoice_gguf/quant_map.json)._meta.runtime_commit_sha;
+        (lib.importJSON ./app/backend/engines/omnivoice_gguf/quant_map.json)._meta.runtime_commit_sha;
 
       omnivoiceTts =
         pkgs:
@@ -612,8 +612,8 @@
             } ''
             cp -r ${src} ./source
             chmod -R u+w ./source
-            sourceRoot="$PWD/source"
-            cd ./source
+            sourceRoot="$PWD/source/app"
+            cd "$sourceRoot"
 
             export ELECTRON_SKIP_BINARY_DOWNLOAD=1
             ln -s ${nodeDepsDev}/node_modules node_modules
@@ -716,12 +716,12 @@
             pname = "voicestudio-desktop-bridge";
             version = "0.0.0";
 
-            src = lib.cleanSource ./native/desktop-bridge;
+            src = lib.cleanSource ./app/native/desktop-bridge;
 
             # Every crate in this lockfile comes from the crates.io registry, and each
             # carries a checksum, so importCargoLock resolves them without any
             # outputHashes (that option only applies to git dependencies).
-            cargoLock.lockFile = ./native/desktop-bridge/Cargo.lock;
+            cargoLock.lockFile = ./app/native/desktop-bridge/Cargo.lock;
 
             # nixpkgs' cargo setup hook exports AWS_LC_SYS_USE_SYSTEM=1 for
             # every buildRustPackage, demanding a system AWS-LC. The matching
@@ -820,6 +820,7 @@
 
           installPhase = ''
             runHook preInstall
+            cd app
 
             staging="$TMPDIR/app"
             resources="$staging/resources"
@@ -881,9 +882,9 @@
             mkdir -p "$resources/vendor/wheels"
             install -m644 vendor/wheels/*.whl "$resources/vendor/wheels/"
             install -m644 vendor/wheels/LICENSE-*.txt "$resources/vendor/wheels/"
-            install -Dm644 README.md "$resources/README.md"
-            install -Dm644 LICENSE "$resources/LICENSE"
-            install -Dm644 LICENSE-NOTICE.md "$resources/LICENSE-NOTICE.md"
+            install -Dm644 ../README.md "$resources/README.md"
+            install -Dm644 ../LICENSE "$resources/LICENSE"
+            install -Dm644 ../LICENSE-NOTICE.md "$resources/LICENSE-NOTICE.md"
             install -Dm644 electron/T3CODE-LICENSE.txt "$resources/electron/T3CODE-LICENSE.txt"
             install -Dm644 config/app.json "$resources/config/app.json"
             install -Dm644 config/analytics.json "$resources/config/analytics.json"

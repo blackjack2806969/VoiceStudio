@@ -102,7 +102,7 @@ Supertonic-3, PocketTTS) and a small Whisper model in the Model Catalogue; the
 setup screen lists them as its CPU preset. Set `OMNIVOICE_TORCH_VARIANT=cuda`
 (or `cpu`) before launching to override the detection.
 Source setup (`bun run setup:api`) also selects locked CPU wheels when NVIDIA
-is absent. See [CPU setup and overrides](../../electron/README.md#running-without-a-gpu).
+is absent. See [CPU setup and overrides](../../app/electron/README.md#running-without-a-gpu).
 
 ### Windows on ARM (Snapdragon X etc.)
 
@@ -216,8 +216,8 @@ Prerequisites:
   tools on Windows on ARM).
 
 ```powershell
-git clone https://github.com/debpalash/VoiceStudio.git
-cd VoiceStudio
+git clone https://github.com/blackjack2806969/Cantonese-Voice-Studio.git
+cd Cantonese-Voice-Studio/app
 node electron/scripts/node-version.mjs
 ```
 
@@ -233,7 +233,7 @@ bun run dev         # Electron with hot reload; it starts and supervises the bac
 
 Use `bun run desktop-prod` to build and launch the production bundle, or
 `bun run dist` to create a local NSIS installer in `electron/release/` without
-publishing. See [Electron setup](../../electron/README.md) for backend
+publishing. See [Electron setup](../../app/electron/README.md) for backend
 configuration.
 
 ## HF_TOKEN persistence

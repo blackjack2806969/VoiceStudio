@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "deploy/dockerhub-overview.md"
+      - "app/deploy/dockerhub-overview.md"
       - ".github/workflows/dockerhub-description.yml"
   workflow_dispatch:
 
@@ -48,4 +48,4 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: ${{ env.DOCKERHUB_IMAGE }}
           short-description: "Local ElevenLabs alternative: voice cloning, design & video dubbing in 646 languages. No API keys."
-          readme-filepath: ./deploy/dockerhub-overview.md
+          readme-filepath: ./app/deploy/dockerhub-overview.md

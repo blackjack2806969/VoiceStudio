@@ -9,12 +9,12 @@ treatment as the existing Supermetry wordmark:
 - [Supermetry brand](https://github.com/velixio/supermetry/tree/main/docs/brand)
 
 The app imports the bundled symbols from
-[`electron/src/shared/assets/sponsors/`](../../electron/src/shared/assets/sponsors/).
+[`electron/src/shared/assets/sponsors/`](../../app/electron/src/shared/assets/sponsors/).
 Displaying sponsor recognition does not load remote images or call sponsor
 services. Sponsor websites open only when the user follows their links.
 
 Keep the roster in the translated upstream READMEs, [SPONSORS.md](SPONSORS.md)
-and [`sponsors.js`](../../electron/src/shared/config/sponsors.js) together;
+and [`sponsors.js`](../../app/electron/src/shared/config/sponsors.js) together;
 `tests/test_sponsors_lockstep.py` checks the names, destinations and local assets.
 
 README logo credits open the sponsor GitHub repositories with the existing

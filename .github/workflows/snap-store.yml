@@ -39,6 +39,9 @@ jobs:
       VOICESTUDIO_DISTRIBUTION: snap-store
       VOICESTUDIO_RUST_TARGET: x86_64-unknown-linux-gnu
       CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+    defaults:
+      run:
+        working-directory: app
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Match the tag to the app version
@@ -65,7 +68,7 @@ jobs:
           targets: x86_64-unknown-linux-gnu
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
-          workspaces: native/desktop-bridge -> target
+          workspaces: app/native/desktop-bridge -> target
           key: electron-snap-x86_64-unknown-linux-gnu
       - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
         with:
@@ -75,7 +78,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          helper=.github/scripts/apt-retry.sh
+          helper="$GITHUB_WORKSPACE/.github/scripts/apt-retry.sh"
           # An older release tag predates the helper; take it from this workflow's commit.
           if [ ! -f "$helper" ]; then
             helper="$RUNNER_TEMP/apt-retry.sh"
@@ -107,7 +110,7 @@ jobs:
           bun run --cwd electron build:web
           node electron/tests/packaging-contract.mjs
       - name: Package without publishing
-        working-directory: electron
+        working-directory: app/electron
         env:
           SUPERMETRY_APP_ID: ${{ secrets.SUPERMETRY_APP_ID }}
           SUPERMETRY_INGEST_KEY: ${{ secrets.SUPERMETRY_INGEST_KEY }}
@@ -143,10 +146,10 @@ jobs:
           retention-days: 14
           if-no-files-found: error
           path: |
-            electron/release/*.snap
-            electron/release/VoiceStudio-*-snap-verification.json
-            electron/release/store-artifact-manifest-linux-x64.json
-            electron/release/snap-store-assets/
+            app/electron/release/*.snap
+            app/electron/release/VoiceStudio-*-snap-verification.json
+            app/electron/release/store-artifact-manifest-linux-x64.json
+            app/electron/release/snap-store-assets/
 
   upload:
     needs: package

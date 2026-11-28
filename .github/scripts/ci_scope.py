@@ -40,7 +40,7 @@ def non_runtime(path: str) -> bool:
     if not parts or any(part in {".", ".."} for part in parts):
         return False
     # These documentation-tree assets are inputs to the installed phone apps.
-    if path in {"docs/logo.svg", "docs/logo.png"} or path in CI_HARNESS:
+    if path in {"docs/logo.svg", "docs/logo.png"} or path.removeprefix("app/") in CI_HARNESS:
         return False
     if PurePosixPath(path).suffix.lower() in {".md", ".mdx", ".rst", ".adoc"}:
         return True
@@ -48,7 +48,7 @@ def non_runtime(path: str) -> bool:
         return True
     if any(part.lower() in {"tests", "test", "__tests__", "__snapshots__", "androidtest"} for part in parts[:-1]):
         return True
-    if any(part.endswith("Tests") for part in parts[:-1]) and parts[0] == "mobile":
+    if any(part.endswith("Tests") for part in parts[:-1]) and PurePosixPath(path.removeprefix("app/")).parts[0] == "mobile":
         return True
     return bool(re.fullmatch(r"(?:test_.+\.py|.+_test\.py|conftest\.py|.+\.(?:test|spec)\.[cm]?[jt]sx?)", parts[-1]))
 

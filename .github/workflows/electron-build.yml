@@ -71,6 +71,7 @@ jobs:
             local_runtime: false
     defaults:
       run:
+        working-directory: app
         shell: bash
     env:
       VOICESTUDIO_RUST_TARGET: ${{ matrix.target }}
@@ -92,7 +93,7 @@ jobs:
           targets: ${{ matrix.target }}
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
-          workspaces: native/desktop-bridge -> target
+          workspaces: app/native/desktop-bridge -> target
           key: electron-${{ matrix.target }}
       - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
         with:
@@ -103,7 +104,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          helper=.github/scripts/apt-retry.sh
+          helper="$GITHUB_WORKSPACE/.github/scripts/apt-retry.sh"
           # An older release tag predates the helper; take it from this workflow's commit.
           if [ ! -f "$helper" ]; then
             helper="$RUNNER_TEMP/apt-retry.sh"
@@ -118,13 +119,13 @@ jobs:
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: omnivoice-tts-${{ matrix.gguf_platform }}
-          path: electron/build/omnivoice-tts
+          path: app/electron/build/omnivoice-tts
       - name: Install locked dependencies
         run: bun install --frozen-lockfile
       - name: Validate and build Electron
         run: bun run check:electron
       - name: Package without publishing
-        working-directory: electron
+        working-directory: app/electron
         env:
           SUPERMETRY_APP_ID: ${{ secrets.SUPERMETRY_APP_ID }}
           SUPERMETRY_INGEST_KEY: ${{ secrets.SUPERMETRY_INGEST_KEY }}
@@ -138,7 +139,7 @@ jobs:
           node tests/update-package-contract.mjs --platform ${{ matrix.platform }} --arch ${{ matrix.arch }}
           node ../scripts/create_store_artifact_manifest.mjs --platform=${{ matrix.platform }} --arch=${{ matrix.arch }}
       - name: Packaged startup smoke test
-        working-directory: electron
+        working-directory: app/electron
         run: |
           if [ "$RUNNER_OS" = Linux ]; then
             for image in release/VoiceStudio-*-linux-x64.AppImage; do
@@ -149,7 +150,7 @@ jobs:
           fi
       - name: Install and start a fresh packaged runtime
         if: matrix.local_runtime
-        working-directory: electron
+        working-directory: app/electron
         timeout-minutes: 25
         env:
           VOICESTUDIO_RUNTIME_TIMEOUT_MS: '1200000'
@@ -166,6 +167,6 @@ jobs:
           retention-days: 14
           if-no-files-found: error
           path: |
-            electron/release/VoiceStudio-*
-            electron/release/electron-*.yml
-            electron/release/store-artifact-manifest-*.json
+            app/electron/release/VoiceStudio-*
+            app/electron/release/electron-*.yml
+            app/electron/release/store-artifact-manifest-*.json

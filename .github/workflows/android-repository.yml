@@ -5,19 +5,19 @@ on:
     paths:
       - '.github/workflows/android-repository.yml'
       - '.github/workflows/electron-release.yml'
-      - 'scripts/prepare_android_repository.py'
-      - 'tests/test_android_repository.py'
-      - 'store/fdroid/**'
-      - 'store/obtainium.json'
-      - 'fastlane/metadata/android/**'
+      - 'app/scripts/prepare_android_repository.py'
+      - 'app/tests/test_android_repository.py'
+      - 'app/store/fdroid/**'
+      - 'app/store/obtainium.json'
+      - 'app/fastlane/metadata/android/**'
   push:
     branches: [main]
     paths:
       - '.github/workflows/android-repository.yml'
-      - 'scripts/prepare_android_repository.py'
-      - 'store/fdroid/**'
-      - 'store/obtainium.json'
-      - 'fastlane/metadata/android/**'
+      - 'app/scripts/prepare_android_repository.py'
+      - 'app/store/fdroid/**'
+      - 'app/store/obtainium.json'
+      - 'app/fastlane/metadata/android/**'
   release:
     types: [published]
   workflow_dispatch:
@@ -50,6 +50,9 @@ jobs:
     # github-pages environment and are available only to the deploy job.
     if: github.event_name != 'release'
     runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: app
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -98,6 +101,9 @@ jobs:
       contents: read
       pages: write
       id-token: write
+    defaults:
+      run:
+        working-directory: app
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

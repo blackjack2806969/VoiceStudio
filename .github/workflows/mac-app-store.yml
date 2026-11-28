@@ -18,6 +18,9 @@ env:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -45,6 +48,9 @@ jobs:
     env:
       VOICESTUDIO_RUST_TARGET: ${{ matrix.target }}
       VOICESTUDIO_UPDATE_CHANNEL: electron-stable-darwin-${{ matrix.arch }}
+    defaults:
+      run:
+        working-directory: app
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -58,7 +64,7 @@ jobs:
           targets: ${{ matrix.target }}
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
-          workspaces: native/desktop-bridge -> target
+          workspaces: app/native/desktop-bridge -> target
           key: mac-app-store-${{ matrix.target }}
       - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
         with:
@@ -104,7 +110,7 @@ jobs:
           chmod 600 "$PROFILE_PATH"
           echo "VOICESTUDIO_MAS_PROVISIONING_PROFILE=$PROFILE_PATH" >> "$GITHUB_ENV"
       - name: Build signed sandbox packages
-        working-directory: electron
+        working-directory: app/electron
         env:
           SUPERMETRY_APP_ID: ${{ secrets.SUPERMETRY_APP_ID }}
           SUPERMETRY_INGEST_KEY: ${{ secrets.SUPERMETRY_INGEST_KEY }}
@@ -117,7 +123,7 @@ jobs:
           bun x electron-builder --config electron-builder.config.mjs --mac mas ${{ matrix.flag }} --publish never
           node tests/packaging-contract.mjs --artifact
       - name: Verify Apple Distribution signatures and sandbox
-        working-directory: electron
+        working-directory: app/electron
         run: |
           APP=$(find release -type d -path '*mas*' -name VoiceStudio.app -print -quit)
           PKG=$(find release -maxdepth 1 -type f -name 'VoiceStudio-MacAppStore-*-mac-${{ matrix.arch }}.pkg' -print -quit)
@@ -138,7 +144,7 @@ jobs:
           }, null, 2)}\n`);
           NODE
       - name: Record artifact provenance
-        working-directory: electron
+        working-directory: app/electron
         run: node ../scripts/create_store_artifact_manifest.mjs --distribution=mac-app-store --platform=darwin --arch=${{ matrix.arch }} --signing-evidence=apple-signing-darwin-${{ matrix.arch }}.json
       - name: Save private App Store handoff
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -147,6 +153,6 @@ jobs:
           retention-days: 30
           if-no-files-found: error
           path: |
-            electron/release/VoiceStudio-MacAppStore-*-mac-${{ matrix.arch }}.pkg
-            electron/release/store-artifact-manifest-darwin-${{ matrix.arch }}.json
-            electron/release/apple-signing-darwin-${{ matrix.arch }}.json
+            app/electron/release/VoiceStudio-MacAppStore-*-mac-${{ matrix.arch }}.pkg
+            app/electron/release/store-artifact-manifest-darwin-${{ matrix.arch }}.json
+            app/electron/release/apple-signing-darwin-${{ matrix.arch }}.json

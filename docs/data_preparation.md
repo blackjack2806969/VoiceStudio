@@ -179,6 +179,6 @@ After creating WebDataset shards, write a data config JSON that references them:
 - `repeat` — how many times to repeat this dataset per epoch (useful for balancing languages)
 - `language_id` is not used, just for a better data organization.
 
-See [examples/config/](../examples/config/) for ready-to-use data config files.
+See [examples/config/](../app/examples/config/) for ready-to-use data config files.
 
 > See [docs/data_preparation_advanced.md](../docs/data_preparation_advanced.md) for denoising and noise augmentation.
