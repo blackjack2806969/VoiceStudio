@@ -19,6 +19,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { throttle } from '@tanstack/react-pacer';
 import { toast } from 'sonner';
 import { ApiError, apiJson, describeError, isAbortError } from '@/lib/api/client';
+import { MAX_SEED, pickDesignSeed } from '@shared/utils/seed';
 import { failureTopicOf } from '@shared/utils/failureCatalog';
 import { generateClone, sanitizeInstruct } from '@/lib/api/generate';
 import type {
@@ -103,6 +104,15 @@ let takeCounter = 0;
 
 type CloneInput = Parameters<typeof generateClone>[0];
 
+export const TAKE_COUNTS = [1, 3, 5] as const;
+export type TakeCount = (typeof TAKE_COUNTS)[number];
+
+interface BatchTake {
+  id: string;
+  index: number;
+  count: TakeCount;
+}
+
 export type GenerationQueueStatus = 'queued' | 'running' | 'done' | 'failed' | 'cancelled';
 
 export interface GenerationQueueItem {
@@ -114,6 +124,8 @@ export interface GenerationQueueItem {
   mode: 'clone' | 'design';
   status: GenerationQueueStatus;
   error?: string;
+  batch?: BatchTake;
+  audioPath?: string | null;
 }
 
 /** Everything a take needs, captured when it was requested. */
@@ -121,6 +133,7 @@ interface PreparedTake {
   id: string;
   mode: 'clone' | 'design';
   input: CloneInput;
+  batch?: BatchTake;
   /** Sampling steps actually sent, resolved for the engine active at request time. */
   steps: ReturnType<typeof effectiveSamplingSteps>;
   spokenText: string;
@@ -198,8 +211,8 @@ export function clonesSavedSample(profile: Profile | null | undefined): boolean 
 
 export interface UseGenerateClone {
   generateDesign(input: DesignGenerateInput): Promise<void>;
-  generate(): Promise<void>;
-  /** Stop the running take; the queue moves on to the next one. */
+  generate(count?: TakeCount): Promise<void>;
+  /** Stop the running take and any pending takes from its batch. */
   cancel(): void;
   /** Stop the running take and drop every waiting one. */
   cancelAll(): void;
@@ -333,7 +346,7 @@ function useGenerateController(): UseGenerateClone {
   const sawModelLoadRef = useRef(false);
   // Takes waiting their turn, oldest first; the running one is not in here.
   const pendingRef = useRef<PreparedTake[]>([]);
-  const currentTakeIdRef = useRef<string | null>(null);
+  const currentTakeRef = useRef<PreparedTake | null>(null);
   const drainRetryRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const drainRef = useRef<() => void>(() => {});
   const [queue, setQueue] = useState<GenerationQueueItem[]>([]);
@@ -345,7 +358,7 @@ function useGenerateController(): UseGenerateClone {
     () =>
       throttle(
         (takeId: string, pct: number | null) => {
-          if (activeRef.current && currentTakeIdRef.current === takeId) {
+          if (activeRef.current && currentTakeRef.current?.id === takeId) {
             setProgress(pct);
             setStage('receiving');
           }
@@ -591,6 +604,20 @@ function useGenerateController(): UseGenerateClone {
     ],
   );
 
+  const cancelWaiting = useCallback((batchId?: string) => {
+    const dropped = new Set<string>();
+    pendingRef.current = pendingRef.current.filter((take) => {
+      if (batchId !== undefined && take.batch?.id !== batchId) return true;
+      dropped.add(take.id);
+      return false;
+    });
+    if (dropped.size) {
+      setQueue((items) =>
+        items.map((item) => (dropped.has(item.id) ? { ...item, status: 'cancelled' } : item)),
+      );
+    }
+  }, []);
+
   /** Drive one synthesis lifecycle; the caller already holds the synthesis slot. */
   const runTake = useCallback(
     async (take: PreparedTake, release: () => void) => {
@@ -598,7 +625,7 @@ function useGenerateController(): UseGenerateClone {
       const reportMode = take.mode;
       const { input } = take;
       reportModeRef.current = reportMode;
-      currentTakeIdRef.current = take.id;
+      currentTakeRef.current = take;
       recordActionBreadcrumb(`generate:${reportMode}:start`);
       patchQueueItem(take.id, { status: 'running' });
 
@@ -663,10 +690,14 @@ function useGenerateController(): UseGenerateClone {
             steps: take.steps,
             at: Date.now(),
           });
-        setLatestOutput(result, input.text);
+        if (!take.batch) setLatestOutput(result, input.text);
         recordActionBreadcrumb(`generate:${reportMode}:complete`);
-        patchQueueItem(take.id, { status: 'done' });
-        toast.success(tr('tts.generationComplete'), { position: 'top-right' });
+        patchQueueItem(take.id, {
+          status: 'done',
+          ...(take.batch && { audioPath: result.audioPath }),
+        });
+        if (!take.batch || take.batch.index === take.batch.count)
+          toast.success(tr('tts.generationComplete'), { position: 'top-right' });
         if (reportMode === 'clone')
           // Record what was actually rendered: a take sent without emotion (an
           // engine without IndexTTS2 controls, or Off) or without a delivery
@@ -707,6 +738,7 @@ function useGenerateController(): UseGenerateClone {
           setErrorTopic(failureTopicOf(err) ?? null);
           setError(message);
           patchQueueItem(take.id, { status: 'failed', error: message });
+          if (take.batch) cancelWaiting(take.batch.id);
         }
       } finally {
         finishActivity();
@@ -714,7 +746,7 @@ function useGenerateController(): UseGenerateClone {
         activeRef.current = false;
         abortRef.current = null;
         reportModeRef.current = null;
-        currentTakeIdRef.current = null;
+        currentTakeRef.current = null;
         if (timerRef.current) clearInterval(timerRef.current);
         timerRef.current = null;
         setIsGenerating(false);
@@ -730,7 +762,7 @@ function useGenerateController(): UseGenerateClone {
         drainRef.current();
       }
     },
-    [queryClient, onProgress, patchQueueItem],
+    [queryClient, onProgress, patchQueueItem, cancelWaiting],
   );
 
   /**
@@ -757,7 +789,7 @@ function useGenerateController(): UseGenerateClone {
 
   /** Render a take now, or add it to the queue when one is already running. */
   const generate = useCallback(
-    async (design?: DesignGenerateInput) => {
+    async (design?: DesignGenerateInput, count: TakeCount = 1) => {
       if (design) {
         // Voice Design has no queue view to show, remove or cancel waiting
         // takes, so it keeps one render at a time: start now or say it's busy.
@@ -777,20 +809,41 @@ function useGenerateController(): UseGenerateClone {
         await runTake(take, release);
         return;
       }
-      if (pendingRef.current.length >= MAX_QUEUED) {
+      if (count > 1 && (activeRef.current || pendingRef.current.length > 0)) {
+        toast.info(tr('tts_errors.generation_in_progress'));
+        return;
+      }
+      if (pendingRef.current.length + count > MAX_QUEUED) {
         toast.warning(tr('generationQueue.full', { count: MAX_QUEUED }));
         return;
       }
       const take = prepareTake(design);
       if (!take) return;
-      pendingRef.current.push(take);
+      const takes = [take];
+      if (count > 1) {
+        const seeds = new Set<number>();
+        for (let index = 1; index <= count; index++) {
+          let seed = pickDesignSeed(false, null);
+          while (seeds.has(seed)) seed = (seed + 1) % MAX_SEED;
+          seeds.add(seed);
+          takes[index - 1] = {
+            ...take,
+            id: index === 1 ? take.id : `${take.id}-${index}`,
+            input: { ...take.input, seed },
+            batch: { id: take.id, index, count },
+          };
+        }
+      }
+      pendingRef.current.push(...takes);
       setQueue((items) => [
         // Keep only the most recent finished takes alongside the live ones.
         ...trimFinished(items),
-        { id: take.id, label: take.label, voice: take.voice, mode: take.mode, status: 'queued' },
+        ...takes.map(({ id, label, voice, mode, batch }): GenerationQueueItem => ({
+          id, label, voice, mode, status: 'queued', ...(batch && { batch }),
+        })),
       ]);
       drain();
-      if (pendingRef.current.includes(take))
+      if (pendingRef.current.some((item) => item.id === take.id))
         toast.info(tr('generationQueue.added', { count: pendingRef.current.length }));
     },
     [prepareTake, drain, runTake],
@@ -812,26 +865,24 @@ function useGenerateController(): UseGenerateClone {
   const cancel = useCallback(() => {
     if (!abortRef.current) return;
     cancelledRef.current = true;
+    const batch = currentTakeRef.current?.batch;
+    if (batch) cancelWaiting(batch.id);
     const reportMode = reportModeRef.current;
     if (reportMode) recordActionBreadcrumb(`generate:${reportMode}:cancel`);
     abortRef.current.abort();
-  }, []);
+  }, [cancelWaiting]);
 
   /** Stop the running take and drop everything still waiting. */
   const cancelAll = useCallback(() => {
-    const dropped = new Set(pendingRef.current.map((take) => take.id));
-    pendingRef.current = [];
+    cancelWaiting();
     if (drainRetryRef.current) clearTimeout(drainRetryRef.current);
     drainRetryRef.current = null;
-    setQueue((items) =>
-      items.map((item) => (dropped.has(item.id) ? { ...item, status: 'cancelled' } : item)),
-    );
     cancel();
-  }, [cancel]);
+  }, [cancel, cancelWaiting]);
 
   return useMemo(
     () => ({
-    generate: () => generate(),
+    generate: (count) => generate(undefined, count),
     generateDesign: generate,
     cancel,
     isGenerating,

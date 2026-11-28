@@ -1,4 +1,10 @@
 {
+  "cloneTakes": {
+    "countLabel": "Numero di take",
+    "generate": "Genera {{count}} take",
+    "progress": "Generazione del take {{index}} di {{count}}",
+    "take": "Take {{index}} di {{count}}"
+  },
   "cloneEmotion": {
     "title": "Emozione",
     "off": "Disattivato",

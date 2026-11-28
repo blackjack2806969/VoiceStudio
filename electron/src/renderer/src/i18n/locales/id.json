@@ -1,4 +1,10 @@
 {
+  "cloneTakes": {
+    "countLabel": "Jumlah rekaman",
+    "generate": "Buat {{count}} rekaman",
+    "progress": "Membuat rekaman {{index}} dari {{count}}",
+    "take": "Rekaman {{index}} dari {{count}}"
+  },
   "cloneEmotion": {
     "title": "Emosi",
     "off": "Nonaktif",

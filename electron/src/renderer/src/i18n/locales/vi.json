@@ -1,4 +1,10 @@
 {
+  "cloneTakes": {
+    "countLabel": "Số bản thu",
+    "generate": "Tạo {{count}} bản thu",
+    "progress": "Đang tạo bản thu {{index}} trên {{count}}",
+    "take": "Bản thu {{index}} trên {{count}}"
+  },
   "cloneEmotion": {
     "title": "Cảm xúc",
     "off": "Tắt",

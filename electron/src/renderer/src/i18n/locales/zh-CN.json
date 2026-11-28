@@ -1,4 +1,10 @@
 {
+  "cloneTakes": {
+    "countLabel": "生成条数",
+    "generate": "生成 {{count}} 条",
+    "progress": "正在生成第 {{index}} 条，共 {{count}} 条",
+    "take": "第 {{index}} 条，共 {{count}} 条"
+  },
   "cloneEmotion": {
     "title": "情绪",
     "off": "关闭",

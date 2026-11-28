@@ -1,4 +1,10 @@
 {
+  "cloneTakes": {
+    "countLabel": "테이크 수",
+    "generate": "테이크 {{count}}개 생성",
+    "progress": "테이크 {{index}} / {{count}} 생성 중",
+    "take": "테이크 {{index}} / {{count}}"
+  },
   "cloneEmotion": {
     "title": "감정",
     "off": "끄기",

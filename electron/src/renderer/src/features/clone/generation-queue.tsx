@@ -11,7 +11,7 @@ export function GenerationQueue({ className }: { className?: string }) {
   const { queue, queuedCount, isGenerating, removeQueued, clearFinished, cancelAll } =
     useGenerateClone();
   // A lone take that started right away needs no list: the button shows it.
-  const worthShowing = queue.length > 1 || queuedCount > 0;
+  const worthShowing = queue.length > 1 || queuedCount > 0 || queue.some((item) => item.batch);
   if (!worthShowing) return null;
   const finished = queue.filter((item) => item.status !== 'queued' && item.status !== 'running');
   let waiting = 0;

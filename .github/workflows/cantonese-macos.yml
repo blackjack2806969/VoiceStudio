@@ -64,7 +64,7 @@ jobs:
           (ulimit -n 128; node electron/tests/cantonese-sign-walk.test.mjs)
           bun run --cwd electron typecheck
           cd electron
-          bun x vitest run src/main/app-identity.test.ts src/renderer/src/features/tools/lexical-pitch.test.tsx src/main/cantonese-offline.test.ts src/main/ipc-registry.test.ts src/renderer/src/hooks/use-tts-readiness.test.tsx
+          bun x vitest run src/main/app-identity.test.ts src/renderer/src/features/tools/lexical-pitch.test.tsx src/main/cantonese-offline.test.ts src/main/ipc-registry.test.ts src/renderer/src/hooks/use-tts-readiness.test.tsx src/renderer/src/hooks/use-generate.test.tsx src/renderer/src/features/clone/action-bar.test.tsx
           bun run build
           bun run build:web
           bun x electron-builder --config electron-builder.config.mjs --mac --arm64 --publish never

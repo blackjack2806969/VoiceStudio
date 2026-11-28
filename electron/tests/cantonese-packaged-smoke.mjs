@@ -78,7 +78,7 @@ try {
   assert.equal(identity.menu, CANTONESE_PRODUCT_NAME);
   assert.equal(identity.about, true);
   assert.equal(identity.userData, join(identity.appData, 'Cantonese Voice Studio'));
-  console.log('PASS: Finder branding, Dock icon, menu and window title match v0.3.1; bundle ID, user data and licence notices retained.');
+  console.log(`PASS: Finder branding, Dock icon, menu and window title match v${CANTONESE_VERSION}; bundle ID, user data and licence notices retained.`);
   assert.equal(await app.evaluate(({ app }) => app.commandLine.hasSwitch('no-sandbox')), false);
   const window = await app.browserWindow(page);
   assert.equal(await window.evaluate(win => win.getTitle()), CANTONESE_PRODUCT_NAME);
@@ -263,6 +263,80 @@ try {
   assert(exported.length > 44 && exported.toString('ascii', 0, 4) === 'RIFF' &&
     exported.toString('ascii', 8, 12) === 'WAVE', 'Export must be a nonempty WAV');
   console.log('PASS: sandboxed ARM64 app, bundled backend/ffmpeg, real pitch edit and export.');
+
+  await page.evaluate(() => localStorage.setItem('voicestudio.locale', 'en'));
+  await page.reload();
+  const cloneLink = navigation(page).getByRole('link', { name: 'Clone', exact: true });
+  await cloneLink.click();
+  await page.getByRole('main').getByRole('button', { name: 'Demo Voice', exact: true }).click();
+  // Only the destination picker is replaced. Saving still runs through native IPC.
+  await app.evaluate(({ dialog }, directory) => {
+    dialog.showSaveDialog = async (...args) => ({
+      canceled: false,
+      filePath: `${directory}/${args.at(-1).defaultPath}`,
+    });
+  }, captures);
+  const takeRow = (index, count) => page.locator('li[data-status="done"]').filter({
+    has: page.getByText(`Take ${index} of ${count}`, { exact: true }),
+  });
+  const completed = [];
+  for (const [count, script] of [[3, '聽日見，see you.'], [5, '而家出發，let’s go.']]) {
+    await page.locator('[data-clone-script]').fill(script);
+    await page.getByRole('button', { name: String(count), exact: true }).click();
+    const seeds = new Set();
+    const responses = [];
+    const paths = [];
+    const record = response => {
+      if (response.request().method() === 'POST' && new URL(response.url()).pathname === '/api/generate')
+        responses.push(response);
+    };
+    page.on('response', record);
+    try {
+      await page.getByRole('button', { name: `Generate ${count} takes`, exact: true }).click();
+      await page.getByRole('button', { name: `Generating take 1 of ${count}`, exact: true }).waitFor();
+      for (let index = 1; index <= count; index++) {
+        const row = takeRow(index, count);
+        await row.waitFor({ timeout: 12 * 60 * 1000 });
+        const response = responses[index - 1];
+        assert(response?.ok(), `Take ${index} of ${count} did not get a successful response`);
+        const path = await response.headerValue('x-audio-path');
+        assert(path?.endsWith('.wav'), `Take ${index} of ${count} has no local WAV`);
+        const seed = await response.headerValue('x-seed');
+        assert(seed && /^\d+$/.test(seed), `Take ${index} of ${count} has no numeric seed`);
+        paths.push(path);
+        seeds.add(seed);
+        await row.getByRole('button', { name: 'Play', exact: true }).click();
+        await page.waitForFunction(selector => [...document.querySelectorAll(selector)].some(
+          player => player.played.length > 0 && player.played.end(0) > 0.05,
+        ), `li[data-status="done"] audio[src*="${encodeURIComponent(path)}"]`, { polling: 100 });
+        await row.getByRole('button', { name: 'Save as…', exact: true }).click();
+        const wav = await pollUntil(() => readFile(resolve(captures, path)).catch(() => null),
+          30000, `Take ${index} of ${count} did not export`);
+        assert(wav.length > 44 && wav.toString('ascii', 0, 4) === 'RIFF');
+        completed.push({ count, index, path });
+      }
+    } finally {
+      page.off('response', record);
+    }
+    assert.equal(seeds.size, count, 'Each take should have a distinct returned seed');
+    assert.equal(new Set(paths).size, count, 'Each take should have a distinct saved WAV');
+    const history = await page.evaluate(async () => (await fetch('/api/history')).json());
+    assert(paths.every(path => history.some(take => take.audio_path === path)));
+    console.log(`PASS: ${count} offline takes, distinct seeds, History, playback and WAV export.`);
+  }
+  await page.evaluate(() => fetch('/api/system/flush-memory?unload_model=true', { method: 'POST' }));
+  for (const { index, count, path } of completed) {
+    const source = page.waitForRequest(request => request.resourceType() === 'fetch' &&
+      new URL(request.url()).pathname === '/api/audio/' + encodeURIComponent(path));
+    const upload = page.waitForResponse(response => response.request().method() === 'POST' &&
+      response.url().endsWith('/tools/lexical-pitch/import'));
+    await takeRow(index, count).getByRole('button', { name: 'Edit Pitch', exact: true }).click();
+    const [, result] = await Promise.all([source, upload]);
+    assert.equal(result.status(), 200);
+    await page.waitForURL(url => /#\/tools\?pitch=/.test(url.hash));
+    await cloneLink.click();
+  }
+  console.log('PASS: each completed take opened independently in the pitch editor.');
 } finally {
   if (page) await page.screenshot({ path: resolve(captures, 'last-screen.png'), fullPage: true }).catch(() => {});
   await app.close();

@@ -81,6 +81,7 @@ vi.mock('@/lib/audio/playback', () => ({
 }));
 
 vi.mock('@/hooks/use-generate', () => ({
+  TAKE_COUNTS: [1, 3, 5],
   useGenerationElapsed: () => runtime.elapsedSeconds,
   useGenerateClone: () => ({
     generate,
@@ -157,6 +158,16 @@ describe('ActionBar', () => {
     fireEvent.click(button);
     expect(generate).toHaveBeenCalledTimes(1);
     expect(screen.queryByRole('button', { name: 'Stop playback' })).not.toBeInTheDocument();
+  });
+  it('lets Clone select multiple takes and submits the selected count', () => {
+    const select = vi.fn();
+    const view = render(<ActionBar takeCount={1} onTakeCountChange={select} />);
+    expect(screen.getByRole('button', { name: '1' })).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.click(screen.getByRole('button', { name: '3' }));
+    expect(select).toHaveBeenCalledWith(3);
+    view.rerender(<ActionBar takeCount={5} onTakeCountChange={select} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Generate 5 takes' }));
+    expect(generate).toHaveBeenCalledWith(5);
   });
   it('keeps everyday controls clear and advanced tuning collapsed', () => {
     const { container } = render(<ProductionSettings />);

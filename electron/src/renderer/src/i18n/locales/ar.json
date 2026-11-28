@@ -1,4 +1,10 @@
 {
+  "cloneTakes": {
+    "countLabel": "عدد التسجيلات",
+    "generate": "إنشاء {{count}} تسجيلات",
+    "progress": "جارٍ إنشاء التسجيل {{index}} من {{count}}",
+    "take": "التسجيل {{index}} من {{count}}"
+  },
   "cloneEmotion": {
     "title": "العاطفة",
     "off": "إيقاف",

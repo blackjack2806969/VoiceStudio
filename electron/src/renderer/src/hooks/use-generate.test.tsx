@@ -970,7 +970,11 @@ describe('generation queue', () => {
     return (
       <>
         <button onClick={() => void state.generate()}>go</button>
+        <button onClick={() => void state.generate(3)}>three takes</button>
+        <button onClick={() => void state.generate(5)}>five takes</button>
+        <button onClick={() => state.cancel()}>cancel</button>
         <button onClick={() => state.cancelAll()}>cancel all</button>
+        <span>{state.error}</span>
         <button onClick={() => void state.generateDesign({ text: 'Designed', instruct: '' })}>
           design
         </button>
@@ -978,7 +982,13 @@ describe('generation queue', () => {
         <span data-testid="queue-stage">{state.stage}</span>
         <ul>
           {state.queue.map((item) => (
-            <li key={item.id} data-testid="item" data-status={item.status}>
+            <li
+              key={item.id}
+              data-testid="item"
+              data-status={item.status}
+              data-audio={item.audioPath}
+              data-index={item.batch?.index}
+            >
               {item.label}
             </li>
           ))}
@@ -1019,6 +1029,71 @@ describe('generation queue', () => {
         </GenerationProvider>
       </QueryClientProvider>,
     );
+
+  it.each([[3, 'three takes'], [5, 'five takes']] as const)(
+    'runs %i takes sequentially with identical inputs and unique seeds',
+    async (count, button) => {
+      const renders = deferredRenders();
+      const rng = vi.spyOn(Math, 'random').mockReturnValue(0.5);
+      try {
+        mount();
+        patchCloneSettings({
+          text: 'Same script', selectedProfileId: 'voice-1', speed: 1.1,
+          language: 'Cantonese', autoPlay: false,
+        });
+        fireEvent.click(screen.getByText(button));
+        patchCloneSettings({ text: 'Next script', selectedProfileId: 'voice-2', speed: 0.8 });
+        const first = vi.mocked(generateClone).mock.calls[0]![0];
+        expect(first).toMatchObject({
+          text: 'Same script', profileId: 'voice-1', speed: 1.1, language: 'Cantonese',
+        });
+        const seeds = new Set<number>();
+        for (let index = 0; index < count; index++) {
+          expect(generateClone).toHaveBeenCalledTimes(index + 1);
+          const input = vi.mocked(generateClone).mock.calls[index]![0];
+          expect(input).toEqual({ ...first, seed: input.seed });
+          expect(Number.isInteger(input.seed)).toBe(true);
+          seeds.add(input.seed!);
+          expect(screen.getAllByTestId('item')[index]).toHaveAttribute('data-index', String(index + 1));
+          await act(async () => renders[index]!.resolve(take(`audio-${index}`)));
+        }
+        expect(seeds.size).toBe(count);
+        expect(statuses()).toEqual(Array(count).fill('done'));
+        expect(screen.getAllByTestId('item').map((row) => row.dataset.audio)).toEqual(
+          Array.from({ length: count }, (_, index) => `audio-${index}.wav`),
+        );
+      } finally {
+        rng.mockRestore();
+      }
+    },
+  );
+
+  it.each(['cancel', 'failure'] as const)(
+    'keeps the first take and stops the rest of the batch on %s',
+    async (outcome) => {
+      const renders = deferredRenders();
+      mount();
+      patchCloneSettings({ text: 'One script', selectedProfileId: 'voice-1', autoPlay: false });
+      fireEvent.click(screen.getByText('three takes'));
+      await act(async () => renders[0]!.resolve(take('first')));
+      expect(statuses()).toEqual(['done', 'running', 'queued']);
+
+      if (outcome === 'cancel') fireEvent.click(screen.getByText('cancel', { exact: true }));
+      else await act(async () => renders[1]!.reject(new Error('engine failed')));
+
+      await waitFor(() => expect(statuses()).toEqual([
+        'done', outcome === 'cancel' ? 'cancelled' : 'failed', 'cancelled',
+      ]));
+      expect(generateClone).toHaveBeenCalledTimes(2);
+      expect(screen.getAllByTestId('item')[0]).toHaveAttribute('data-audio', 'first.wav');
+      if (outcome === 'failure') expect(screen.getByText('engine failed')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByText('go', { exact: true }));
+      expect(vi.mocked(generateClone).mock.calls[2]![0].seed).toBeUndefined();
+      await act(async () => renders[2]!.resolve(take('single')));
+      expect(statuses().at(-1)).toBe('done');
+    },
+  );
 
   it('queues takes requested mid-render and runs them in order with their own script', async () => {
     const renders = deferredRenders();

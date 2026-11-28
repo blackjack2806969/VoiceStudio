@@ -1,6 +1,6 @@
 # Cantonese Voice Studio development status
 
-Updated: 2026-11-27. Deadline: 2026-11-30.
+Updated: 2026-11-28. Deadline: 2026-11-30.
 
 ## Baseline
 - Upstream: debpalash/VoiceStudio @ 29ca59dcd, Electron + FastAPI.
@@ -11,7 +11,7 @@ Updated: 2026-11-27. Deadline: 2026-11-30.
 - Initial fork creation returned HTTP 403. On recheck, blackjack2806969/VoiceStudio exists as a fork and grants push permission; publishing is now proceeding.
 
 ## Current milestone
-Implement bounded, non-destructive Praat lexical-tone editing integrated into Electron Tools.
+Validate the v0.4.0 Multiple Takes candidate.
 
 ## Remaining acceptance gates
 - Real Hong Kong Cantonese and mixed English listening evaluation on an M1 Ultra.
@@ -245,3 +245,17 @@ physical Mac remains open.
 - [Release v0.3.1](https://github.com/blackjack2806969/VoiceStudio/releases/tag/cantonese-macos-0.3.1)
   contains the branded ARM64 DMG and app ZIP. The package uses ad-hoc signing.
   Physical Mac testing remains pending.
+
+## v0.4.0 candidate — Multiple Takes
+
+- Clone defaults to one take. Select three or five to generate sequential local
+  OmniVoice takes with distinct seeds and the same captured inputs and settings.
+- Each completed take supports playback, WAV export and Edit Pitch in Clone and
+  is saved to History. Cancelling or failing a batch leaves its completed takes
+  available. The app reuses the existing model and offline restrictions.
+- Focused Electron tests cover queue order, input reuse, seeds, cancellation,
+  partial failures and single-take generation. The ARM64 workflow includes
+  packaged checks for 1, 3 and 5 takes using the reused OmniVoice cache.
+- Physical M1 Ultra acceptance still needs an offline install and restart with
+  existing data, Cantonese and mixed-language listening checks, and a real save
+  dialog. Release publication requires approval.

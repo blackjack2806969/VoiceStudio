@@ -1,4 +1,10 @@
 {
+  "cloneTakes": {
+    "countLabel": "Antal tagningar",
+    "generate": "Generera {{count}} tagningar",
+    "progress": "Genererar tagning {{index}} av {{count}}",
+    "take": "Tagning {{index}} av {{count}}"
+  },
   "cloneEmotion": {
     "title": "Känsla",
     "off": "Av",

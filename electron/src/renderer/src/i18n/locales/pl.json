@@ -1,4 +1,10 @@
 {
+  "cloneTakes": {
+    "countLabel": "Liczba ujęć",
+    "generate": "Wygeneruj {{count}} ujęcia",
+    "progress": "Generowanie ujęcia {{index}} z {{count}}",
+    "take": "Ujęcie {{index}} z {{count}}"
+  },
   "cloneEmotion": {
     "title": "Emocje",
     "off": "Wyłączone",

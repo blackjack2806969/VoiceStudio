@@ -8,6 +8,10 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { audioUrl } from '@/lib/api/client';
+import { EditPitchButton } from '@/features/tools/edit-pitch-button';
+import { SaveAudioButton } from '@/components/save-audio-button';
+import { WaveformPlayer } from '@/components/waveform-player';
 import { Button } from '@/components/ui/button';
 import type { GenerationQueueItem, GenerationQueueStatus } from '@/hooks/use-generate';
 import { cn } from '@/lib/utils';
@@ -42,6 +46,9 @@ export function QueueRow({
   const { t } = useTranslation();
   const Icon = STATUS_ICON[item.status];
   const statusText = t(`generationQueue.status.${item.status}`);
+  const title = item.batch
+    ? t('cloneTakes.take', { index: item.batch.index, count: item.batch.count })
+    : item.label;
   return (
     <li
       data-status={item.status}
@@ -59,14 +66,31 @@ export function QueueRow({
           )}
           title={item.label}
         >
-          {item.label}
+          {title}
         </p>
         <p className="truncate text-xs text-muted-foreground">
           <span className="sr-only">{statusText}. </span>
-          {[position != null ? t('generationQueue.position', { position }) : statusText, item.voice]
+          {[
+            position != null ? t('generationQueue.position', { position }) : statusText,
+            item.voice,
+            item.batch && item.label,
+          ]
             .filter(Boolean)
             .join(' · ')}
         </p>
+        {item.audioPath && (
+          <div className="my-1 flex flex-wrap items-center gap-x-2">
+            <WaveformPlayer
+              className="min-w-32 flex-1"
+              compact
+              showWaveform={false}
+              src={audioUrl(item.audioPath)}
+              source={item.id}
+            />
+            <SaveAudioButton url={audioUrl(item.audioPath)} suggestedName={item.audioPath} />
+            <EditPitchButton audioPath={item.audioPath} />
+          </div>
+        )}
         {item.status === 'failed' && item.error && (
           <p className="mt-0.5 line-clamp-2 text-xs text-destructive">{item.error}</p>
         )}

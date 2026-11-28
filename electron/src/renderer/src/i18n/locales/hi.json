@@ -1,4 +1,10 @@
 {
+  "cloneTakes": {
+    "countLabel": "टेक की संख्या",
+    "generate": "{{count}} टेक बनाएँ",
+    "progress": "टेक {{index}} / {{count}} बनाया जा रहा है",
+    "take": "टेक {{index}} / {{count}}"
+  },
   "cloneEmotion": {
     "title": "भावना",
     "off": "बंद",

@@ -20,7 +20,7 @@ import { useProfiles } from '@/hooks/use-profiles';
 import { setCloneSetting, useCloneSetting } from '@/lib/store/clone-settings';
 import { useReference } from '@/lib/store/reference';
 import { EngineSetupNotice, useEngineSetup } from '@/components/engine-notice';
-import { useGenerateClone } from '@/hooks/use-generate';
+import { useGenerateClone, type TakeCount } from '@/hooks/use-generate';
 import { ActionBar } from './action-bar';
 import { OutputPanel } from './output-panel';
 import { ReferencePanel, SaveProfileForm } from './reference-panel';
@@ -42,6 +42,7 @@ export function ClonePage() {
   const navigate = useNavigate();
   const selectedTake = useSelectedTake();
   const { generate, isGenerating } = useGenerateClone();
+  const [takeCount, setTakeCount] = useState<TakeCount>(1);
   const demo = useCloneDemo();
   // One setup for the notice and the composer: choosing a voice swaps one for
   // the other, and a download must keep its progress and Cancel across that.
@@ -138,11 +139,11 @@ export function ClonePage() {
       if (event.target instanceof HTMLElement && event.target.closest('[role="dialog"], aside'))
         return;
       event.preventDefault();
-      void generate();
+      void generate(focused ? takeCount : 1);
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [demo, generate, panel]);
+  }, [demo, focused, generate, panel, takeCount]);
 
   return (
     <div className="flex h-full min-h-0 overflow-hidden">
@@ -281,7 +282,11 @@ export function ClonePage() {
             <SynthesisDock output={<OutputPanel />}>
               <div className="mx-auto w-full max-w-4xl px-6 pb-4">
                 <div className="glass-panel composer-surface rounded-xl border border-border/60 bg-muted/30 p-2.5 shadow-[0_2px_12px_rgb(0_0_0/4%)]">
-                  <ActionBar setup={setup} />
+                  <ActionBar
+                    setup={setup}
+                    takeCount={takeCount}
+                    onTakeCountChange={focused ? setTakeCount : undefined}
+                  />
                 </div>
               </div>
             </SynthesisDock>

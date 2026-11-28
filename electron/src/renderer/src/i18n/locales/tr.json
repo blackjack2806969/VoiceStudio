@@ -1,4 +1,10 @@
 {
+  "cloneTakes": {
+    "countLabel": "Kayıt sayısı",
+    "generate": "{{count}} kayıt oluştur",
+    "progress": "Kayıt oluşturuluyor: {{index}} / {{count}}",
+    "take": "Kayıt {{index}} / {{count}}"
+  },
   "cloneEmotion": {
     "title": "Duygu",
     "off": "Kapalı",

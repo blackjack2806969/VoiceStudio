@@ -1,4 +1,10 @@
 {
+  "cloneTakes": {
+    "countLabel": "テイク数",
+    "generate": "{{count}} テイクを生成",
+    "progress": "テイク {{index}} / {{count}} を生成中",
+    "take": "テイク {{index}} / {{count}}"
+  },
   "cloneEmotion": {
     "title": "感情",
     "off": "オフ",

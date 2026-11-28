@@ -30,11 +30,12 @@ import { useTranslation } from 'react-i18next';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/popover';
 import { Input } from '@/components/ui/input';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Kbd, KbdGroup } from '@/components/ui/kbd';
 import { isMac } from '@/components/bridge';
 import { Label } from '@/components/ui/label';
 import { ProgressIndicator, ProgressTrack } from '@/components/ui/progress';
-import { useGenerateClone } from '@/hooks/use-generate';
+import { TAKE_COUNTS, useGenerateClone, type TakeCount } from '@/hooks/use-generate';
 import { GenerationElapsed } from '@/components/generation-elapsed';
 import {
   resetVoiceControls,
@@ -240,7 +241,15 @@ export function VoiceControls({ size = 'icon-lg' }: { size?: 'icon-sm' | 'icon-l
 }
 
 /** Render the Voice Cloning composer including engine-aware emotion controls. */
-export function ActionBar({ setup: shared }: { setup?: EngineSetup } = {}) {
+export function ActionBar({
+  setup: shared,
+  takeCount = 1,
+  onTakeCountChange,
+}: {
+  setup?: EngineSetup;
+  takeCount?: TakeCount;
+  onTakeCountChange?: (count: TakeCount) => void;
+} = {}) {
   const { t } = useTranslation();
   const demo = useCloneDemo();
   const mac = isMac();
@@ -258,8 +267,12 @@ export function ActionBar({ setup: shared }: { setup?: EngineSetup } = {}) {
     clearError,
     cloneBlocker: blocker,
     queuedCount,
+    queue,
   } = useGenerateClone();
-  const generationLabel = isGenerating
+  const batch = queue.find((item) => item.status === 'running')?.batch;
+  const generationLabel = batch
+    ? t('cloneTakes.progress', { index: batch.index, count: batch.count })
+    : isGenerating
     ? t(
         stage === 'loading'
           ? modelStage
@@ -271,7 +284,9 @@ export function ActionBar({ setup: shared }: { setup?: EngineSetup } = {}) {
               ? 'synthesisState.preparing'
               : 'clone.generating_status',
       )
-    : t('clone.synthesize');
+    : takeCount > 1
+      ? t('cloneTakes.generate', { count: takeCount })
+      : t('clone.synthesize');
   // Not ready: the primary action is the setup that fixes it, not a dead Synthesize.
   // The page passes its own setup so a download outlives the notice above.
   const own = useEngineSetup('clone');
@@ -307,7 +322,24 @@ export function ActionBar({ setup: shared }: { setup?: EngineSetup } = {}) {
           <EmotionControls />
         </div>
 
-        <div className="relative ml-auto flex shrink-0 gap-2">
+        <div className="relative ml-auto flex max-w-full flex-wrap items-center gap-2">
+          {onTakeCountChange && !demo && !needsSetup && (
+            <ToggleGroup
+              aria-label={t('cloneTakes.countLabel')}
+              value={[String(takeCount)]}
+              onValueChange={([next]) => {
+                const count = TAKE_COUNTS.find((count) => String(count) === next);
+                if (count !== undefined) onTakeCountChange(count);
+              }}
+              disabled={isGenerating || queuedCount > 0}
+              size="sm"
+              variant="outline"
+            >
+              {TAKE_COUNTS.map((count) => (
+                <ToggleGroupItem key={count} value={String(count)}>{count}</ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          )}
           {demo ? (
             <CloneDemoAction />
           ) : needsSetup ? (
@@ -320,8 +352,8 @@ export function ActionBar({ setup: shared }: { setup?: EngineSetup } = {}) {
             <Button
               size="lg"
               className="h-10 w-60 max-w-full shrink-0 justify-between overflow-hidden rounded-lg ps-4 pe-2.5 shadow-sm transition-colors"
-              onClick={() => void generate()}
-              disabled={isGenerating || blocker !== null}
+              onClick={() => void generate(takeCount === 1 ? undefined : takeCount)}
+              disabled={isGenerating || blocker !== null || (takeCount > 1 && queuedCount > 0)}
               aria-describedby={blocker ? readinessId : undefined}
               aria-busy={isGenerating}
               aria-label={generationLabel}
@@ -357,7 +389,7 @@ export function ActionBar({ setup: shared }: { setup?: EngineSetup } = {}) {
               )}
             </Button>
           )}
-          {isGenerating && !demo ? (
+          {isGenerating && !demo && !batch ? (
             <Button
               size="lg"
               className="h-10 shrink-0 gap-2 rounded-lg px-3"

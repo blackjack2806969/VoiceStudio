@@ -1,4 +1,10 @@
 {
+  "cloneTakes": {
+    "countLabel": "生成版本數量",
+    "generate": "生成 {{count}} 個版本",
+    "progress": "正在生成第 {{index}} 個版本，共 {{count}} 個",
+    "take": "第 {{index}} 個版本，共 {{count}} 個"
+  },
   "cloneEmotion": {
     "title": "情緒",
     "off": "關閉",

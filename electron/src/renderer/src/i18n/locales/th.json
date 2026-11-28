@@ -1,4 +1,10 @@
 {
+  "cloneTakes": {
+    "countLabel": "จำนวนเทค",
+    "generate": "สร้าง {{count}} เทค",
+    "progress": "กำลังสร้างเทค {{index}} จาก {{count}}",
+    "take": "เทค {{index}} จาก {{count}}"
+  },
   "cloneEmotion": {
     "title": "อารมณ์",
     "off": "ปิด",

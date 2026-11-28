@@ -1,4 +1,10 @@
 {
+  "cloneTakes": {
+    "countLabel": "Кількість дублів",
+    "generate": "Створити дублі ({{count}})",
+    "progress": "Створюється дубль {{index}} з {{count}}",
+    "take": "Дубль {{index}} з {{count}}"
+  },
   "cloneEmotion": {
     "title": "Емоція",
     "off": "Вимк.",
