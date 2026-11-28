@@ -255,9 +255,10 @@ if [ "$MODE" = main ]; then
     printf 'Building and installing Electron from main (this may take several minutes).\n'
     # Never pull into, reset, or build from an existing user checkout.
     git clone --depth 1 --branch main --single-branch https://github.com/debpalash/VoiceStudio.git "$WORK/source"
+    APP_SOURCE="$WORK/source"
+    if [ -f "$APP_SOURCE/app/package.json" ]; then APP_SOURCE="$APP_SOURCE/app"; fi
     (
-        cd "$WORK/source"
-        if [ -f app/package.json ]; then cd app; fi
+        cd "$APP_SOURCE"
         printf 'Source commit: '; git rev-parse HEAD
         bun install --frozen-lockfile
         # Packaging includes the backend and builds its Rust native helper.
@@ -273,9 +274,9 @@ if [ "$MODE" = main ]; then
         if [ "$OS" = linux ]; then node scripts/embed-appimage-update.mjs; fi
         node tests/update-package-contract.mjs
     )
-    VS_VERSION=$(node -p 'require(process.argv[1]).version' "$WORK/source/package.json")
+    VS_VERSION=$(node -p 'require(process.argv[1]).version' "$APP_SOURCE/package.json")
     valid_version "$VS_VERSION" || die 'Invalid version in source checkout.'
-    PACKAGE_DIR="$WORK/source/electron/release"
+    PACKAGE_DIR="$APP_SOURCE/electron/release"
 else
     RELEASES=https://github.com/debpalash/VoiceStudio/releases
     if [ -z "$VS_VERSION" ]; then
