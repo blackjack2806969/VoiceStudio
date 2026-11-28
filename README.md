@@ -6,6 +6,7 @@
   <p><strong>English</strong> · <a href="README.zh-HK.md">繁體中文（香港）</a></p>
   <p>
     <a href="https://github.com/blackjack2806969/VoiceStudio/releases"><strong>Download for macOS</strong></a> ·
+    <a href="#screenshots">Screenshots</a> ·
     <a href="#quick-start">Quick start</a> ·
     <a href="https://github.com/blackjack2806969/VoiceStudio/blob/cantonese-offline/docs/cantonese-offline.md">Documentation</a>
   </p>
@@ -24,6 +25,37 @@ The distribution uses OmniVoice as its only TTS engine. Once the model is instal
 > **Most important generation tip: render complete sentences, not isolated words.** Give OmniVoice a full sentence or a natural phrase instead of generating one or two words at a time. Sentence-level context helps the model produce more natural Cantonese pronunciation, rhythm and intonation. If a single syllable has the wrong tone, generate the whole sentence first and then correct that syllable in the Pitch Editor. If regeneration is needed, regenerate the full sentence rather than splicing isolated words together.
 >
 > For example, render `聽日朝早九點要開會，記得準時返嚟。` as a complete sentence rather than generating `聽日` and `開會` separately.
+
+## Screenshots
+
+Actual screenshots from the packaged v0.3.0 macOS ARM64 application tests, not design mockups.
+
+### Voice Clone
+
+[![v0.3.0 Voice Clone workspace](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-01-clone.png)](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-01-clone.png)
+
+### Cantonese Pitch Editor
+
+[![v0.3.0 Cantonese Pitch Editor workspace](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-02-cantonese-pitch-editor.png)](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-02-cantonese-pitch-editor.png)
+
+<details>
+<summary>More screenshots: Saved Voices, History and Settings</summary>
+
+### Saved Voices
+
+[![Saved Voices](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-03-saved-voices.png)](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-03-saved-voices.png)
+
+### History
+
+[![History](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-04-history.png)](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-04-history.png)
+
+### Settings
+
+[![Settings](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-05-settings.png)](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-05-settings.png)
+
+</details>
+
+[View the v0.3.0 release and screenshots](https://github.com/blackjack2806969/VoiceStudio/releases/tag/cantonese-macos-0.3.0)
 
 ## Two core tools
 
@@ -68,9 +100,9 @@ Choose the newest published OmniVoice-only release and download its `.dmg` file.
 3. Review and acknowledge the model licence.
 4. Import a clean 5–15 second reference recording with the speaker's permission and enter its accurate transcript.
 5. Select Cantonese, enter your script and generate speech. For example: `聽日開 meeting，記得帶 laptop。我哋九點見。`
-6. Preview the take. Open it in the Cantonese Pitch Editor, select a syllable, adjust the tone and export WAV.
+6. Preview the take and choose **Edit Pitch** to open it directly in the Cantonese Pitch Editor. Select a syllable, adjust the tone and export WAV.
 
-In v0.2.0, export the generated take and import it through **Tools → Cantonese lexical tones**. The focused v0.3.0 interface introduces a direct **Edit Pitch** handoff from Clone and History.
+In v0.3.0, **Edit Pitch** is available directly from Clone and History. In the older v0.2.0 release, export the generated take and import it through **Tools → Cantonese lexical tones**.
 
 ### Existing model cache / offline setup
 
@@ -81,7 +113,9 @@ A complete existing `k2-fsa/OmniVoice` Hugging Face snapshot can be reused. For 
 | Version | Status |
 | --- | --- |
 | [v0.2.0](https://github.com/blackjack2806969/VoiceStudio/releases/tag/cantonese-macos-0.2.0) | Published OmniVoice-only ARM64 installer; packaged CI passed |
-| [v0.3.0](https://github.com/blackjack2806969/VoiceStudio/tree/cantonese-macos-0.3.0) | Focused UI candidate: Clone, Cantonese Pitch Editor, Saved Voices, History, Settings; check Releases for installer availability |
+| [v0.3.0](https://github.com/blackjack2806969/VoiceStudio/releases/tag/cantonese-macos-0.3.0) | Published ARM64 installer; five focused workspaces, direct Edit Pitch handoff, packaged CI passed |
+
+The v0.3.0 release tests verified model setup, offline cloning, both Edit Pitch actions, playback, undo and WAV export.
 
 The v0.2.0 [macOS ARM64 CI run](https://github.com/blackjack2806969/VoiceStudio/actions/runs/45981656040) verified model installation, cache reuse, local mixed-language voice cloning, manual F0 editing, playback, undo and WAV export.
 
