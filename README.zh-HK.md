@@ -1,160 +1,52 @@
 <div align="center">
   <img src="docs/logo-can.svg" alt="Cantonese Voice Studio CAN 標誌" width="112" height="112" />
   <h1>Cantonese Voice Studio</h1>
-  <p><strong>廣東話語音複製 · 本地文字轉語音 · 六聲修音</strong></p>
-  <p>專為 Apple Silicon Mac 而設嘅離線廣東話配音工具。</p>
+  <p><strong>為 Apple Silicon Mac 而設、以私隱為先嘅廣東話語音複製及聲調修正工具</strong></p>
   <p><a href="README.md">English</a> · <strong>繁體中文（香港）</strong></p>
-  <p>
-    <a href="https://github.com/blackjack2806969/Cantonese-Voice-Studio/releases/download/cantonese-macos-0.3.1/Cantonese-Voice-Studio-0.3.1-mac-arm64.dmg"><strong>下載 v0.3.1 DMG</strong></a> ·
-    <a href="https://github.com/blackjack2806969/Cantonese-Voice-Studio/releases">版本發佈</a> ·
-    <a href="#實際介面">實際介面</a> ·
-    <a href="#快速上手">快速上手</a> ·
-    <a href="https://github.com/blackjack2806969/Cantonese-Voice-Studio/blob/cantonese-offline/docs/cantonese-offline.md">技術文件（英文）</a>
-  </p>
-  <p><code>macOS arm64</code> · <code>OmniVoice</code> · <code>Praat / PSOLA</code> · <code>本地運算</code> · <code>私隱優先</code></p>
+  <p><a href="https://github.com/blackjack2806969/Cantonese-Voice-Studio/releases/download/cantonese-macos-0.3.1/Cantonese-Voice-Studio-0.3.1-mac-arm64.dmg"><strong>下載 v0.3.1 DMG</strong></a> · <a href="https://github.com/blackjack2806969/Cantonese-Voice-Studio/releases/download/cantonese-macos-0.3.1/Cantonese-Voice-Studio-0.3.1-mac-arm64.zip">ZIP</a> · <a href="https://github.com/blackjack2806969/Cantonese-Voice-Studio/releases/tag/cantonese-macos-0.3.1">預發佈版本說明</a> · <a href="https://github.com/blackjack2806969/Cantonese-Voice-Studio/tree/cantonese-macos-0.3.1">v0.3.1 對應原始碼</a></p>
 </div>
 
----
+## 私隱同資訊保安
 
-## 關於 Cantonese Voice Studio
+配音稿、參考錄音、已儲存聲線同生成音訊都喺 Mac 本機處理，唔會上載至雲端 AI 服務。語音複製、文字轉語音、聲調修正同輸出全部喺本機完成。macOS 沙盒限制後端同音訊處理程序只用本地連線。App 亦會封鎖介面程序嘅外部網絡請求，並停用分析追蹤同雲端帳戶。獨立嘅 OmniVoice 下載程序會喺你確認後先連接網絡。安裝模型權重之後，就可以完全離線工作。[離線網絡限制（英文）](https://github.com/blackjack2806969/Cantonese-Voice-Studio/blob/cantonese-macos-0.3.1/docs/cantonese-offline.md#offline-enforcement)
 
-本專案係 [VoiceStudio](https://github.com/debpalash/VoiceStudio) 嘅獨立廣東話特化版本，專注香港廣東話配音：匯入獲授權嘅參考聲音、生成廣東話及中英夾雜語音、修正個別音節嘅聲調，再輸出完成品。
+## 生成同修正語音
 
-本版本只採用 OmniVoice 作為語音生成引擎。安裝模型之後，語音生成同修音都喺本機進行，唔需要雲端推理服務或者付費 API 額度。
-
-## 點解堅持本地運算？資訊保安與私隱
-
-**本地運算唔單止係為咗慳 API 費用，更重要係保護未公開內容同敏感資料。** 配音稿、參考錄音、聲線及製作中嘅音訊可能涉及機密資訊或者未發佈作品，因此本專案採用 local-first 設計，減低內容外流及傳送至第三方服務嘅風險。
-
-- **內容留喺本機：** 語音複製、TTS、修音及輸出均在本機處理，毋須將錄音、文字稿或生成音訊上載至雲端 AI 服務。
-- **限制網絡存取：** macOS 沙盒限制後端及音訊處理程序只使用本地連線；App 亦封鎖外部網絡請求，停用分析追蹤及雲端帳戶功能。
-- **模型下載例外：** 首次下載 OmniVoice 時，需要由用戶明確確認，透過獨立下載程序連接網絡。模型安裝完成後，可完全離線進行配音及修音。
-
-本設計旨在減低資料外流風險，並非保證所有情況下絕無外洩；裝置安全、檔案權限、備份及機構資訊保安政策仍然重要。詳見[離線網絡限制技術說明](https://github.com/blackjack2806969/Cantonese-Voice-Studio/blob/cantonese-macos-0.3.1/docs/cantonese-offline.md#offline-enforcement)（英文）。
+1. 喺 Apple Silicon Mac 開啟 DMG 安裝。安裝包採用 ad-hoc 簽署，尚未經 Apple 公證。
+2. 開啟 **Clone**，閱讀 OmniVoice 模型條款。可以重用完整嘅模型快取，或者選擇 **Download OmniVoice**（約 2.4 GiB）。修音工具毋須安裝模型權重。[安裝及離線模型設定（英文）](https://github.com/blackjack2806969/Cantonese-Voice-Studio/blob/cantonese-macos-0.3.1/docs/cantonese-offline.md)
+3. 匯入一段約 5–15 秒、清晰而且已獲講者同意嘅參考錄音，再輸入逐字稿。選擇廣東話，輸入配音稿（可以夾雜英文），設定語速同試聽。你可以儲存聲線下次再用。
+4. 喺 **Clone** 或 **History** 選擇 **Edit Pitch**。喺波形選取音節，套用按講者音域調整嘅廣東話六聲預設（55、25、33、21、23、22），拖動 F0 音高點，或者按半音調整。可以比較修正前後、復原同輸出 WAV，原始音訊會保留。
 
 > [!TIP]
-> **最重要嘅使用建議：一次 Render 完整句子，唔好逐一兩個字生成。**
->
-> 完整語境有助 OmniVoice 生成更自然嘅廣東話發音、節奏同語調。例如唔好將「聽日」、「開會」分開生成，而係一次過輸入「聽日朝早九點要開會，記得準時返嚟。」
->
-> 如果個別字讀錯聲調，先生成成句，再用 Pitch Editor 修正嗰個字；如果需要重新生成，亦建議 Render 成句，而唔係逐字剪接。
+> 每次生成一句完整嘅廣東話句子或者一個自然短語。完整語境有助 OmniVoice 讀出自然嘅發音、節奏同語調。可以試下一次過生成「聽日朝早九點要開會，記得準時返嚟。」個別音節需要修正聲調，就用修音工具。如果要重新生成，建議再生成成句。
 
 ## 實際介面
 
-以下五張係 v0.3.1 macOS ARM64 [打包測試](https://github.com/blackjack2806969/Cantonese-Voice-Studio/actions/runs/46128615288) 擷取嘅原始介面截圖，唔係設計示意圖。圖片直接存放喺本專案，唔受 Release 或測試產物到期影響。
+五張截圖擷取自 v0.3.1 macOS ARM64 打包應用程式測試。[CI 紀錄](https://github.com/blackjack2806969/Cantonese-Voice-Studio/actions/runs/46128615288)
 
 ### 語音複製
 
-[![語音複製 — v0.3.1](docs/screenshots/ui-01-clone.png)](docs/screenshots/ui-01-clone.png)
+[![語音複製](docs/screenshots/ui-01-clone.png)](docs/screenshots/ui-01-clone.png)
 
 ### 廣東話修音
 
-[![廣東話修音 — v0.3.1](docs/screenshots/ui-02-cantonese-pitch-editor.png)](docs/screenshots/ui-02-cantonese-pitch-editor.png)
+[![廣東話修音](docs/screenshots/ui-02-cantonese-pitch-editor.png)](docs/screenshots/ui-02-cantonese-pitch-editor.png)
 
 <details>
-<summary>查看更多介面：已儲存聲線、歷史紀錄及設定</summary>
+<summary>已儲存聲線、歷史紀錄同設定</summary>
 
-### 已儲存聲線
+[![已儲存聲線](docs/screenshots/ui-03-saved-voices.png)](docs/screenshots/ui-03-saved-voices.png)
 
-[![已儲存聲線 — v0.3.1](docs/screenshots/ui-03-saved-voices.png)](docs/screenshots/ui-03-saved-voices.png)
+[![歷史紀錄](docs/screenshots/ui-04-history.png)](docs/screenshots/ui-04-history.png)
 
-### 歷史紀錄
-
-[![歷史紀錄 — v0.3.1](docs/screenshots/ui-04-history.png)](docs/screenshots/ui-04-history.png)
-
-### 設定
-
-[![設定 — v0.3.1](docs/screenshots/ui-05-settings.png)](docs/screenshots/ui-05-settings.png)
+[![設定](docs/screenshots/ui-05-settings.png)](docs/screenshots/ui-05-settings.png)
 
 </details>
 
-## 兩大核心功能
+## 原始碼、授權同鳴謝
 
-| 語音複製（Voice Clone） | 廣東話修音（Pitch Editor） |
-| --- | --- |
-| 利用參考錄音進行零樣本語音複製 | 喺波形上選取個別音節 |
-| 支援廣東話及中英夾雜文字 | 廣東話六聲預設 |
-| 儲存聲線及調整語速 | 手動 F0 音高控制點及半音調整 |
-| 試聽及輸出生成語音 | 非破壞性編輯、復原、前後試聽及 WAV 輸出 |
+完整應用程式原始碼同建置檔案存放喺 [`cantonese-offline`](https://github.com/blackjack2806969/Cantonese-Voice-Studio/tree/cantonese-offline)。每個已發佈版本嘅對應原始碼可喺[版本原始碼索引（英文）](docs/release-source.md)查閱。
 
-### 廣東話六聲修正
-
-同唱歌用嘅 Auto-Tune 唔同，呢個修音工具係專為口語廣東話而設，利用 Praat PSOLA 技術，按講者本身嘅音高範圍調整聲調，而唔係將聲音拉去音樂音階。
-
-| 聲調 | 例字 | 音高走勢 |
-| :---: | :---: | --- |
-| 第一聲 | 詩（si1） | 55 · 高平 |
-| 第二聲 | 史（si2） | 25 · 高升 |
-| 第三聲 | 試（si3） | 33 · 中平 |
-| 第四聲 | 時（si4） | 21 · 低降 |
-| 第五聲 | 市（si5） | 23 · 低升 |
-| 第六聲 | 事（si6） | 22 · 低平 |
-
-選取音節後，可以套用預設或者手動調整音高控制點，再比較修正前後嘅聲音。原始錄音唔會被覆蓋。修音功能只調整音高，唔會修正聲母、韻母，亦唔會自動識別所有讀音錯誤。
-
-## 下載及系統需求
-
-**最新發佈：v0.3.1（28/11/2026，預發佈版本）**
-
-[下載 DMG（約 752 MB）](https://github.com/blackjack2806969/Cantonese-Voice-Studio/releases/download/cantonese-macos-0.3.1/Cantonese-Voice-Studio-0.3.1-mac-arm64.dmg) · [下載 ZIP](https://github.com/blackjack2806969/Cantonese-Voice-Studio/releases/download/cantonese-macos-0.3.1/Cantonese-Voice-Studio-0.3.1-mac-arm64.zip) · [版本說明](https://github.com/blackjack2806969/Cantonese-Voice-Studio/releases/tag/cantonese-macos-0.3.1) · [所有版本](https://github.com/blackjack2806969/Cantonese-Voice-Studio/releases)
-
-更新前請先退出舊版 App。v0.3.1 保留原有 Bundle Identifier 同資料位置，現有 OmniVoice 模型、聲線、設定及歷史紀錄可繼續使用。
-
-- 適用平台：Apple Silicon Mac（M 系列）。
-- DMG 已包含 App、Python 執行環境、OmniVoice 引擎及 FFmpeg。
-- OmniVoice 模型權重（約 2.4 GiB）**未包含喺 DMG**。首次使用 Clone 時下載一次，或者重用已有嘅完整 Hugging Face 模型快取。
-- Pitch Editor 唔需要安裝任何 TTS 模型。
-- 安裝包採用 ad-hoc 簽署，未經 Apple Developer ID 公證。請遵守所屬機構嘅安裝及資訊保安政策。
-
-## 快速上手
-
-1. 開啟 DMG，將 App 安裝到 Applications。
-2. 開啟 **Clone**。如果未有模型，撳 **Download OmniVoice** 完成一次性下載。
-3. 閱讀並確認模型授權條款。
-4. 匯入一段約 5–15 秒、清晰而且已獲講者授權嘅參考錄音，輸入準確逐字稿。
-5. 選擇 Cantonese，輸入完整句子，例如：`聽日開 meeting，記得帶 laptop。我哋九點見。`，再生成語音。
-6. 試聽後，撳 **Edit Pitch** 直接開啟廣東話修音介面，選取音節、修正聲調並輸出 WAV。
-
-v0.3.0 起支援直接由 Clone 同 History 開啟修音工具。舊版 v0.2.0 則需要先輸出生成語音，再經 **Tools → Cantonese lexical tones** 匯入修音。
-
-如需繁體中文介面，可喺 Settings 嘅語言設定選擇繁體中文。未安裝語音辨識模型時，可以手動輸入參考錄音逐字稿。
-
-### 重用模型快取及離線安裝
-
-App 可以重用完整嘅 `k2-fsa/OmniVoice` Hugging Face 模型快取。對於離線 Mac，可以將完整嘅 `models--k2-fsa--OmniVoice` 資料夾移到 `~/.cache/huggingface/hub`，保留 blobs、snapshots 同相對符號連結。
-
-詳細步驟請參考[安裝及操作指南（英文）](https://github.com/blackjack2806969/Cantonese-Voice-Studio/blob/cantonese-offline/docs/cantonese-offline.md)。
-
-## 版本及測試狀態
-
-| 版本 | 狀態 |
-| --- | --- |
-| [v0.3.1](https://github.com/blackjack2806969/Cantonese-Voice-Studio/releases/tag/cantonese-macos-0.3.1) | 最新預發佈版本；App 及安裝包改名 Cantonese Voice Studio，採用 CAN Edition Icon，保留現有資料及模型快取 |
-| v0.3.0 | 五個精簡工作區、直接 Edit Pitch；舊 Release 已移除 |
-| v0.2.0 | OmniVoice-only 版本、首次下載及離線運算測試；舊 Release 已移除 |
-
-v0.3.0 嘅發佈測試已驗證模型設定、離線語音複製、Clone 同 History 嘅 Edit Pitch、播放、復原及 WAV 輸出。
-
-v0.2.0 嘅 [macOS ARM64 CI 測試](https://github.com/blackjack2806969/Cantonese-Voice-Studio/actions/runs/45981656040) 已驗證模型下載、快取重用、本地中英夾雜語音複製、手動 F0 編輯、播放、復原及 WAV 輸出。
-
-[下載 v0.2.0 測試截圖及音訊](https://github.com/blackjack2806969/Cantonese-Voice-Studio/actions/runs/45981656040/artifacts/15190228799)（GitHub Actions 測試產物，可能需要登入）。
-
-CI 測試唔代表已驗證實體 M1 Ultra 嘅運算效能、廣東話發音質素或者聲線相似度，仍然需要實機試聽及測試。
-
-## 原始碼及技術文件
-
-廣東話版本嘅實作位於 [`cantonese-offline` 分支](https://github.com/blackjack2806969/Cantonese-Voice-Studio/tree/cantonese-offline)。預設分支用作專案主頁並保留上游程式碼基礎；開發時請使用廣東話版本分支或者指定版本標籤。
-
-- [安裝、模型設定及修音操作指南（英文）](https://github.com/blackjack2806969/Cantonese-Voice-Studio/blob/cantonese-offline/docs/cantonese-offline.md)
-- [開發進度及測試紀錄（英文）](https://github.com/blackjack2806969/Cantonese-Voice-Studio/blob/cantonese-offline/DEVELOPMENT_STATUS.md)
-- [回報本專案問題](https://github.com/blackjack2806969/Cantonese-Voice-Studio/issues)
-
-## 授權及鳴謝
-
-- App：採用 [AGPL-3.0](LICENSE)，保留上游版權、授權聲明及原始碼歷史。詳見 [LICENSE-NOTICE.md](LICENSE-NOTICE.md)。
-- OmniVoice 模型權重：[CC BY-NC，僅限非商業用途](https://huggingface.co/k2-fsa/OmniVoice/blob/c5fdb5ccb189668d56333f77ba2629f4cd7535f4/README.md)。音訊 tokenizer 另受 [Higgs Audio 2 及 Meta Llama 3 條款](https://huggingface.co/k2-fsa/OmniVoice/blob/c5fdb5ccb189668d56333f77ba2629f4cd7535f4/audio_tokenizer/LICENSE) 約束。App 授權唔會取代模型授權。
-- 音高處理：[Praat-Parselmouth](https://github.com/YannickJadoul/Parselmouth)，GPL-3.0-or-later。
-
-本專案建基於 [Palash Debnath](https://github.com/debpalash)、[Shimul Debnath](https://github.com/velixio) 同 [VoiceStudio 貢獻者](https://github.com/debpalash/VoiceStudio/graphs/contributors) 嘅成果，並感謝 OmniVoice、Praat 同 Parselmouth 嘅原作者及開發者。
-
-本專案係獨立衍生版本，並非 VoiceStudio 官方版本。請只複製已獲授權嘅聲音，切勿用於冒認身份、詐騙或其他違法用途。
+- Cantonese Voice Studio 係 VoiceStudio 嘅獨立衍生版本。VoiceStudio 原由 Palash Debnath、Shimul Debnath 同其他貢獻者開發。應用程式採用 AGPL-3.0-only 授權。[上游 VoiceStudio](https://github.com/debpalash/VoiceStudio) · [授權全文](LICENSE) · [版權及授權聲明](LICENSE-NOTICE.md)
+- OmniVoice 程式碼採用 Apache-2.0。預訓練模型權重採用 CC BY-NC，音訊 tokenizer 另受 Higgs Audio 2 同 Meta Llama 3 條款約束。[模型卡](https://huggingface.co/k2-fsa/OmniVoice/blob/c5fdb5ccb189668d56333f77ba2629f4cd7535f4/README.md) · [Tokenizer 條款](https://huggingface.co/k2-fsa/OmniVoice/blob/c5fdb5ccb189668d56333f77ba2629f4cd7535f4/audio_tokenizer/LICENSE)
+- 音高處理透過 Parselmouth 使用 Praat（GPL-3.0-or-later）。[Parselmouth](https://github.com/YannickJadoul/Parselmouth) · [第三方模型鳴謝](https://github.com/blackjack2806969/Cantonese-Voice-Studio/blob/cantonese-macos-0.3.1/docs/model-credits.md)
