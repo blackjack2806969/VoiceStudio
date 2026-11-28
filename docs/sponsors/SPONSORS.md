@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/logo.png" alt="VoiceStudio Logo" width="96" height="96" />
+  <img src="../logo.png" alt="VoiceStudio Logo" width="96" height="96" />
   <h1>Sponsor VoiceStudio</h1>
   <p><b>Keep the open-source ElevenLabs alternative free, local, and shipping.</b></p>
   <p><a href="https://github.com/sponsors/debpalash"><img src="https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-ea4aaa?logo=githubsponsors&logoColor=white" alt="Sponsor on GitHub Sponsors" /></a></p>
@@ -27,7 +27,7 @@ GitHub Sponsors is the checkout; its tier names and prices follow this table. Ti
 | **Company Sponsor** | $500 | A logo and link on the [project website](https://voicestudio.sh). |
 | **Strategic Sponsor** | $1,000 | A 30-minute feedback call each quarter. Feedback is welcome; it does not set the roadmap. |
 
-The same tiers are published machine-readably in [`funding.json`](funding.json) ([funding.json](https://fundingjson.org) format); keep the two in step.
+The same tiers are published machine-readably in [`funding.json`](../../funding.json) ([funding.json](https://fundingjson.org) format); keep the two in step.
 
 Recognition appears only on surfaces that exist today: this file, the README and the website. New surfaces are added to existing sponsors when they ship.
 
@@ -91,17 +91,17 @@ By sponsoring you confirm you have the right to use the submitted logo and grant
 
 ### Special sponsor
 
-<a href="https://spicrawl.com?utm_source=voicestudio&amp;utm_medium=github_readme&amp;utm_campaign=special_sponsor&amp;utm_content=sponsor-list-logo"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/sponsors/spicrawl-dark.svg" /><img src="docs/sponsors/spicrawl.svg" alt="Spicrawl" height="32" align="middle" /></picture></a>
+<a href="https://spicrawl.com?utm_source=voicestudio&amp;utm_medium=github_readme&amp;utm_campaign=special_sponsor&amp;utm_content=sponsor-list-logo"><picture><source media="(prefers-color-scheme: dark)" srcset="spicrawl-dark.svg" /><img src="spicrawl.svg" alt="Spicrawl" height="32" align="middle" /></picture></a>
 
 [Spicrawl](https://spicrawl.com) provides web scraping for AI agents through an API, CLI and MCP. Its special-sponsor logo appears in the English and translated READMEs.
 
 ### Strategic and Company sponsors
 
-<a href="https://opengtm.palash.dev/?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=sponsor-list-logo"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/sponsors/opengtm-dark.svg" /><img src="docs/sponsors/opengtm.svg" alt="OpenGTM" height="48" align="middle" /></picture></a>
+<a href="https://opengtm.palash.dev/?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=sponsor-list-logo"><picture><source media="(prefers-color-scheme: dark)" srcset="opengtm-dark.svg" /><img src="opengtm.svg" alt="OpenGTM" height="48" align="middle" /></picture></a>
 
-<a href="https://opal.palash.dev/?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=sponsor-list-logo"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/sponsors/opal-dark.svg" /><img src="docs/sponsors/opal.svg" alt="Opal" height="48" align="middle" /></picture></a>
+<a href="https://opal.palash.dev/?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=sponsor-list-logo"><picture><source media="(prefers-color-scheme: dark)" srcset="opal-dark.svg" /><img src="opal.svg" alt="Opal" height="48" align="middle" /></picture></a>
 
-<a href="https://supermetry.com/?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=sponsor-list-logo"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/sponsors/supermetry-dark.svg" /><img src="docs/sponsors/supermetry.svg" alt="Supermetry" height="48" align="middle" /></picture></a>
+<a href="https://supermetry.com/?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=sponsor-list-logo"><picture><source media="(prefers-color-scheme: dark)" srcset="supermetry-dark.svg" /><img src="supermetry.svg" alt="Supermetry" height="48" align="middle" /></picture></a>
 
 ### Development sponsors
 
@@ -116,7 +116,7 @@ _Open._
 _Open._
 
 <!-- When a sponsor is verified, add them to the matching section above:
-     - Logo tiers ($100+):  <a href="https://sponsor.example"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/sponsors/name-dark.svg" /><img src="docs/sponsors/name.svg" alt="Name" height="48" /></picture></a>
+     - Logo tiers ($100+):  <a href="https://sponsor.example"><picture><source media="(prefers-color-scheme: dark)" srcset="name-dark.svg" /><img src="name.svg" alt="Name" height="48" /></picture></a>
      Keep the in-app roster (electron/src/shared/config/sponsors.js) in step; tests/test_sponsors_lockstep.py checks it.
      - Name tiers:          - [Name / handle](https://link)  -->
 
@@ -124,7 +124,7 @@ _Open._
 
 ## Not a paywall
 
-Every feature of VoiceStudio is and will remain **free** and **open-source under [AGPL-3.0](LICENSE)**. Sponsors do **not** get private builds, gated features, licence exceptions or feature priority. VoiceStudio stays local-first and fully functional with zero dollars spent.
+Every feature of VoiceStudio is and will remain **free** and **open-source under [AGPL-3.0](../../LICENSE)**. Sponsors do **not** get private builds, gated features, licence exceptions or feature priority. VoiceStudio stays local-first and fully functional with zero dollars spent.
 
 ---
 

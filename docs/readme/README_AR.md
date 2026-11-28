@@ -522,7 +522,7 @@ VoiceStudio مجاني ولا يعتمد على خدمة سحابية مدفوع
 للاستفسارات حول الرعاية، اتصل بـ [sponsor@voicestudio.sh](mailto:sponsor@voicestudio.sh).
 
 <a href="https://github.com/sponsors/debpalash"><img src="https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-ea4aaa?logo=githubsponsors&logoColor=white" alt="الراعي على رعاة جيثب" /></a>
-[Ko-fi](https://ko-fi.com/debpalash) · [PayPal](https://paypal.me/palashCoder) · [المستويات والمزايا](../../SPONSORS.md) · [أدرج شعارك](https://github.com/debpalash/VoiceStudio/issues/new?template=sponsor.yml)
+[Ko-fi](https://ko-fi.com/debpalash) · [PayPal](https://paypal.me/palashCoder) · [المستويات والمزايا](../sponsors/SPONSORS.md) · [أدرج شعارك](https://github.com/debpalash/VoiceStudio/issues/new?template=sponsor.yml)
 
 <a id="other-projects"></a>
 

@@ -10,7 +10,7 @@ VoiceStudio/
 ├── README.md ⟵ user-facing overview (translations: docs/readme/README_*.md)
 ├── CHANGELOG.md                 ⟵ release history; Electron releases use the tagged section
 ├── CLAUDE.md / AGENTS.md        ⟵ matching copies of the agent operating rules
-├── LICENSE / LICENSE-NOTICE.md / SPONSORS.md   ⟵ legal terms, required notices, supporters
+├── LICENSE / LICENSE-NOTICE.md   ⟵ legal terms and required notices
 │
 ├── pyproject.toml               ⟵ Python metadata plus the pytest and lint settings
 ├── uv.lock                      ⟵ Python lockfile
@@ -120,6 +120,7 @@ VoiceStudio/
 │   ├── agents/                  tracker, triage-role and domain instructions for agents
 │   ├── engines/ dubbing/ install/ setup/ migration/ features/ playbooks/ specs/
 │   ├── media/ screenshots/      supporting media and captured UI
+│   ├── sponsors/                upstream sponsorship guide and artwork
 │   ├── preview.png / logo.*     repository preview and logo assets
 │   └── languages.md training.md data_preparation.md evaluation.md voice-design.md
 │

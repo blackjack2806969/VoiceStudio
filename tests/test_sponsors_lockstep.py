@@ -1,4 +1,4 @@
-"""The sponsor roster lives in SPONSORS.md, the READMEs and the in-app config; they must agree."""
+"""The sponsor roster lives in SPONSORS.md, the upstream translations and the in-app config; they must agree."""
 from __future__ import annotations
 
 import json
@@ -10,7 +10,8 @@ import pytest
 
 _ROOT = Path(__file__).resolve().parents[1]
 _CONFIG = _ROOT / "electron" / "src" / "shared" / "config" / "sponsors.js"
-_READMES = [_ROOT / "README.md", *sorted((_ROOT / "docs" / "readme").glob("README_*.md"))]
+_SPONSORS_DOC = _ROOT / "docs" / "sponsors" / "SPONSORS.md"
+_UPSTREAM_READMES = sorted((_ROOT / "docs" / "readme").glob("README_*.md"))
 
 _README_REPOSITORIES = {
     "OpenGTM": "/debpalash/OpenGTM",
@@ -50,7 +51,7 @@ def _in_app_tiers() -> list[str]:
 
 
 def _current_sponsors_section() -> str:
-    text = (_ROOT / "SPONSORS.md").read_text(encoding="utf-8")
+    text = _SPONSORS_DOC.read_text(encoding="utf-8")
     start = text.index("## Current sponsors")
     return text[start : text.index("<!--", start)]
 
@@ -102,10 +103,10 @@ def test_sponsors_md_and_the_app_list_the_same_sponsors():
                 "utm_campaign": ["special_sponsor"], "utm_content": ["sponsor-list-logo"],
             }
         for asset in link["assets"]:
-            assert (_ROOT / asset).is_file(), f"SPONSORS.md: {asset} does not exist"
+            assert (_SPONSORS_DOC.parent / asset).is_file(), f"SPONSORS.md: {asset} does not exist"
 
 
-@pytest.mark.parametrize("path", _READMES, ids=lambda p: p.name)
+@pytest.mark.parametrize("path", _UPSTREAM_READMES, ids=lambda p: p.name)
 def test_readme_logo_row_matches_the_app_and_resolves(path):
     links = _logo_links(path.read_text(encoding="utf-8"))
     assert {s["name"] for s in links} == {s["name"] for s in _in_app_sponsors()} | set(_SPECIAL_SPONSORS)

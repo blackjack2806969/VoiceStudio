@@ -45,7 +45,7 @@
 
 ## 原始碼、授權同鳴謝
 
-完整應用程式原始碼同建置檔案存放喺 [`cantonese-offline`](https://github.com/blackjack2806969/Cantonese-Voice-Studio/tree/cantonese-offline)。每個已發佈版本嘅對應原始碼可喺[版本原始碼索引（英文）](docs/release-source.md)查閱。
+完整應用程式原始碼同建置檔案存放喺 [`cantonese-offline`](https://github.com/blackjack2806969/Cantonese-Voice-Studio/tree/cantonese-offline)。每個已發佈版本嘅對應原始碼可喺[版本原始碼索引（英文）](docs/release-source.md)查閱。 [上游功能目錄（英文）](docs/feature-catalog.md)
 
 - Cantonese Voice Studio 係 VoiceStudio 嘅獨立衍生版本。VoiceStudio 原由 Palash Debnath、Shimul Debnath 同其他貢獻者開發。應用程式採用 AGPL-3.0-only 授權。[上游 VoiceStudio](https://github.com/debpalash/VoiceStudio) · [授權全文](LICENSE) · [版權及授權聲明](LICENSE-NOTICE.md)
 - OmniVoice 程式碼採用 Apache-2.0。預訓練模型權重採用 CC BY-NC，音訊 tokenizer 另受 Higgs Audio 2 同 Meta Llama 3 條款約束。[模型卡](https://huggingface.co/k2-fsa/OmniVoice/blob/c5fdb5ccb189668d56333f77ba2629f4cd7535f4/README.md) · [Tokenizer 條款](https://huggingface.co/k2-fsa/OmniVoice/blob/c5fdb5ccb189668d56333f77ba2629f4cd7535f4/audio_tokenizer/LICENSE)

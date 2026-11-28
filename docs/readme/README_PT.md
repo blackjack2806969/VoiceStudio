@@ -522,7 +522,7 @@ VoiceStudio é gratuito e não depende de um serviço de nuvem pago. Os patrocin
 Para consultas de patrocínio, entre em contato com [sponsor@voicestudio.sh](mailto:sponsor@voicestudio.sh).
 
 <a href="https://github.com/sponsors/debpalash"><img src="https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-ea4aaa?logo=githubsponsors&logoColor=white" alt="Patrocinador no GitHub Patrocinadores" /></a>
-[Ko-fi](https://ko-fi.com/debpalash) · [PayPal](https://paypal.me/palashCoder) · [Níveis e benefícios](../../SPONSORS.md) · [Inclua seu logotipo](https://github.com/debpalash/VoiceStudio/issues/new?template=sponsor.yml)
+[Ko-fi](https://ko-fi.com/debpalash) · [PayPal](https://paypal.me/palashCoder) · [Níveis e benefícios](../sponsors/SPONSORS.md) · [Inclua seu logotipo](https://github.com/debpalash/VoiceStudio/issues/new?template=sponsor.yml)
 
 <a id="other-projects"></a>
 

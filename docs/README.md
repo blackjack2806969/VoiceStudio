@@ -1,10 +1,16 @@
-# VoiceStudio documentation
+# Documentation
 
-## Use the app
+## Cantonese Voice Studio
+
+[macOS downloads and quick start](../README.md) · [繁體中文（香港）](../README.zh-HK.md) · [Corresponding release source](release-source.md)
+
+## Upstream VoiceStudio
+
+### Use the app
 
 | Need | Guide |
 | --- | --- |
-| Install and troubleshoot | [Platform downloads](../README.md#platforms) · [Troubleshooting](install/troubleshooting.md) · [Upgrade from Tauri](electron-migration.md) |
+| Install and troubleshoot | [Platform downloads](https://github.com/debpalash/VoiceStudio/releases) · [Troubleshooting](install/troubleshooting.md) · [Upgrade from Tauri](electron-migration.md) |
 | Phone apps | [iOS and Android](mobile.md) |
 | Models and hardware | [Engine guides](engines/README.md) · [Model downloads](downloading-models.md) |
 | Speech and cloning | [Voice design](voice-design.md) · [Expressive speech](expressive-speech.md) · [Audio quality](audio-quality.md) |
@@ -14,11 +20,11 @@
 | Dictation and transcription | [Dictation](features/dictation.md) · [Transcriptions](electron-transcriptions.md) |
 | Automation | [Local API](speech-platform.md) · [MCP](mcp.md) · [Workflows and calls](calls.md) |
 
-## Develop and maintain
+### Develop and maintain
 
 | Need | Reference |
 | --- | --- |
-| Contribute | [Contributing](../.github/CONTRIBUTING.md) · [Electron development](../electron/README.md) |
+| Contribute | [Contributing](../.github/CONTRIBUTING.md) · [Electron development](../electron/README.md) · [Sponsorship](sponsors/SPONSORS.md) |
 | Repository layout | [Project structure](STRUCTURE.md) |
 | Shipping capabilities | [Feature catalog](feature-catalog.md) · [Electron parity](../electron/PARITY.md) |
 | Planned work | [Live roadmap](ROADMAP.md) |

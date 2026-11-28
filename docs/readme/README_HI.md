@@ -522,7 +522,7 @@ VoiceStudio मुफ़्त है और किसी भुगतान व
 प्रायोजन संबंधी पूछताछ के लिए, [sponsor@voicestudio.sh](mailto:sponsor@voicestudio.sh) से संपर्क करें।
 
 <a href="https://github.com/sponsors/debpalash"><img src="https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-ea4aaa?logo=githubsponsors&logoColor=white" alt="GitHub प्रायोजकों पर प्रायोजक" /></a>
-[को-फाई](https://ko-fi.com/debpalash) · [पेपैल](https://paypal.me/palashCoder) · [स्तर और लाभ](../../SPONSORS.md) · [अपना लोगो सूचीबद्ध कराएं](https://github.com/debpalash/VoiceStudio/issues/new?template=sponsor.yml)
+[को-फाई](https://ko-fi.com/debpalash) · [पेपैल](https://paypal.me/palashCoder) · [स्तर और लाभ](../sponsors/SPONSORS.md) · [अपना लोगो सूचीबद्ध कराएं](https://github.com/debpalash/VoiceStudio/issues/new?template=sponsor.yml)
 
 <a id="other-projects"></a>
 

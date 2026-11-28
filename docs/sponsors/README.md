@@ -13,7 +13,7 @@ The app imports the bundled symbols from
 Displaying sponsor recognition does not load remote images or call sponsor
 services. Sponsor websites open only when the user follows their links.
 
-Keep the roster in the English and translated READMEs, [SPONSORS.md](../../SPONSORS.md)
+Keep the roster in the translated upstream READMEs, [SPONSORS.md](SPONSORS.md)
 and [`sponsors.js`](../../electron/src/shared/config/sponsors.js) together;
 `tests/test_sponsors_lockstep.py` checks the names, destinations and local assets.
 
@@ -22,7 +22,7 @@ README logo credits open the sponsor GitHub repositories with the existing
 website destinations with their own campaign tags. The roster and bundled
 assets are checked together by `tests/test_sponsors_lockstep.py`.
 
-The special sponsor, Spicrawl, has a separate centered README logo credit and is listed in
+The special sponsor, Spicrawl, has a separate logo credit in the translated upstream READMEs and is listed in
 SPONSORS.md. It is distinct from the app's paid-tier roster. Its bundled
 [artwork](https://github.com/debpalash/OpenGTM/blob/main/docs/assets/spicrawl-sponsor.svg)
 comes from the OpenGTM sponsor card; transparent light/dark variants match the

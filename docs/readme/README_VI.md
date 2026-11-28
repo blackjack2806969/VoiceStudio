@@ -522,7 +522,7 @@ VoiceStudio miễn phí và không phụ thuộc vào dịch vụ đám mây tr�
 Nếu có thắc mắc về tài trợ, hãy liên hệ [sponsor@voicestudio.sh](mailto:sponsor@voicestudio.sh).
 
 <a href="https://github.com/sponsors/debpalash"><img src="https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-ea4aaa?logo=githubsponsors&logoColor=white" alt="Tài trợ qua GitHub Sponsors" /></a>
-[Ko-fi](https://ko-fi.com/debpalash) · [PayPal](https://paypal.me/palashCoder) · [Cấp bậc và lợi ích](../../SPONSORS.md) · [Đưa logo của bạn vào danh sách](https://github.com/debpalash/VoiceStudio/issues/new?template=sponsor.yml)
+[Ko-fi](https://ko-fi.com/debpalash) · [PayPal](https://paypal.me/palashCoder) · [Cấp bậc và lợi ích](../sponsors/SPONSORS.md) · [Đưa logo của bạn vào danh sách](https://github.com/debpalash/VoiceStudio/issues/new?template=sponsor.yml)
 
 <a id="other-projects"></a>
 

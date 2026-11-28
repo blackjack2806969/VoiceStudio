@@ -524,7 +524,7 @@ VoiceStudio 應用程式免費使用，不需要付費雲服務。贊助者讓�
 如有贊助意向，請聯絡 [sponsor@voicestudio.sh](mailto:sponsor@voicestudio.sh)。
 
 <a href="https://github.com/sponsors/debpalash"><img src="https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-ea4aaa?logo=githubsponsors&logoColor=white" alt="透過 GitHub Sponsors 贊助" /></a>
-[Ko-fi](https://ko-fi.com/debpalash) · [PayPal](https://paypal.me/palashCoder) · [贊助等級與權益](../../SPONSORS.md) · [申請展示標誌](https://github.com/debpalash/VoiceStudio/issues/new?template=sponsor.yml)
+[Ko-fi](https://ko-fi.com/debpalash) · [PayPal](https://paypal.me/palashCoder) · [贊助等級與權益](../sponsors/SPONSORS.md) · [申請展示標誌](https://github.com/debpalash/VoiceStudio/issues/new?template=sponsor.yml)
 
 <a id="other-projects"></a>
 

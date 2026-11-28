@@ -3,9 +3,7 @@
 Renames (OmniVoice -> VoiceStudio, moved guides, reworded headings) silently
 break in-repo links; this keeps every relative link and anchor resolvable.
 
-The scan covers the repository-root pages too (#2903). ``CHANGELOG.md`` and
-``SPONSORS.md`` sat outside it, so links there kept pointing at files a later
-release deleted while the covered pages stayed clean. A released changelog
+The scan covers the repository-root pages too (#2903). A released changelog
 entry is a historical record and is never repointed at a different file that
 happens to exist today — name the removed path as inline code instead.
 """
@@ -21,7 +19,7 @@ _DOCS = sorted(
         *(_ROOT / ".github").glob("*.md"),
         _ROOT / "README.md",
         _ROOT / "CHANGELOG.md",
-        _ROOT / "SPONSORS.md",
+        _ROOT / "README.zh-HK.md",
     }
 )
 _LINK = re.compile(r"(?<!!)\[[^\]]*\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
@@ -64,14 +62,14 @@ def test_slug_matches_github():
     assert _slug("License & responsible use") == "license--responsible-use"
 
 
-def test_scan_covers_the_repo_root_pages():
-    """The root pages are in scope, so a link rotting there fails the suite.
+def test_scan_covers_the_main_documentation_pages():
+    """The main documentation pages are in scope, so a link rotting there fails the suite.
 
     Without this, dropping a page from ``_DOCS`` silently stops checking it —
     which is how the #2903 links survived the sweep that fixed the rest.
     """
     covered = {doc.relative_to(_ROOT).as_posix() for doc in _DOCS}
-    for page in ("README.md", "CHANGELOG.md", "SPONSORS.md"):
+    for page in ("README.md", "README.zh-HK.md", "CHANGELOG.md", "docs/sponsors/SPONSORS.md"):
         assert page in covered, f"{page} is not scanned for broken links"
 
 
