@@ -5,7 +5,6 @@ import {
   cpSync,
   mkdtempSync,
   readdirSync,
-  readFileSync,
   renameSync,
   rmSync,
   writeFileSync,
@@ -136,7 +135,7 @@ export async function packageCli(context) {
   // Check the shipped copy only once its build folder is gone, so it cannot lean on it.
   assertBundleSymlinks(dirname(command));
   const version = JSON.parse(execFileSync(command, ['version', '--json'], { encoding: 'utf8' }));
-  const expected = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).version;
+  const expected = context.packager.appInfo.version;
   if (version.version !== expected)
     throw new Error('Bundled command reports a different application version.');
   execFileSync(command, ['--help'], { stdio: 'pipe' });
