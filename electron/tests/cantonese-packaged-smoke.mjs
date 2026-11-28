@@ -268,7 +268,8 @@ try {
   await page.reload();
   const cloneLink = navigation(page).getByRole('link', { name: 'Clone', exact: true });
   await cloneLink.click();
-  await page.getByRole('main').getByRole('button', { name: 'Demo Voice', exact: true }).click();
+  await page.getByRole('button', { name: 'Change voice', exact: true })
+    .getByText('Demo Voice', { exact: true }).waitFor();
   // Only the destination picker is replaced. Saving still runs through native IPC.
   await app.evaluate(({ dialog }, directory) => {
     dialog.showSaveDialog = async (...args) => ({
