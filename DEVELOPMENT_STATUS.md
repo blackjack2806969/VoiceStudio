@@ -229,3 +229,19 @@ physical Mac remains open.
   includes the verified ARM64 DMG, app ZIP and actual CI screenshots of all
   five workspaces. The app uses ad-hoc signing. Physical Mac testing remains
   pending.
+
+## v0.3.1 Cantonese branding
+
+- The macOS app, menu, About panel, window and installer use Cantonese Voice
+  Studio. The fork's CAN Edition SVG matches the original blob
+  `b30ba4289b840561d25825610e57442f92b48cc6`. The generated ICNS and PNGs
+  are scoped to the Cantonese distribution. Upstream licence notices ship
+  unmodified.
+- [ARM64 CI](https://github.com/blackjack2806969/VoiceStudio/actions/runs/46128615288)
+  installed the app from the DMG and verified the Finder metadata, icons,
+  menu, window title, `com.voicestudio.desktop` bundle ID and existing
+  Application Support directory. OmniVoice cache reuse, offline synthesis,
+  pitch editing, playback, undo and export also passed.
+- [Release v0.3.1](https://github.com/blackjack2806969/VoiceStudio/releases/tag/cantonese-macos-0.3.1)
+  contains the branded ARM64 DMG and app ZIP. The package uses ad-hoc signing.
+  Physical Mac testing remains pending.
