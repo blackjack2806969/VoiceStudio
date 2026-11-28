@@ -5,10 +5,11 @@
   <p>Offline voice cloning and Cantonese lexical-tone editing for Apple Silicon Macs.</p>
   <p><strong>English</strong> · <a href="README.zh-HK.md">繁體中文（香港）</a></p>
   <p>
-    <a href="https://github.com/blackjack2806969/VoiceStudio/releases"><strong>Download for macOS</strong></a> ·
+    <a href="https://github.com/blackjack2806969/Cantonese-Voice-Studio/releases/download/cantonese-macos-0.3.1/Cantonese-Voice-Studio-0.3.1-mac-arm64.dmg"><strong>Download v0.3.1 DMG</strong></a> ·
+    <a href="https://github.com/blackjack2806969/Cantonese-Voice-Studio/releases">Releases</a> ·
     <a href="#screenshots">Screenshots</a> ·
     <a href="#quick-start">Quick start</a> ·
-    <a href="https://github.com/blackjack2806969/VoiceStudio/blob/cantonese-offline/docs/cantonese-offline.md">Documentation</a>
+    <a href="https://github.com/blackjack2806969/Cantonese-Voice-Studio/blob/cantonese-offline/docs/cantonese-offline.md">Documentation</a>
   </p>
   <p><code>macOS arm64</code> · <code>OmniVoice</code> · <code>Praat / PSOLA</code> · <code>Local inference</code></p>
 </div>
@@ -28,34 +29,7 @@ The distribution uses OmniVoice as its only TTS engine. Once the model is instal
 
 ## Screenshots
 
-Actual screenshots from the packaged v0.3.0 macOS ARM64 application tests, not design mockups.
-
-### Voice Clone
-
-[![v0.3.0 Voice Clone workspace](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-01-clone.png)](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-01-clone.png)
-
-### Cantonese Pitch Editor
-
-[![v0.3.0 Cantonese Pitch Editor workspace](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-02-cantonese-pitch-editor.png)](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-02-cantonese-pitch-editor.png)
-
-<details>
-<summary>More screenshots: Saved Voices, History and Settings</summary>
-
-### Saved Voices
-
-[![Saved Voices](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-03-saved-voices.png)](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-03-saved-voices.png)
-
-### History
-
-[![History](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-04-history.png)](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-04-history.png)
-
-### Settings
-
-[![Settings](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-05-settings.png)](https://github.com/blackjack2806969/VoiceStudio/releases/download/cantonese-macos-0.3.0/ui-05-settings.png)
-
-</details>
-
-[View the v0.3.0 release and screenshots](https://github.com/blackjack2806969/VoiceStudio/releases/tag/cantonese-macos-0.3.0)
+[View the v0.3.0 packaged-app screenshots and audio test evidence](https://github.com/blackjack2806969/Cantonese-Voice-Studio/actions/runs/46126680909/artifacts/15255659072) (GitHub Actions artifact; sign-in may be required; expires 26 February 2027). The older release was removed, so this evidence link replaces the previous embedded screenshots. These are not screenshots of the v0.3.1 rebranding.
 
 ## Two core tools
 
@@ -83,9 +57,11 @@ Select a syllable, apply a preset or adjust its pitch points manually, then list
 
 ## Download
 
-**[Get the macOS ARM64 installer from this fork's Releases](https://github.com/blackjack2806969/VoiceStudio/releases)**
+**Latest published build: v0.3.1 (28 November 2026, pre-release)**
 
-Choose the newest published OmniVoice-only release and download its `.dmg` file.
+[Download DMG (~752 MB)](https://github.com/blackjack2806969/Cantonese-Voice-Studio/releases/download/cantonese-macos-0.3.1/Cantonese-Voice-Studio-0.3.1-mac-arm64.dmg) · [Download ZIP](https://github.com/blackjack2806969/Cantonese-Voice-Studio/releases/download/cantonese-macos-0.3.1/Cantonese-Voice-Studio-0.3.1-mac-arm64.zip) · [Release notes](https://github.com/blackjack2806969/Cantonese-Voice-Studio/releases/tag/cantonese-macos-0.3.1) · [All releases](https://github.com/blackjack2806969/Cantonese-Voice-Studio/releases)
+
+Quit the previous build before upgrading. v0.3.1 retains the existing bundle identifier and data locations, including OmniVoice weights, saved voices, settings and history.
 
 - Target: Apple Silicon Macs (M-series).
 - The DMG bundles the app, Python runtime, OmniVoice engine and ffmpeg.
@@ -102,34 +78,35 @@ Choose the newest published OmniVoice-only release and download its `.dmg` file.
 5. Select Cantonese, enter your script and generate speech. For example: `聽日開 meeting，記得帶 laptop。我哋九點見。`
 6. Preview the take and choose **Edit Pitch** to open it directly in the Cantonese Pitch Editor. Select a syllable, adjust the tone and export WAV.
 
-In v0.3.0, **Edit Pitch** is available directly from Clone and History. In the older v0.2.0 release, export the generated take and import it through **Tools → Cantonese lexical tones**.
+From v0.3.0, **Edit Pitch** is available directly from Clone and History. In the older v0.2.0 release, export the generated take and import it through **Tools → Cantonese lexical tones**.
 
 ### Existing model cache / offline setup
 
-A complete existing `k2-fsa/OmniVoice` Hugging Face snapshot can be reused. For an offline Mac, the intact `models--k2-fsa--OmniVoice` cache directory can be transferred to `~/.cache/huggingface/hub`, preserving blobs, snapshots and relative symlinks. See the [installation guide](https://github.com/blackjack2806969/VoiceStudio/blob/cantonese-offline/docs/cantonese-offline.md) for details.
+A complete existing `k2-fsa/OmniVoice` Hugging Face snapshot can be reused. For an offline Mac, the intact `models--k2-fsa--OmniVoice` cache directory can be transferred to `~/.cache/huggingface/hub`, preserving blobs, snapshots and relative symlinks. See the [installation guide](https://github.com/blackjack2806969/Cantonese-Voice-Studio/blob/cantonese-offline/docs/cantonese-offline.md) for details.
 
 ## Release status
 
 | Version | Status |
 | --- | --- |
-| [v0.2.0](https://github.com/blackjack2806969/VoiceStudio/releases/tag/cantonese-macos-0.2.0) | Published OmniVoice-only ARM64 installer; packaged CI passed |
-| [v0.3.0](https://github.com/blackjack2806969/VoiceStudio/releases/tag/cantonese-macos-0.3.0) | Published ARM64 installer; five focused workspaces, direct Edit Pitch handoff, packaged CI passed |
+| [v0.3.1](https://github.com/blackjack2806969/Cantonese-Voice-Studio/releases/tag/cantonese-macos-0.3.1) | Latest pre-release; Cantonese Voice Studio app and installer name, CAN Edition icon, existing data and model cache preserved |
+| v0.3.0 | Five focused workspaces and direct Edit Pitch handoff; previous release removed |
+| v0.2.0 | OmniVoice-only build and offline model setup tests; previous release removed |
 
 The v0.3.0 release tests verified model setup, offline cloning, both Edit Pitch actions, playback, undo and WAV export.
 
-The v0.2.0 [macOS ARM64 CI run](https://github.com/blackjack2806969/VoiceStudio/actions/runs/45981656040) verified model installation, cache reuse, local mixed-language voice cloning, manual F0 editing, playback, undo and WAV export.
+The v0.2.0 [macOS ARM64 CI run](https://github.com/blackjack2806969/Cantonese-Voice-Studio/actions/runs/45981656040) verified model installation, cache reuse, local mixed-language voice cloning, manual F0 editing, playback, undo and WAV export.
 
-[Download v0.2.0 test screenshots and audio](https://github.com/blackjack2806969/VoiceStudio/actions/runs/45981656040/artifacts/15190228799) (GitHub Actions artifact; sign-in may be required).
+[Download v0.2.0 test screenshots and audio](https://github.com/blackjack2806969/Cantonese-Voice-Studio/actions/runs/45981656040/artifacts/15190228799) (GitHub Actions artifact; sign-in may be required).
 
 CI is not a guarantee of pronunciation quality, voice similarity or performance on a physical M1 Ultra. Those remain subject to hands-on evaluation.
 
 ## Source and documentation
 
-The Cantonese implementation lives on [`cantonese-offline`](https://github.com/blackjack2806969/VoiceStudio/tree/cantonese-offline). The default branch is the repository landing page and retains the upstream source baseline; use the Cantonese branch or a release tag for development.
+The Cantonese implementation lives on [`cantonese-offline`](https://github.com/blackjack2806969/Cantonese-Voice-Studio/tree/cantonese-offline). The default branch is the repository landing page and retains the upstream source baseline; use the Cantonese branch or a release tag for development.
 
-- [Installation, model setup and editing guide](https://github.com/blackjack2806969/VoiceStudio/blob/cantonese-offline/docs/cantonese-offline.md)
-- [Development status and test evidence](https://github.com/blackjack2806969/VoiceStudio/blob/cantonese-offline/DEVELOPMENT_STATUS.md)
-- [Report a fork-specific issue](https://github.com/blackjack2806969/VoiceStudio/issues)
+- [Installation, model setup and editing guide](https://github.com/blackjack2806969/Cantonese-Voice-Studio/blob/cantonese-offline/docs/cantonese-offline.md)
+- [Development status and test evidence](https://github.com/blackjack2806969/Cantonese-Voice-Studio/blob/cantonese-offline/DEVELOPMENT_STATUS.md)
+- [Report a fork-specific issue](https://github.com/blackjack2806969/Cantonese-Voice-Studio/issues)
 
 ## Licence and credits
 
