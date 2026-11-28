@@ -71,6 +71,15 @@ jobs:
           bun run build
           bun run build:web
           bun x electron-builder --config electron-builder.config.mjs --mac --arm64 --publish never
+      - name: Retain downloadable DMG and app ZIP
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: Cantonese-Voice-Studio-macOS-arm64
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            electron/release/*.dmg
+            electron/release/*arm64*.zip
       - name: Retrieve the release acceptance scripts
         if: env.CANDIDATE_TAG != ''
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -105,15 +114,6 @@ jobs:
           name: Cantonese-packaged-test-evidence
           path: artifacts/cantonese/packaged
           if-no-files-found: warn
-      - name: Retain downloadable DMG and app ZIP
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
-        with:
-          name: Cantonese-Voice-Studio-macOS-arm64
-          if-no-files-found: error
-          retention-days: 14
-          path: |
-            electron/release/*.dmg
-            electron/release/*arm64*.zip
   publish:
     if: github.repository == 'blackjack2806969/VoiceStudio' && (startsWith(github.ref, 'refs/tags/cantonese-macos-') || github.ref == 'refs/heads/cantonese-release-evidence/0.3.0')
     needs: macos-arm64

@@ -79,14 +79,14 @@ try {
   }
   await page.goto('app://voicestudio/#/clone');
   await verifyNavigation(page, ['Clone', 'Cantonese Pitch Editor', 'Saved Voices', 'History', 'Settings']);
-  await navigation(page).getByRole('link', { name: 'Saved Voices', exact: true }).click();
-  await page.getByRole('heading', { name: 'Saved Voices', exact: true }).waitFor();
+  await navigation(page).getByRole('link', { name: 'Saved Voices', exact: true }).press('Enter');
+  await page.getByRole('heading', { name: 'Saved Voices', exact: true, level: 1 }).waitFor();
   await page.getByRole('main').getByRole('button', { name: 'Demo Voice', exact: true }).waitFor();
   await page.screenshot({ path: resolve(captures, 'ui-03-saved-voices.png') });
   await page.goto('app://voicestudio/#/settings/sharing');
   await page.waitForURL('**/#/settings/general');
   await page.getByRole('heading', { name: 'General', exact: true, level: 1 }).waitFor();
-  await page.getByRole('link', { name: 'Models', exact: true }).click();
+  await page.getByRole('link', { name: 'Models', exact: true }).press('Enter');
   await page.getByText('VoiceStudio (k2-fsa/OmniVoice, 600+ languages)', { exact: true }).first().waitFor();
   assert.equal(await page.getByRole('link', { name: /dictation|translation|credentials|network|account/i }).count(), 0);
   await page.screenshot({ path: resolve(captures, 'ui-05-settings.png') });
@@ -187,8 +187,8 @@ try {
 
   for (const origin of ['Clone', 'History']) {
     if (origin === 'History') {
-      await navigation(page).getByRole('link', { name: 'History', exact: true }).click();
-      await page.getByRole('heading', { name: 'History', exact: true }).waitFor();
+      await navigation(page).getByRole('link', { name: 'History', exact: true }).press('Enter');
+      await page.getByRole('heading', { name: 'History', exact: true, level: 1 }).waitFor();
     }
     const editPitch = page.getByRole('button', { name: 'Edit Pitch', exact: true });
     await editPitch.waitFor();
@@ -200,14 +200,14 @@ try {
       response.ok());
     const upload = page.waitForResponse(response =>
       response.request().method() === 'POST' && response.url().endsWith('/tools/lexical-pitch/import'));
-    await editPitch.click();
+    await editPitch.press('Enter');
     const [wavResponse, importResponse] = await Promise.all([original, upload]);
     assert.deepEqual(await wavResponse.body(), speech, `${origin} selected a different WAV`);
     assert.equal(importResponse.status(), 200);
     const project = await importResponse.json();
     await page.waitForURL(url => /#\/tools\?pitch=/.test(url.hash));
     assert.equal(new URLSearchParams(new URL(page.url()).hash.split('?')[1]).get('pitch'), project.id);
-    await page.getByRole('heading', { name: 'Cantonese Pitch Editor', exact: true }).waitFor();
+    await page.getByRole('heading', { name: 'Cantonese Pitch Editor', exact: true, level: 1 }).waitFor();
     await page.getByRole('img', { name: /Speech waveform/ }).waitFor();
     await page.getByRole('link', { name: 'Export WAV', exact: true }).waitFor();
     await page.screenshot({ path: resolve(captures, `pitch-from-${origin.toLowerCase()}.png`) });
