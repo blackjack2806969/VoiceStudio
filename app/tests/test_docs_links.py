@@ -88,3 +88,9 @@ def test_relative_doc_links_resolve():
                 elif fragment and resolved.suffix == ".md" and fragment.lower() not in _anchors(resolved):
                     broken.append(f"{where} (missing heading)")
     assert not broken, "Broken relative doc links:\n" + "\n".join(broken)
+
+
+def test_python_distribution_notices_match_the_repository():
+    # Hatchling includes legal files from inside the Python project.
+    for name in ("LICENSE", "LICENSE-NOTICE.md"):
+        assert (_ROOT / "app" / name).read_bytes() == (_ROOT / name).read_bytes()

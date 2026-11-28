@@ -111,7 +111,7 @@ ENV UV_LINK_MODE=copy
 RUN python3 -m pip install --no-cache-dir uv
 
 # Copy python packaging specs (README.md required by hatchling metadata)
-COPY pyproject.toml uv.lock README.md ./
+COPY pyproject.toml uv.lock README.md LICENSE LICENSE-NOTICE.md ./
 # [tool.uv.sources] points source-only deps at these wheels (#4253).
 COPY vendor/wheels/ ./vendor/wheels/
 COPY deploy/torch-constraints.txt ./deploy/torch-constraints.txt

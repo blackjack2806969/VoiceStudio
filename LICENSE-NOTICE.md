@@ -101,4 +101,3 @@ reproduced verbatim in [`LICENSE`](LICENSE). The authoritative copy lives at
 > AGPL-3.0 text and nothing else, so GitHub's license detection (and the
 > corporate license scanners that gate adoption) can identify it as
 > `AGPL-3.0-only` rather than falling back to "Other" / `NOASSERTION`.
-

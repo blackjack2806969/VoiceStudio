@@ -49,7 +49,7 @@ reviews:
     - "!**/*.png"
     - "!**/*.wav"
     - "!**/*.onnx"
-    - "!tests/fixtures/**"
+    - "!app/tests/fixtures/**"
 
   # One expert lens per subsystem — encode what a passionate senior in each
   # domain would actually check, beyond what linters and CI already gate.

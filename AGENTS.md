@@ -1,3 +1,8 @@
+## Application workspace
+
+Run Bun, uv, Make, and application tests from `app/`. The Git checkout,
+documentation, and GitHub Actions workflows are one level above it.
+
 ## Active desktop: Electron only
 
 Electron (`electron/`) is the only desktop and web UI. The Tauri shell and legacy

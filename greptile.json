@@ -22,7 +22,7 @@
   "triggerOnUpdates": true,
   "triggerOnDrafts": false,
   "statusCheck": true,
-  "ignorePatterns": "bun.lock\nuv.lock\ntests/fixtures/**\n*.svg\n*.png\n*.wav\n*.onnx",
+  "ignorePatterns": "bun.lock\nuv.lock\napp/tests/fixtures/**\n*.svg\n*.png\n*.wav\n*.onnx",
   "sequenceDiagramSection": {
     "included": false
   },
