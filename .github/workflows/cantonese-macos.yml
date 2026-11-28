@@ -97,7 +97,7 @@ jobs:
           path: artifacts/cantonese/packaged
           if-no-files-found: warn
   publish:
-    if: github.repository == 'blackjack2806969/VoiceStudio' && startsWith(github.ref, 'refs/tags/cantonese-macos-')
+    if: github.repository == 'blackjack2806969/Cantonese-Voice-Studio' && startsWith(github.ref, 'refs/tags/cantonese-macos-')
     needs: macos-arm64
     runs-on: ubuntu-latest
     permissions:
