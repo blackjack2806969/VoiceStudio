@@ -5,7 +5,7 @@ import { execFileSync } from 'node:child_process';
 export function packageCantonese(context) {
   if (process.env.VOICESTUDIO_CANTONESE_BUILD !== '1') return;
   if (context.electronPlatformName !== 'darwin') throw new Error('Cantonese installers require macOS ARM64');
-  const contents = join(context.appOutDir, 'VoiceStudio.app', 'Contents');
+  const contents = join(context.appOutDir, `${context.packager.appInfo.productFilename}.app`, 'Contents');
   const source = new URL('../packaging/cantonese/', import.meta.url);
   const launcher = join(contents, 'MacOS', 'cantonese-offline');
   copyFileSync(new URL('launch-offline.sh', source), launcher);

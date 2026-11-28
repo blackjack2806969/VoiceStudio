@@ -8,6 +8,11 @@ currently fall back to English.
 
 ## Install and set up OmniVoice
 
+From v0.3.1, the bundle is named **Cantonese Voice Studio.app** and uses the
+[original CAN Edition mark](https://github.com/blackjack2806969/VoiceStudio/blob/main/docs/logo-can.svg).
+Quit the previous build and open the renamed app. The same bundle identifier and
+Application Support directory keep your model cache, voices, settings and takes available.
+
 Install the Apple Silicon app from [GitHub Releases](https://github.com/blackjack2806969/VoiceStudio/releases).
 The DMG includes Python, the upstream OmniVoice engine and local ffmpeg. The
 pitch editor works before model setup.

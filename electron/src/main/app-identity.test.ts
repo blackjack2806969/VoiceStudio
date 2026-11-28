@@ -60,4 +60,23 @@ describe('installAppIdentity', () => {
     });
     expect(menu.setApplicationMenu).toHaveBeenCalledWith(nativeMenu);
   });
+
+  it('uses the Cantonese name and version in the packaged macOS About panel', async () => {
+    vi.stubEnv('VOICESTUDIO_CANTONESE_BUNDLED', '1');
+    vi.resetModules();
+    try {
+      const identity = await import('./app-identity');
+      const setAboutPanelOptions = vi.fn();
+      const menu = { buildFromTemplate: vi.fn(), setApplicationMenu: vi.fn() };
+      identity.installMacApplicationMenu({ setAboutPanelOptions }, menu, '0.3.1');
+      expect(setAboutPanelOptions).toHaveBeenCalledWith({
+        applicationName: 'Cantonese Voice Studio',
+        applicationVersion: '0.3.1',
+        version: '0.3.1',
+      });
+      expect(menu.buildFromTemplate.mock.calls[0]?.[0]?.[0]?.label).toBe('Cantonese Voice Studio');
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
 });

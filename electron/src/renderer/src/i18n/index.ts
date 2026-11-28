@@ -3,6 +3,8 @@ import { initReactI18next } from 'react-i18next';
 import en from './locales/en.json';
 import { matchLocale } from './locale-match';
 import { onStorageKey } from '@/lib/storage-events';
+import { isCantoneseStudio } from '@/lib/cantonese-studio';
+import { CANTONESE_PRODUCT_NAME } from '../../../../../config/app-config.mjs';
 
 export const SUPPORTED_LOCALES = [
   'en',
@@ -38,6 +40,12 @@ const localeModules = import.meta.glob<{ default: Record<string, unknown> }>([
 ]);
 const loading = new Map<AppLocale, Promise<void>>();
 
+function withProductName(resources: Record<string, unknown>) {
+  return isCantoneseStudio()
+    ? { ...resources, app: { ...(resources.app as object), name: CANTONESE_PRODUCT_NAME } }
+    : resources;
+}
+
 function normalizeLocale(value: string | null | undefined): AppLocale | null {
   return matchLocale(value, SUPPORTED_LOCALES);
 }
@@ -66,7 +74,7 @@ async function loadLocale(locale: AppLocale): Promise<void> {
   if (!load) return;
   const promise = load()
     .then((module) => {
-      i18next.addResourceBundle(locale, 'translation', module.default, true, true);
+      i18next.addResourceBundle(locale, 'translation', withProductName(module.default), true, true);
     })
     .finally(() => loading.delete(locale));
   loading.set(locale, promise);
@@ -84,7 +92,7 @@ const selectedLocale = initialLocale();
 void i18next
   .use(initReactI18next)
   .init({
-    resources: { en: { translation: en } },
+    resources: { en: { translation: withProductName(en) } },
     lng: selectedLocale,
     fallbackLng: 'en',
     partialBundledLanguages: true,

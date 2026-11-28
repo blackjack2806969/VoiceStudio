@@ -8,20 +8,21 @@ import {
   DEFAULT_ELECTRON_DEV_PORT,
   DEFAULT_ELECTRON_PROXY_PORT,
   PRODUCT_NAME,
+  CANTONESE_PRODUCT_NAME,
+  CANTONESE_VERSION,
 } from '../config/app-config.mjs';
 import { DISTRIBUTION_TARGET } from '../config/distributions.mjs';
 import { buildCommit } from '../config/build-commit.mjs';
 import { writeSupermetryConfig } from '../config/supermetry-app.mjs';
 
-// The app version is single-sourced from the root package.json (CLAUDE.md,
-// Versioning). Nothing in electron/ mirrors it: the renderer reads it through
-// __APP_VERSION__ and the installer through electron-builder.config.mjs.
+// Keep the renderer and installer on the same upstream or Cantonese version.
 const frontendPkg = JSON.parse(readFileSync(resolve(__dirname, '../package.json'), 'utf-8')) as {
   version: string;
 };
 
+const cantonese = process.env.VOICESTUDIO_CANTONESE_BUILD === '1';
 const define = {
-  __APP_VERSION__: JSON.stringify(frontendPkg.version),
+  __APP_VERSION__: JSON.stringify(cantonese ? CANTONESE_VERSION : frontendPkg.version),
   __BUILD_COMMIT__: JSON.stringify(buildCommit()),
   __DISTRIBUTION_TARGET__: JSON.stringify(DISTRIBUTION_TARGET),
   __WEB_DEPLOYMENT__: false,
@@ -67,7 +68,9 @@ export default defineConfig({
       {
         name: 'app-identity',
         transformIndexHtml(html) {
-          return html.replaceAll('__APP_PRODUCT_NAME__', PRODUCT_NAME);
+          const title = cantonese ? CANTONESE_PRODUCT_NAME : PRODUCT_NAME;
+          return html.replaceAll('__APP_PRODUCT_NAME__', title)
+            .replace('/favicon.svg', cantonese ? '/favicon-can.svg' : '/favicon.svg');
         },
       },
       {

@@ -159,7 +159,7 @@ export function DiagnosticsSettings() {
         <SettingsRow id="diagnostics-app" title={t('about.app')}>
           <span className="inline-flex items-center gap-2 text-sm font-medium" translate="no">
             <img src={brandIcon} alt="" className="size-5" />
-            VoiceStudio
+            {t('app.name')}
           </span>
         </SettingsRow>
         <SettingsRow id="diagnostics-version" title={t('about.version')}>

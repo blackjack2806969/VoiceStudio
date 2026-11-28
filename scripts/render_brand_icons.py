@@ -80,5 +80,26 @@ def main():
         print("Skipped icon.icns: rebuild it on macOS (iconutil)")
 
 
+def cantonese():
+    """Render the fork's unmodified CAN Edition mark and installer headline."""
+    master = rasterize(ROOT / "electron/public/favicon-can.svg")
+    scaled(master, 512).save(ICONS / "cantonese.png")
+    scaled(master, 32).save(ICONS / "cantonese-32x32.png")
+    if sys.platform == "darwin" and shutil.which("iconutil"):
+        with tempfile.TemporaryDirectory() as tmp:
+            icns(master, pathlib.Path(tmp), ICONS / "cantonese.icns")
+    else:
+        master.save(ICONS / "cantonese.icns")
+
+    build = ICONS.parent
+    svg = (build / "dmg/background.svg").read_text().replace(
+        "Drag VoiceStudio to Applications", "Drag Cantonese Voice Studio to Applications"
+    )
+    for scale, suffix in ((1, ""), (2, "@2x")):
+        png = resvg_py.svg_to_bytes(svg_string=svg, width=660 * scale, height=440 * scale)
+        with Image.open(io.BytesIO(bytes(png))) as image:
+            image.save(build / f"dmg-background-cantonese{suffix}.png", dpi=(72 * scale,) * 2)
+
+
 if __name__ == "__main__":
-    main()
+    (cantonese if sys.argv[1:] == ["--cantonese"] else main)()

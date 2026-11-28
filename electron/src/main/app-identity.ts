@@ -1,7 +1,8 @@
 import type { AboutPanelOptionsOptions, App, MenuItemConstructorOptions } from 'electron';
-import { PRODUCT_NAME } from '../../../config/app-config.mjs';
+import { CANTONESE_PRODUCT_NAME, PRODUCT_NAME } from '../../../config/app-config.mjs';
 
-export const DESKTOP_APP_NAME = PRODUCT_NAME;
+export const DESKTOP_APP_NAME = process.env.VOICESTUDIO_CANTONESE_BUNDLED === '1'
+  ? CANTONESE_PRODUCT_NAME : PRODUCT_NAME;
 
 /** Set before Electron creates the native application menu. */
 export function installAppIdentity(application: Pick<App, 'setName'>): void {

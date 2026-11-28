@@ -3,8 +3,8 @@ import { packageCantonese } from './cantonese-bundle.mjs';
 //
 // The installer version is NOT stored in electron/package.json (its version
 // field is a placeholder). It is read from the root package.json at build time
-// so the Electron shell can never drift from the app version (CLAUDE.md,
-// Versioning: package.json is the single source of truth).
+// so the Electron shell can never drift from the upstream app version.
+// The Cantonese distribution uses its own public release number.
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -15,14 +15,17 @@ import { assertBundleSymlinks } from './packaging/bundle-symlinks.mjs';
 import { finalizeOmnivoiceTts, omnivoiceTtsResources, signMac } from './omnivoice-tts-bundle.mjs';
 import { repairSnapArtifacts } from './snap-template-payload.mjs';
 import { signMasRuntime } from './mas-runtime-bundle.mjs';
-import { APP_ID, PRODUCT_NAME } from '../config/app-config.mjs';
+import { APP_ID, CANTONESE_PRODUCT_NAME, CANTONESE_VERSION, PRODUCT_NAME } from '../config/app-config.mjs';
 import { DISTRIBUTION_PROFILE, DISTRIBUTION_TARGET } from '../config/distributions.mjs';
 import { writeSupermetryConfig } from '../config/supermetry-app.mjs';
 
 writeSupermetryConfig();
 
 const here = dirname(fileURLToPath(import.meta.url));
-const { version } = JSON.parse(readFileSync(resolve(here, '../package.json'), 'utf-8'));
+const cantonese = process.env.VOICESTUDIO_CANTONESE_BUILD === '1';
+const productName = cantonese ? CANTONESE_PRODUCT_NAME : PRODUCT_NAME;
+const version = cantonese ? CANTONESE_VERSION :
+  JSON.parse(readFileSync(resolve(here, '../package.json'), 'utf-8')).version;
 const storeMetadata = JSON.parse(readFileSync(resolve(here, '../store/metadata.json'), 'utf-8'));
 const storeIdentity = storeMetadata.identity;
 const isMacAppStore = DISTRIBUTION_TARGET === 'mac-app-store';
@@ -33,7 +36,7 @@ const macRuntimeArch = process.env.VOICESTUDIO_RUST_TARGET?.startsWith('x86_64')
   : process.env.VOICESTUDIO_RUST_TARGET?.startsWith('aarch64')
     ? 'arm64'
     : process.arch;
-const bundlesMasRuntime = (isMacAppStore || process.env.VOICESTUDIO_CANTONESE_BUILD === '1') && macRuntimeArch === 'arm64';
+const bundlesMasRuntime = (isMacAppStore || cantonese) && macRuntimeArch === 'arm64';
 // Direct downloads are `VoiceStudio-<version>-<os>-<arch>.<ext>`; store builds
 // keep a label so they never collide with them. Releases up to v0.5.7-beta.3
 // used `VoiceStudio-Electron-*`; the installers still resolve those names.
@@ -41,7 +44,7 @@ const artifactLabel = {
   'microsoft-store': 'MicrosoftStore',
   'mac-app-store': 'MacAppStore',
 }[DISTRIBUTION_TARGET];
-const artifactPrefix = [PRODUCT_NAME.replace(/[^A-Za-z0-9]+/g, '-'), artifactLabel]
+const artifactPrefix = [productName.replace(/[^A-Za-z0-9]+/g, '-'), artifactLabel]
   .filter(Boolean)
   .join('-');
 // Stable and Beta are the Electron update feeds (Beta = `-beta.N` prereleases,
@@ -134,7 +137,7 @@ const bundledUvResources =
     : [];
 // OmniVoice GGUF runtime, staged by the release workflows (#2780).
 const bundledOmnivoiceTtsResources =
-  process.env.VOICESTUDIO_CANTONESE_BUILD === '1' || (isMacAppStore && !bundlesMasRuntime)
+  cantonese || (isMacAppStore && !bundlesMasRuntime)
     ? []
     : omnivoiceTtsResources();
 const notarizeMac =
@@ -156,11 +159,11 @@ const adhocSignMac = !isMacAppStore && !process.env.CSC_LINK;
 /** @type {import('electron-builder').Configuration} */
 export default {
   appId: isMacAppStore ? storeIdentity.macAppStore.applicationId : APP_ID,
-  productName: PRODUCT_NAME,
+  productName,
   extraMetadata: {
     version,
-    productName: PRODUCT_NAME,
-    desktopName: PRODUCT_NAME,
+    productName,
+    desktopName: productName,
     voicestudioDistribution: DISTRIBUTION_TARGET,
     voicestudioUpdateOwner: DISTRIBUTION_PROFILE.applicationUpdates,
     ...(DISTRIBUTION_TARGET === 'microsoft-store'
@@ -176,10 +179,10 @@ export default {
   // The Python backend + engine sources ride along as plain resources (same as
   // the installer): the shell bootstraps a uv venv on first run.
   extraResources: [
-    { from: 'build/icons/icon.png', to: 'brand/icon.png' },
-    { from: 'build/icons/icon-macos.png', to: 'brand/icon-macos.png' },
+    { from: cantonese ? 'build/icons/cantonese.png' : 'build/icons/icon.png', to: 'brand/icon.png' },
+    { from: cantonese ? 'build/icons/cantonese.png' : 'build/icons/icon-macos.png', to: 'brand/icon-macos.png' },
     { from: 'build/icons/icon.ico', to: 'brand/icon.ico' },
-    { from: 'build/icons/32x32.png', to: 'brand/32x32.png' },
+    { from: cantonese ? 'build/icons/cantonese-32x32.png' : 'build/icons/32x32.png', to: 'brand/32x32.png' },
     { from: 'build/icons/trayTemplate.png', to: 'brand/trayTemplate.png' },
     {
       from: 'build/icons/trayRecordingTemplate.png',
@@ -254,7 +257,7 @@ export default {
     perMachine: false,
   },
   mac: {
-    icon: 'build/icons/icon.icns',
+    icon: cantonese ? 'build/icons/cantonese.icns' : 'build/icons/icon.icns',
     entitlements: 'build/entitlements.mac.plist',
     entitlementsInherit: 'build/entitlements.mac.plist',
     // Keep unsigned artifact rehearsals at their existing signing defaults;
@@ -268,7 +271,7 @@ export default {
     extendInfo: {
       NSMicrophoneUsageDescription: readFileSync(resolve(here, 'build/Info.plist'), 'utf8')
         .match(/<key>NSMicrophoneUsageDescription<\/key>\s*<string>([^<]+)<\/string>/)[1]
-        .replaceAll('__APP_PRODUCT_NAME__', PRODUCT_NAME),
+        .replaceAll('__APP_PRODUCT_NAME__', productName),
     },
     // The CLI matrix selects one architecture per runner and updater feed.
     target: isMacAppStore ? ['mas'] : ['dmg', 'zip'],
@@ -283,7 +286,7 @@ export default {
   // file name still comes from artifactName.
   dmg: {
     title: '${productName} ${version}',
-    background: 'build/dmg-background.png',
+    background: cantonese ? 'build/dmg-background-cantonese.png' : 'build/dmg-background.png',
     window: { width: 660, height: 440 },
     iconSize: 112,
     iconTextSize: 12,

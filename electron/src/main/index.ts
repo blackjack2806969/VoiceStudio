@@ -45,8 +45,8 @@ import {
 } from './main-error-journal';
 import { activateLiveWindow, isLiveWindow, sendToLiveWindow } from './window-safety';
 import { startAccount } from './account';
-import { installAppIdentity, installMacApplicationMenu } from './app-identity';
-import { APP_ID, PRODUCT_NAME } from '../../../config/app-config.mjs';
+import { DESKTOP_APP_NAME, installAppIdentity, installMacApplicationMenu } from './app-identity';
+import { APP_ID } from '../../../config/app-config.mjs';
 import { restoreSecurityScopedDirectories } from './security-scoped-files';
 import { homedir } from 'node:os';
 import {
@@ -317,6 +317,7 @@ function createWindow(): BrowserWindow {
       ? process.env.ELECTRON_RENDERER_URL
       : `${APP_ORIGIN}/index.html`;
   const win = new BrowserWindow({
+    title: DESKTOP_APP_NAME,
     icon: brandIconPath(process.platform === 'win32' ? 'icon.ico' : 'icon.png'),
     width: 1280,
     height: 820,
@@ -692,7 +693,7 @@ if (singleInstance && !app.requestSingleInstanceLock()) {
       const icon = nativeImage.createFromPath(brandIconPath('icon-macos.png'));
       if (process.platform === 'darwin') app.dock?.setIcon(icon);
       tray = new Tray(createTrayIcon(brandIconPath('32x32.png')));
-      tray.setToolTip(PRODUCT_NAME);
+      tray.setToolTip(DESKTOP_APP_NAME);
       if (process.env.VOICESTUDIO_CANTONESE_BUNDLED !== '1') {
         closeWatch = installWatchFolders(
           () => mainWindow,
@@ -733,7 +734,7 @@ if (singleInstance && !app.requestSingleInstanceLock()) {
       if (!headlessOwner) {
         try {
           dialog.showErrorBox(
-            `${PRODUCT_NAME} could not start`,
+            `${DESKTOP_APP_NAME} could not start`,
             (() => {
               const detail = error instanceof Error ? error.message : String(error);
               return savedTo

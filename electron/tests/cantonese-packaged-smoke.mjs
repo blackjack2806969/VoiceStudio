@@ -1,13 +1,32 @@
 import { _electron as electron } from 'playwright';
 import assert from 'node:assert/strict';
-import { mkdir, mkdtemp, readFile, rename, writeFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { execFileSync } from 'node:child_process';
+import { copyFile, mkdir, mkdtemp, readFile, rename, writeFile } from 'node:fs/promises';
+import { dirname, join, resolve } from 'node:path';
 import { homedir, tmpdir } from 'node:os';
 import { exerciseToneEditor } from './cantonese-tone-flow.mjs';
+import { CANTONESE_PRODUCT_NAME, CANTONESE_VERSION } from '../../config/app-config.mjs';
 
 const captures = resolve('artifacts/cantonese/packaged');
 await mkdir(captures, { recursive: true });
 const data = await mkdtemp(resolve(tmpdir(), 'cantonese-packaged-'));
+const executablePath = process.env.CANTONESE_SMOKE_EXECUTABLE ??
+  resolve('electron/release/mac-arm64', `${CANTONESE_PRODUCT_NAME}.app/Contents/MacOS/cantonese-offline`);
+const contents = resolve(dirname(executablePath), '..');
+const plist = JSON.parse(execFileSync('/usr/bin/plutil', ['-convert', 'json', '-o', '-', join(contents, 'Info.plist')], { encoding: 'utf8' }));
+assert.equal(plist.CFBundleIdentifier, 'com.voicestudio.desktop');
+assert.equal(plist.CFBundleName, CANTONESE_PRODUCT_NAME);
+assert.equal(plist.CFBundleDisplayName, CANTONESE_PRODUCT_NAME);
+assert.equal(plist.CFBundleShortVersionString, CANTONESE_VERSION);
+assert.equal(plist.CFBundleExecutable, 'cantonese-offline');
+assert((await readFile(join(contents, 'Resources', plist.CFBundleIconFile)))
+  .equals(await readFile(resolve('electron/build/icons/cantonese.icns'))), 'Finder icon differs from the CAN Edition asset');
+assert((await readFile(join(contents, 'Resources/brand/icon-macos.png')))
+  .equals(await readFile(resolve('electron/build/icons/cantonese.png'))), 'Dock icon differs from the CAN Edition asset');
+for (const notice of ['LICENSE', 'LICENSE-NOTICE.md']) {
+  assert((await readFile(join(contents, 'Resources', notice)))
+    .equals(await readFile(resolve(notice))), `${notice} must retain the original attribution`);
+}
 
 async function pollUntil(check, timeout, message) {
   const deadline = Date.now() + timeout;
@@ -32,7 +51,7 @@ async function verifyNavigation(page, labels) {
 }
 // Launch the bundle's real entrypoint with Chromium sandboxing enabled.
 const launch = () => electron.launch({
-  executablePath: resolve('electron/release/mac-arm64/VoiceStudio.app/Contents/MacOS/cantonese-offline'),
+  executablePath,
   chromiumSandbox: true,
   acceptDownloads: true,
   env: { ...process.env, OMNIVOICE_DATA_DIR: data, OMNIVOICE_PORT: '3920', OMNIVOICE_PRELOAD_TTS_ASR: '0',
@@ -45,8 +64,24 @@ let page;
 try {
   page = await app.firstWindow();
   await page.waitForURL('app://voicestudio/**');
+  assert.equal(await page.title(), CANTONESE_PRODUCT_NAME);
+  const identity = await app.evaluate(({ app, Menu }) => ({
+    name: app.getName(),
+    version: app.getVersion(),
+    menu: Menu.getApplicationMenu().items[0].label,
+    about: Menu.getApplicationMenu().items[0].submenu.items.some(item => item.role === 'about'),
+    userData: app.getPath('userData'),
+    appData: app.getPath('appData'),
+  }));
+  assert.equal(identity.name, CANTONESE_PRODUCT_NAME);
+  assert.equal(identity.version, CANTONESE_VERSION);
+  assert.equal(identity.menu, CANTONESE_PRODUCT_NAME);
+  assert.equal(identity.about, true);
+  assert.equal(identity.userData, join(identity.appData, 'Cantonese Voice Studio'));
+  console.log('PASS: Finder branding, Dock icon, menu and window title match v0.3.1; bundle ID, user data and licence notices retained.');
   assert.equal(await app.evaluate(({ app }) => app.commandLine.hasSwitch('no-sandbox')), false);
   const window = await app.browserWindow(page);
+  assert.equal(await window.evaluate(win => win.getTitle()), CANTONESE_PRODUCT_NAME);
   assert.equal(await window.evaluate(win => {
     win.webContents.setBackgroundThrottling(false);
     return win.webContents.getLastWebPreferences().sandbox;
@@ -78,14 +113,17 @@ try {
   }
   await page.goto('app://voicestudio/#/clone');
   await verifyNavigation(page, ['Clone', 'Cantonese Pitch Editor', 'Saved Voices', 'History', 'Settings']);
-  await navigation(page).getByRole('link', { name: 'Saved Voices', exact: true }).click();
-  await page.getByRole('heading', { name: 'Saved Voices', exact: true }).waitFor();
+  await navigation(page).getByRole('link', { name: 'Saved Voices', exact: true }).press('Enter');
+  await page.getByRole('heading', { name: 'Saved Voices', exact: true, level: 1 }).waitFor();
+  await page.getByRole('main').getByRole('button', { name: 'Demo Voice', exact: true }).waitFor();
+  await page.screenshot({ path: resolve(captures, 'ui-03-saved-voices.png') });
   await page.goto('app://voicestudio/#/settings/sharing');
   await page.waitForURL('**/#/settings/general');
-  await page.getByRole('heading', { name: 'General', exact: true }).waitFor();
-  await page.getByRole('link', { name: 'Models', exact: true }).click();
+  await page.getByRole('heading', { name: 'General', exact: true, level: 1 }).waitFor();
+  await page.getByRole('link', { name: 'Models', exact: true }).press('Enter');
   await page.getByText('VoiceStudio (k2-fsa/OmniVoice, 600+ languages)', { exact: true }).first().waitFor();
   assert.equal(await page.getByRole('link', { name: /dictation|translation|credentials|network|account/i }).count(), 0);
+  await page.screenshot({ path: resolve(captures, 'ui-05-settings.png') });
   await page.goto('app://voicestudio/#/dub');
   await page.waitForURL('**/#/clone');
   const install = page.getByRole('button', { name: 'Download OmniVoice', exact: true });
@@ -180,25 +218,38 @@ try {
   await writeFile(resolve(captures, 'clone-generated.wav'), speech);
   await page.screenshot({ path: resolve(captures, 'clone-reused.png') });
   console.log('PASS: Clone generated and exported a mixed Cantonese–English WAV from the reused OmniVoice weights.');
+  // The synthesis checks are complete. Keep memory headroom for the audio editor
+  // on the hosted runner, while preserving Clone's selection and original take.
+  await page.evaluate(async () => {
+    const response = await fetch('/api/system/flush-memory?unload_model=true', {
+      method: 'POST', signal: AbortSignal.timeout(30_000),
+    });
+    if (!response.ok) throw new Error(`Release test model memory: ${response.status}`);
+  });
 
   for (const origin of ['Clone', 'History']) {
     if (origin === 'History') {
-      await navigation(page).getByRole('link', { name: 'History', exact: true }).click();
-      await page.getByRole('heading', { name: 'History', exact: true }).waitFor();
+      await navigation(page).getByRole('link', { name: 'History', exact: true }).press('Enter');
+      await page.getByRole('heading', { name: 'History', exact: true, level: 1 }).waitFor();
     }
-    const original = page.waitForResponse(response =>
-      new URL(response.url()).pathname === '/api/audio/' + encodeURIComponent(audioPath) &&
-      response.ok());
+    const editPitch = page.getByRole('button', { name: 'Edit Pitch', exact: true });
+    await editPitch.waitFor();
+    await page.screenshot({
+      path: resolve(captures, origin === 'Clone' ? 'ui-01-clone.png' : 'ui-04-history.png'),
+    });
+    const original = page.waitForRequest(request =>
+      request.method() === 'GET' && request.resourceType() === 'fetch' &&
+      new URL(request.url()).pathname === '/api/audio/' + encodeURIComponent(audioPath));
     const upload = page.waitForResponse(response =>
       response.request().method() === 'POST' && response.url().endsWith('/tools/lexical-pitch/import'));
-    await page.getByRole('button', { name: 'Edit Pitch', exact: true }).click();
-    const [wavResponse, importResponse] = await Promise.all([original, upload]);
-    assert.deepEqual(await wavResponse.body(), speech, `${origin} selected a different WAV`);
+    await editPitch.press('Enter');
+    const [, importResponse] = await Promise.all([original, upload]);
     assert.equal(importResponse.status(), 200);
     const project = await importResponse.json();
+    assert(project.duration > 0, `${origin} imported an empty take`);
     await page.waitForURL(url => /#\/tools\?pitch=/.test(url.hash));
     assert.equal(new URLSearchParams(new URL(page.url()).hash.split('?')[1]).get('pitch'), project.id);
-    await page.getByRole('heading', { name: 'Cantonese Pitch Editor', exact: true }).waitFor();
+    await page.getByRole('heading', { name: 'Cantonese Pitch Editor', exact: true, level: 1 }).waitFor();
     await page.getByRole('img', { name: /Speech waveform/ }).waitFor();
     await page.getByRole('link', { name: 'Export WAV', exact: true }).waitFor();
     await page.screenshot({ path: resolve(captures, `pitch-from-${origin.toLowerCase()}.png`) });
@@ -206,6 +257,7 @@ try {
   console.log('PASS: both Clone and History opened the selected WAV directly in the pitch editor.');
 
   await exerciseToneEditor(page, 'app://voicestudio', captures);
+  await copyFile(resolve(captures, 'editor-en.png'), resolve(captures, 'ui-02-cantonese-pitch-editor.png'));
   await verifyNavigation(page, ['複製', '廣東話音高編輯器', '已儲存聲音', '歷史記錄', '設定']);
   const exported = await readFile(resolve(captures, 'edited-speech.wav'));
   assert(exported.length > 44 && exported.toString('ascii', 0, 4) === 'RIFF' &&

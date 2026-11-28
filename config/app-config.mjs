@@ -15,6 +15,8 @@ function requiredPort(value, key) {
 }
 
 export const PRODUCT_NAME = requiredString(rawConfig.productName, "productName");
+export const CANTONESE_PRODUCT_NAME = "Cantonese Voice Studio";
+export const CANTONESE_VERSION = "0.3.1";
 export const APP_ID = requiredString(rawConfig.appId, "appId");
 export const DEFAULT_BACKEND_PORT = requiredPort(rawConfig.ports?.backend, "backend");
 export const DEFAULT_WEB_PORT = requiredPort(rawConfig.ports?.web, "web");

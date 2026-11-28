@@ -1,4 +1,6 @@
 export const PRODUCT_NAME: string;
+export const CANTONESE_PRODUCT_NAME: string;
+export const CANTONESE_VERSION: string;
 export const APP_ID: string;
 export const DEFAULT_BACKEND_PORT: number;
 export const DEFAULT_WEB_PORT: number;
