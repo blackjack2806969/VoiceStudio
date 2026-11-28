@@ -32,7 +32,8 @@ async function verifyNavigation(page, labels) {
 }
 // Launch the bundle's real entrypoint with Chromium sandboxing enabled.
 const launch = () => electron.launch({
-  executablePath: resolve('electron/release/mac-arm64/VoiceStudio.app/Contents/MacOS/cantonese-offline'),
+  executablePath: process.env.CANTONESE_SMOKE_EXECUTABLE ??
+    resolve('electron/release/mac-arm64/VoiceStudio.app/Contents/MacOS/cantonese-offline'),
   chromiumSandbox: true,
   acceptDownloads: true,
   env: { ...process.env, OMNIVOICE_DATA_DIR: data, OMNIVOICE_PORT: '3920', OMNIVOICE_PRELOAD_TTS_ASR: '0',
@@ -84,7 +85,7 @@ try {
   await page.screenshot({ path: resolve(captures, 'ui-03-saved-voices.png') });
   await page.goto('app://voicestudio/#/settings/sharing');
   await page.waitForURL('**/#/settings/general');
-  await page.getByRole('heading', { name: 'General', exact: true }).waitFor();
+  await page.getByRole('heading', { name: 'General', exact: true, level: 1 }).waitFor();
   await page.getByRole('link', { name: 'Models', exact: true }).click();
   await page.getByText('VoiceStudio (k2-fsa/OmniVoice, 600+ languages)', { exact: true }).first().waitFor();
   assert.equal(await page.getByRole('link', { name: /dictation|translation|credentials|network|account/i }).count(), 0);

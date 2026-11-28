@@ -2,7 +2,7 @@ name: Cantonese offline macOS ARM64
 on:
   workflow_dispatch:
   push:
-    branches: [cantonese-offline]
+    branches: [cantonese-offline, cantonese-release-evidence/0.3.0]
     tags: ['cantonese-macos-*']
     paths:
       - 'backend/**'
@@ -17,6 +17,8 @@ on:
       - '.github/workflows/cantonese-macos.yml'
 permissions:
   contents: read
+env:
+  CANDIDATE_TAG: ${{ github.ref == 'refs/heads/cantonese-release-evidence/0.3.0' && 'cantonese-macos-0.3.0' || '' }}
 jobs:
   macos-arm64:
     runs-on: macos-15
@@ -27,6 +29,8 @@ jobs:
       CSC_IDENTITY_AUTO_DISCOVERY: 'false'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ env.CANDIDATE_TAG != '' && format('refs/tags/{0}', env.CANDIDATE_TAG) || github.sha }}
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: '22'
@@ -67,6 +71,31 @@ jobs:
           bun run build
           bun run build:web
           bun x electron-builder --config electron-builder.config.mjs --mac --arm64 --publish never
+      - name: Retrieve the release acceptance scripts
+        if: env.CANDIDATE_TAG != ''
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          path: release-acceptance
+          sparse-checkout: |
+            electron/tests/cantonese-packaged-smoke.mjs
+            electron/tests/cantonese-tone-flow.mjs
+          sparse-checkout-cone-mode: false
+      - name: Install the candidate from its DMG for acceptance
+        if: env.CANDIDATE_TAG != ''
+        run: |
+          git show -s --format='Candidate commit %H'
+          cp release-acceptance/electron/tests/cantonese-*.mjs electron/tests/
+          shopt -s nullglob
+          dmgs=(electron/release/*.dmg)
+          test "${#dmgs[@]}" = 1
+          mount="$RUNNER_TEMP/cantonese-dmg"
+          mkdir -p "$mount"
+          hdiutil attach -nobrowse -readonly -mountpoint "$mount" "${dmgs[0]}"
+          trap 'hdiutil detach "$mount"' EXIT
+          test_app="$RUNNER_TEMP/VoiceStudio.app"
+          ditto "$mount/VoiceStudio.app" "$test_app"
+          echo "CANTONESE_SMOKE_EXECUTABLE=$test_app/Contents/MacOS/cantonese-offline" >> "$GITHUB_ENV"
       - name: Verify packaged OmniVoice, focused navigation and pitch editing
         run: node electron/tests/cantonese-packaged-smoke.mjs
       - name: Retain packaged test evidence
@@ -86,7 +115,7 @@ jobs:
             electron/release/*.dmg
             electron/release/*arm64*.zip
   publish:
-    if: github.repository == 'blackjack2806969/VoiceStudio' && startsWith(github.ref, 'refs/tags/cantonese-macos-')
+    if: github.repository == 'blackjack2806969/VoiceStudio' && (startsWith(github.ref, 'refs/tags/cantonese-macos-') || github.ref == 'refs/heads/cantonese-release-evidence/0.3.0')
     needs: macos-arm64
     runs-on: ubuntu-latest
     permissions:
@@ -96,13 +125,21 @@ jobs:
         with:
           name: Cantonese-Voice-Studio-macOS-arm64
           path: installers
+      - if: env.CANDIDATE_TAG != ''
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: Cantonese-packaged-test-evidence
+          path: screenshots
       - name: Publish the verified macOS ARM64 prerelease
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --verify-tag --prerelease \
+          shopt -s nullglob
+          images=(screenshots/ui-*.png)
+          if [[ -n "$CANDIDATE_TAG" ]]; then test "${#images[@]}" = 5; fi
+          gh release create "${CANDIDATE_TAG:-$GITHUB_REF_NAME}" --repo "$GITHUB_REPOSITORY" --verify-tag --prerelease \
             --title "Cantonese Voice Studio for macOS — Voice Production" \
-            --notes-file - installers/*.dmg installers/*arm64*.zip <<'NOTES'
+            --notes-file - installers/*.dmg installers/*arm64*.zip "${images[@]}" <<'NOTES'
           Open **Clone** to download about 2.4 GB of OmniVoice weights or reuse the original app’s Hugging Face cache. The OmniVoice weights are for non-commercial use and the audio tokenizer has separate terms. Review the disclosures in Clone.
 
           The app has five workspaces: Clone, Cantonese Pitch Editor, Saved Voices, History and Settings. Use **Edit Pitch** beside a take in Clone or History to open that audio directly in the editor.
