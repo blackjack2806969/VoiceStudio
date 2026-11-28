@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/logo.png" alt="VoiceStudio logo" width="72" height="72" />
+  <img src="docs/logo-can.svg" alt="Cantonese Voice Studio CAN logo" width="112" height="112" />
   <h1>Cantonese Voice Studio</h1>
   <p><strong>廣東話語音複製 · 本地文字轉語音 · 六聲修音</strong></p>
   <p>Offline voice cloning and Cantonese lexical-tone editing for Apple Silicon Macs.</p>
