@@ -89,7 +89,12 @@ def test_pull_request_changes_that_affect_the_result_rerun_the_check():
     # New commits, (un)applying `cla-override`, and editing `Supersedes #N`
     # all change who must sign, so each must refresh the CLA status.
     assert {"opened", "synchronize", "reopened", "closed", "labeled", "unlabeled", "edited"} <= types
-    assert workflow["jobs"]["cla"]["if"].startswith("github.event_name == 'pull_request_target' ||")
+    assert workflow["jobs"]["cla"]["if"].startswith(
+        "github.repository == 'debpalash/VoiceStudio' && (github.event_name == 'pull_request_target' ||"
+    )
+    assert _load(_WORKFLOWS / "cla-reminders.yml")["jobs"]["reminders"]["if"] == (
+        "github.repository == 'debpalash/VoiceStudio'"
+    )
 
 
 def test_published_agreements_are_never_edited():
@@ -256,7 +261,7 @@ def test_backfill_is_manual_main_only_and_never_checks_out_pr_code():
     workflow = _load(_WORKFLOWS / "cla-backfill.yml")
     assert _triggers(workflow) == {"workflow_dispatch"}
     job = workflow["jobs"]["backfill"]
-    assert job["if"] == "github.ref == 'refs/heads/main'"
+    assert job["if"] == "github.repository == 'debpalash/VoiceStudio' && github.ref == 'refs/heads/main'"
     checkout = next(step for step in job["steps"] if "checkout" in step.get("uses", ""))
     assert checkout["with"]["persist-credentials"] is False
     assert "ref" not in checkout["with"]

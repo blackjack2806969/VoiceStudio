@@ -117,6 +117,8 @@ def _gh_json(endpoint: str):
 
 
 def cla_hold(event_name: str, event: dict, repo: str) -> bool:
+    if repo.lower() != "debpalash/voicestudio":
+        return False
     if event_name != "pull_request" or _exempt((event.get("pull_request") or {}).get("user") or {}):
         return False  # no API call for the owner, bots, pushes or the merge queue
     # Read labels live: the CLA check's re-run replays this event with its old labels.

@@ -3,7 +3,7 @@
 Give this file to your coding agent before it starts. Each rule links to its
 source in [CONTRIBUTING.md](CONTRIBUTING.md) or [CLAUDE.md](../CLAUDE.md).
 
-1. **Sign the CLA first.** The person submitting the work posts this exact line,
+1. **For pull requests to debpalash/VoiceStudio, sign the CLA first.** The person submitting the work posts this exact line,
    on its own line, as a new comment on the
    [signing issue (#2586)](https://github.com/debpalash/VoiceStudio/issues/2586)
    or on the pull request. Until then the pull request stays a draft and CI waits.

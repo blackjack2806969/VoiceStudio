@@ -45,7 +45,7 @@ Five screens captured during v0.3.1 macOS ARM64 packaged-app testing. [CI run](h
 
 ## Source, licence and credits
 
-The complete application and build files live on [`cantonese-offline`](https://github.com/blackjack2806969/Cantonese-Voice-Studio/tree/cantonese-offline). Use the [release source index](docs/release-source.md) to find the exact source for each distributed build. [Upstream feature catalog](docs/feature-catalog.md)
+The complete application and build files live on [`cantonese-offline`](https://github.com/blackjack2806969/Cantonese-Voice-Studio/tree/cantonese-offline). Use the [release source index](docs/release-source.md) to find the exact source for each distributed build. [Upstream feature catalog](docs/feature-catalog.md) · [Contributor guide](.github/CONTRIBUTING.md#contribution-licensing)
 
 - Cantonese Voice Studio is an independent fork of VoiceStudio, originally developed by Palash Debnath, Shimul Debnath and the VoiceStudio contributors. The application is licensed under AGPL-3.0-only. [Upstream VoiceStudio](https://github.com/debpalash/VoiceStudio) · [Licence](LICENSE) · [Copyright and notices](LICENSE-NOTICE.md)
 - OmniVoice code is Apache-2.0. The pretrained weights are CC BY-NC and the audio tokenizer is subject to separate Higgs Audio 2 and Meta Llama 3 terms. [Model card](https://huggingface.co/k2-fsa/OmniVoice/blob/c5fdb5ccb189668d56333f77ba2629f4cd7535f4/README.md) · [Tokenizer terms](https://huggingface.co/k2-fsa/OmniVoice/blob/c5fdb5ccb189668d56333f77ba2629f4cd7535f4/audio_tokenizer/LICENSE)

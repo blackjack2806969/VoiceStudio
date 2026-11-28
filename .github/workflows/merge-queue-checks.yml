@@ -21,6 +21,7 @@ permissions:
 jobs:
   cla:
     name: CLA gate
+    if: github.repository == 'debpalash/VoiceStudio'
     runs-on: ubuntu-24.04
     timeout-minutes: 2
     steps:
@@ -46,7 +47,11 @@ jobs:
           REPO: ${{ github.repository }}
           SHA: ${{ github.sha }}
         run: |
-          for context in "CLA" "Commit identity policy"; do
+          contexts=("Commit identity policy")
+          if [[ "${REPO,,}" == debpalash/voicestudio ]]; then
+            contexts+=("CLA")
+          fi
+          for context in "${contexts[@]}"; do
             gh api "repos/$REPO/statuses/$SHA" \
               -f state=success -f context="$context" \
               -f description="Checked on the pull request before it was queued"
