@@ -1,12 +1,12 @@
 <div align="center">
   <img src="docs/logo-can.svg" alt="Cantonese Voice Studio CAN logo" width="112" height="112" />
   <h1>Cantonese Voice Studio</h1>
-  <p><strong>廣東話語音複製 · 本地文字轉語音 · 六聲修音</strong></p>
+  <p><strong>Voice cloning · Local TTS · Cantonese tone correction</strong></p>
   <p>Offline voice cloning and Cantonese lexical-tone editing for Apple Silicon Macs.</p>
+  <p><strong>English</strong> · <a href="README.zh-HK.md">繁體中文（香港）</a></p>
   <p>
     <a href="https://github.com/blackjack2806969/VoiceStudio/releases"><strong>Download for macOS</strong></a> ·
     <a href="#quick-start">Quick start</a> ·
-    <a href="#快速上手">繁體中文</a> ·
     <a href="https://github.com/blackjack2806969/VoiceStudio/blob/cantonese-offline/docs/cantonese-offline.md">Documentation</a>
   </p>
   <p><code>macOS arm64</code> · <code>OmniVoice</code> · <code>Praat / PSOLA</code> · <code>Local inference</code></p>
@@ -22,6 +22,8 @@ The distribution uses OmniVoice as its only TTS engine. Once the model is instal
 
 > [!TIP]
 > **Most important generation tip: render complete sentences, not isolated words.** Give OmniVoice a full sentence or a natural phrase instead of generating one or two words at a time. Sentence-level context helps the model produce more natural Cantonese pronunciation, rhythm and intonation. If a single syllable has the wrong tone, generate the whole sentence first and then correct that syllable in the Pitch Editor. If regeneration is needed, regenerate the full sentence rather than splicing isolated words together.
+>
+> For example, render `聽日朝早九點要開會，記得準時返嚟。` as a complete sentence rather than generating `聽日` and `開會` separately.
 
 ## Two core tools
 
@@ -55,7 +57,7 @@ Choose the newest published OmniVoice-only release and download its `.dmg` file.
 
 - Target: Apple Silicon Macs (M-series).
 - The DMG bundles the app, Python runtime, OmniVoice engine and ffmpeg.
-- OmniVoice model weights (~2.4 GB) are **not bundled**. Install once from Clone, or reuse a complete existing Hugging Face model cache.
+- OmniVoice model weights (~2.4 GiB) are **not bundled**. Install once from Clone, or reuse a complete existing Hugging Face model cache.
 - The pitch editor works without any TTS model.
 - Packages are ad-hoc signed, not Apple Developer ID notarized. Follow your organisation's installation and security policy.
 
@@ -86,21 +88,6 @@ The v0.2.0 [macOS ARM64 CI run](https://github.com/blackjack2806969/VoiceStudio/
 [Download v0.2.0 test screenshots and audio](https://github.com/blackjack2806969/VoiceStudio/actions/runs/45981656040/artifacts/15190228799) (GitHub Actions artifact; sign-in may be required).
 
 CI is not a guarantee of pronunciation quality, voice similarity or performance on a physical M1 Ultra. Those remain subject to hands-on evaluation.
-
-## 快速上手
-
-Cantonese Voice Studio 係一個以香港廣東話為核心嘅本地 AI 配音工具，專為 Apple Silicon Mac 設計。
-
-- **語音複製：** 匯入獲授權嘅參考錄音，用 OmniVoice 生成廣東話及中英夾雜語音。
-- **廣東話修音：** 選取讀錯聲調嘅字，套用六聲預設，或者手動調整 F0 音高曲線。
-- **本地運算：** 安裝模型後，生成語音、錄音及修音均在本機處理。
-- **繁體中文介面：** 在 Settings → Language 選擇繁體中文。
-
-去 [Releases](https://github.com/blackjack2806969/VoiceStudio/releases) 下載 ARM64 DMG。首次使用 Clone 需要下載約 2.4 GB OmniVoice 模型權重；如已有完整模型快取，可以直接重用。Pitch Editor 不需要 AI 模型。
-
-> **最重要嘅使用建議：一次生成完整句子，而唔係逐一兩個字 Render。** 完整語境有助 OmniVoice 生成更自然嘅廣東話發音、語速同語調。如果個別字讀錯聲調，先生成成句，再用 Pitch Editor 修正嗰個字；需要重新生成時，亦建議 Render 成句。
-
-注意：聲調修正並非自動糾正所有讀音錯誤。OmniVoice 權重採非商業用途授權，使用前請確認授權條款。
 
 ## Source and documentation
 
