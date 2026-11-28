@@ -41,7 +41,32 @@
 
 ## 實際介面
 
-[查看 v0.3.0 打包測試截圖及音訊](https://github.com/blackjack2806969/Cantonese-Voice-Studio/actions/runs/46126680909/artifacts/15255659072)（GitHub Actions 測試產物，可能需要登入，保留至 26/02/2027）。舊版 Release 已移除，因此暫時以測試產物連結代替圖片展示；呢批截圖並非 v0.3.1 新品牌介面。
+以下五張係 v0.3.1 macOS ARM64 [打包測試](https://github.com/blackjack2806969/Cantonese-Voice-Studio/actions/runs/46128615288) 擷取嘅原始介面截圖，唔係設計示意圖。圖片直接存放喺本專案，唔受 Release 或測試產物到期影響。
+
+### 語音複製
+
+[![語音複製 — v0.3.1](docs/screenshots/ui-01-clone.png)](docs/screenshots/ui-01-clone.png)
+
+### 廣東話修音
+
+[![廣東話修音 — v0.3.1](docs/screenshots/ui-02-cantonese-pitch-editor.png)](docs/screenshots/ui-02-cantonese-pitch-editor.png)
+
+<details>
+<summary>查看更多介面：已儲存聲線、歷史紀錄及設定</summary>
+
+### 已儲存聲線
+
+[![已儲存聲線 — v0.3.1](docs/screenshots/ui-03-saved-voices.png)](docs/screenshots/ui-03-saved-voices.png)
+
+### 歷史紀錄
+
+[![歷史紀錄 — v0.3.1](docs/screenshots/ui-04-history.png)](docs/screenshots/ui-04-history.png)
+
+### 設定
+
+[![設定 — v0.3.1](docs/screenshots/ui-05-settings.png)](docs/screenshots/ui-05-settings.png)
+
+</details>
 
 ## 兩大核心功能
 

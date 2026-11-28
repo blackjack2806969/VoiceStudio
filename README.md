@@ -39,7 +39,32 @@ This design reduces the risk of data leakage; it is not a guarantee against ever
 
 ## Screenshots
 
-[View the v0.3.0 packaged-app screenshots and audio test evidence](https://github.com/blackjack2806969/Cantonese-Voice-Studio/actions/runs/46126680909/artifacts/15255659072) (GitHub Actions artifact; sign-in may be required; expires 26 February 2027). The older release was removed, so this evidence link replaces the previous embedded screenshots. These are not screenshots of the v0.3.1 rebranding.
+Actual screenshots from the v0.3.1 macOS ARM64 [packaged-app tests](https://github.com/blackjack2806969/Cantonese-Voice-Studio/actions/runs/46128615288), not mockups. Images are stored in this repository rather than in release assets or expiring workflow artifacts.
+
+### Voice Clone
+
+[![Voice Clone — v0.3.1](docs/screenshots/ui-01-clone.png)](docs/screenshots/ui-01-clone.png)
+
+### Cantonese Pitch Editor
+
+[![Cantonese Pitch Editor — v0.3.1](docs/screenshots/ui-02-cantonese-pitch-editor.png)](docs/screenshots/ui-02-cantonese-pitch-editor.png)
+
+<details>
+<summary>More screenshots: Saved Voices, History and Settings</summary>
+
+### Saved Voices
+
+[![Saved Voices — v0.3.1](docs/screenshots/ui-03-saved-voices.png)](docs/screenshots/ui-03-saved-voices.png)
+
+### History
+
+[![History — v0.3.1](docs/screenshots/ui-04-history.png)](docs/screenshots/ui-04-history.png)
+
+### Settings
+
+[![Settings — v0.3.1](docs/screenshots/ui-05-settings.png)](docs/screenshots/ui-05-settings.png)
+
+</details>
 
 ## Two core tools
 
