@@ -20,6 +20,9 @@ An independent, Cantonese-focused fork of [VoiceStudio](https://github.com/debpa
 
 The distribution uses OmniVoice as its only TTS engine. Once the model is installed, speech generation and audio editing run locally, without a cloud inference service or paid API credits.
 
+> [!TIP]
+> **Most important generation tip: render complete sentences, not isolated words.** Give OmniVoice a full sentence or a natural phrase instead of generating one or two words at a time. Sentence-level context helps the model produce more natural Cantonese pronunciation, rhythm and intonation. If a single syllable has the wrong tone, generate the whole sentence first and then correct that syllable in the Pitch Editor. If regeneration is needed, regenerate the full sentence rather than splicing isolated words together.
+
 ## Two core tools
 
 | Voice Clone | Cantonese Pitch Editor |
@@ -94,6 +97,8 @@ Cantonese Voice Studio 係一個以香港廣東話為核心嘅本地 AI 配音�
 - **繁體中文介面：** 在 Settings → Language 選擇繁體中文。
 
 去 [Releases](https://github.com/blackjack2806969/VoiceStudio/releases) 下載 ARM64 DMG。首次使用 Clone 需要下載約 2.4 GB OmniVoice 模型權重；如已有完整模型快取，可以直接重用。Pitch Editor 不需要 AI 模型。
+
+> **最重要嘅使用建議：一次生成完整句子，而唔係逐一兩個字 Render。** 完整語境有助 OmniVoice 生成更自然嘅廣東話發音、語速同語調。如果個別字讀錯聲調，先生成成句，再用 Pitch Editor 修正嗰個字；需要重新生成時，亦建議 Render 成句。
 
 注意：聲調修正並非自動糾正所有讀音錯誤。OmniVoice 權重採非商業用途授權，使用前請確認授權條款。
 
