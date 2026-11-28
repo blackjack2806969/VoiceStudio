@@ -217,6 +217,15 @@ physical Mac remains open.
   Traditional Chinese, model setup and reuse, and the existing audio tests.
 - Local type checking, locale validation and 130 targeted Electron tests
   passed. The candidate is tagged `cantonese-macos-0.3.0`.
-- GitHub rejected workflow dispatch with HTTP 422 because Actions is disabled
-  for the fork. The integration cannot read or change the Actions settings
-  (HTTP 403). Packaged ARM64 acceptance and release publication are pending.
+- The original `cantonese-macos-0.3.0` candidate remains at `f2cbaa00b`.
+  After Actions was re-enabled, the [ARM64 build](https://github.com/blackjack2806969/VoiceStudio/actions/runs/46125002742)
+  produced the DMG and app ZIP. The acceptance branch changed only test and
+  release automation.
+- [Packaged ARM64 acceptance](https://github.com/blackjack2806969/VoiceStudio/actions/runs/46126680909)
+  installed from that DMG and passed OmniVoice download and cache reuse,
+  offline synthesis, direct pitch handoff from Clone and History, manual
+  pitch editing, playback, undo, WAV export and both locales.
+- [Release v0.3.0](https://github.com/blackjack2806969/VoiceStudio/releases/tag/cantonese-macos-0.3.0)
+  includes the verified ARM64 DMG, app ZIP and actual CI screenshots of all
+  five workspaces. The app uses ad-hoc signing. Physical Mac testing remains
+  pending.
